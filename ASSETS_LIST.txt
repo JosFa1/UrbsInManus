@@ -1,0 +1,296 @@
+════════════════════════════════════════════════════════════════════
+  URBS IN MANUS - GRAPHICS ASSETS LIST
+  Place all graphics in the /graphics/ folder
+════════════════════════════════════════════════════════════════════
+
+All images should be PNG format with transparency.
+Each building should have a clear, easily recognizable design.
+Use earthy, Roman-inspired colors (browns, tans, stone gray, terracotta).
+
+────────────────────────────────────────────────────────────────────
+ROADS & INFRASTRUCTURE (1x1 tiles = 48x48 pixels)
+────────────────────────────────────────────────────────────────────
+
+via.png
+  - Size: 48x48 pixels
+  - Description: Stone paved road
+  - Colors: Gray stone with subtle texture
+  - Details: Show cobblestones or paving stones
+
+
+────────────────────────────────────────────────────────────────────
+HOUSING (Varied sizes)
+────────────────────────────────────────────────────────────────────
+
+insula.png
+  - Size: 96x96 pixels (2x2 tiles)
+  - Description: Multi-story apartment block
+  - Colors: Terracotta/orange walls, brown roof
+  - Details: Multiple windows, 3-4 stories tall, dense urban look
+
+domus.png
+  - Size: 96x96 pixels (2x2 tiles)
+  - Description: Single-family villa with courtyard
+  - Colors: Cream/tan walls, red tile roof
+  - Details: Elegant columns, open courtyard visible from above
+
+
+────────────────────────────────────────────────────────────────────
+FOOD & STORAGE (Varied sizes)
+────────────────────────────────────────────────────────────────────
+
+macellum.png
+  - Size: 144x96 pixels (3x2 tiles)
+  - Description: Market building with stalls
+  - Colors: Stone gray with colorful awnings
+  - Details: Market stalls, open courtyard, merchant goods visible
+
+pistrinum.png
+  - Size: 48x48 pixels (1x1 tile)
+  - Description: Bakery with oven
+  - Colors: Brown stone, warm orange glow from oven
+  - Details: Smoke from chimney, bread visible
+
+horrea.png
+  - Size: 96x144 pixels (2x3 tiles)
+  - Description: Large storage warehouse
+  - Colors: Dark brown wood and stone
+  - Details: Large doors, grain sacks visible, multiple levels
+
+
+────────────────────────────────────────────────────────────────────
+WATER & SANITATION
+────────────────────────────────────────────────────────────────────
+
+aquaeductus.png
+  - Size: 48x144 pixels (1x3 tiles)
+  - Description: Aqueduct arches
+  - Colors: Stone gray/white
+  - Details: Multiple arches stacked, water channel on top
+
+fons.png
+  - Size: 48x48 pixels (1x1 tile)
+  - Description: Public fountain
+  - Colors: Stone gray/marble white with blue water
+  - Details: Water basin, lion head spout, water splash
+
+latrina.png
+  - Size: 48x48 pixels (1x1 tile)
+  - Description: Public toilet building
+  - Colors: Brown stone
+  - Details: Small rectangular building with entrance
+
+
+────────────────────────────────────────────────────────────────────
+WORK & COMMERCE
+────────────────────────────────────────────────────────────────────
+
+tabernae.png
+  - Size: 96x48 pixels (2x1 tiles)
+  - Description: Row of street-level shops
+  - Colors: Mixed browns and tans
+  - Details: Multiple shop fronts, awnings, goods displayed
+
+officina.png
+  - Size: 96x96 pixels (2x2 tiles)
+  - Description: Workshop with forge
+  - Colors: Dark stone with orange glow
+  - Details: Smoke, tools visible, industrial appearance
+
+
+────────────────────────────────────────────────────────────────────
+PUBLIC BUILDINGS (Large structures)
+────────────────────────────────────────────────────────────────────
+
+thermae.png
+  - Size: 192x144 pixels (4x3 tiles)
+  - Description: Grand public bathhouse
+  - Colors: White marble/stone with blue accents
+  - Details: Domed roof, columns, steam rising, pools visible
+
+templum.png
+  - Size: 144x144 pixels (3x3 tiles)
+  - Description: Classical Roman temple
+  - Colors: White marble with gold accents
+  - Details: Triangular pediment, columns, steps leading up
+
+basilica.png
+  - Size: 192x144 pixels (4x3 tiles)
+  - Description: Large civic hall
+  - Colors: Stone gray with red tile roof
+  - Details: Rectangular hall, columns along sides, imposing
+
+forum.png
+  - Size: 192x192 pixels (4x4 tiles)
+  - Description: Central public plaza
+  - Colors: White stone paving, various buildings around edge
+  - Details: Open space, statues, columns, surrounded by colonnades
+
+
+────────────────────────────────────────────────────────────────────
+ENTERTAINMENT (Very large structures)
+────────────────────────────────────────────────────────────────────
+
+amphitheatrum.png
+  - Size: 240x192 pixels (5x4 tiles)
+  - Description: Oval amphitheater (like Colosseum)
+  - Colors: Stone beige/tan with arches
+  - Details: Oval shape, multiple levels of arches, arena in center
+
+theatrum.png
+  - Size: 192x144 pixels (4x3 tiles)
+  - Description: Semi-circular theater
+  - Colors: Stone gray
+  - Details: Semi-circular seating, stage at front, Greek-style
+
+
+────────────────────────────────────────────────────────────────────
+UI ELEMENTS
+────────────────────────────────────────────────────────────────────
+
+cursor-normal.png
+  - Size: 32x32 pixels
+  - Description: Default cursor
+  - Details: Standard pointer
+
+cursor-build.png
+  - Size: 32x32 pixels
+  - Description: Building placement cursor
+  - Details: Hammer or trowel icon
+
+cursor-demolish.png
+  - Size: 32x32 pixels
+  - Description: Demolish cursor
+  - Details: X or demolition icon
+
+icon-water.png
+  - Size: 24x24 pixels
+  - Description: Water drop icon for UI
+
+icon-food.png
+  - Size: 24x24 pixels
+  - Description: Wheat or bread icon for UI
+
+icon-happiness.png
+  - Size: 24x24 pixels
+  - Description: Smiling face or laurel wreath
+
+icon-order.png
+  - Size: 24x24 pixels
+  - Description: Roman fasces or scales of justice
+
+icon-aes.png
+  - Size: 24x24 pixels
+  - Description: Coin or denarius
+
+icon-population.png
+  - Size: 24x24 pixels
+  - Description: Multiple people silhouettes
+
+
+────────────────────────────────────────────────────────────────────
+BACKGROUND & TERRAIN
+────────────────────────────────────────────────────────────────────
+
+terrain-grass.png
+  - Size: 48x48 pixels (tileable)
+  - Description: Grass/dirt terrain
+  - Colors: Olive green and brown
+  - Details: Should tile seamlessly
+
+terrain-water.png
+  - Size: 48x48 pixels (tileable)
+  - Description: Water (for river borders, optional)
+  - Colors: Blue with slight ripple texture
+
+overlay-green.png
+  - Size: 48x48 pixels
+  - Description: Green transparent overlay for valid placement
+  - Colors: Bright green with 40% transparency, green border
+
+overlay-red.png
+  - Size: 48x48 pixels
+  - Description: Red transparent overlay for invalid placement
+  - Colors: Bright red with 40% transparency, red border
+
+
+────────────────────────────────────────────────────────────────────
+EFFECTS & DECORATIONS (Optional but recommended)
+────────────────────────────────────────────────────────────────────
+
+effect-fire.png
+  - Size: 48x48 pixels
+  - Description: Fire/smoke effect for events
+  - Animation: Can be animated or static flames
+
+effect-smoke.png
+  - Size: 32x32 pixels
+  - Description: Smoke rising from buildings
+  - Details: Wispy smoke for bakeries and workshops
+
+citizen-walk.png
+  - Size: 16x16 pixels
+  - Description: Tiny citizen sprite (optional)
+  - Details: Small figure for visual movement
+
+decoration-tree.png
+  - Size: 32x48 pixels
+  - Description: Tree decoration
+  - Colors: Green foliage, brown trunk
+
+decoration-statue.png
+  - Size: 32x32 pixels
+  - Description: Small statue decoration
+  - Colors: White marble
+
+
+────────────────────────────────────────────────────────────────────
+NOTES ON ASSET CREATION
+────────────────────────────────────────────────────────────────────
+
+1. PIXEL PERFECT: All assets should align to 48-pixel grid units
+   - 1x1 = 48x48px
+   - 2x2 = 96x96px
+   - 3x3 = 144x144px
+   - etc.
+
+2. TRANSPARENCY: Use PNG-24 with alpha channel for all buildings
+   
+3. SHADOWS: Add subtle drop shadows beneath buildings for depth
+
+4. STYLE: Keep a consistent art style across all assets
+   - Suggested: Isometric 2D or top-down 2.5D perspective
+   - Alternative: Simple flat design with strong outlines
+
+5. COLOR PALETTE (suggested):
+   - Stone: #A8978E, #D3C5BB
+   - Terracotta: #CD853F, #D2691E
+   - Marble: #F5F5DC, #FFFAF0
+   - Roof tiles: #8B4513, #A0522D
+   - Grass: #6B8E23, #556B2F
+   - Water: #4682B4, #5F9EA0
+
+6. NAMING: Use lowercase, no spaces, match exactly as listed above
+
+7. FILE STRUCTURE:
+   /graphics/
+     buildings/
+       via.png
+       insula.png
+       domus.png
+       [etc...]
+     ui/
+       cursor-normal.png
+       icon-water.png
+       [etc...]
+     terrain/
+       terrain-grass.png
+       overlay-green.png
+       [etc...]
+     effects/
+       effect-fire.png
+       [etc...]
+
+════════════════════════════════════════════════════════════════════
+TOTAL ASSET COUNT: 31 core assets + 5 optional decorative assets
+════════════════════════════════════════════════════════════════════

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urbs in Manus - Roman City Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main Game Container -->
+    <div id="app">
+        <!-- Header -->
+        <header>
+            <h1>URBS IN MANVS</h1>
+            <p class="subtitle">A Roman City Planning Simulation</p>
+        </header>
+
+        <!-- Main Game Area -->
+        <div id="game-container">
+            <!-- Left Panel - Build Palette -->
+            <div id="left-panel">
+                <h2>Aedificatio</h2>
+                <p class="panel-subtitle">Build</p>
+                
+                <div class="building-category">
+                    <h3>Viae</h3>
+                    <button class="build-btn" data-type="via" title="Road - Via">
+                        <span class="icon">═</span>
+                        <span class="name">Via</span>
+                        <span class="cost">5</span>
+                    </button>
+                </div>
+
+                <div class="building-category">
+                    <h3>Habitatio</h3>
+                    <button class="build-btn" data-type="insula" title="Apartment Block - Insula">
+                        <span class="icon">▦</span>
+                        <span class="name">Insula</span>
+                        <span class="cost">20</span>
+                    </button>
+                    <button class="build-btn" data-type="domus" title="Private House - Domus">
+                        <span class="icon">⌂</span>
+                        <span class="name">Domus</span>
+                        <span class="cost">40</span>
+                    </button>
+                </div>
+
+                <div class="building-category">
+                    <h3>Cibus</h3>
+                    <button class="build-btn" data-type="macellum" title="Market - Macellum">
+                        <span class="icon">⚖</span>
+                        <span class="name">Macellum</span>
+                        <span class="cost">50</span>
+                    </button>
+                    <button class="build-btn" data-type="pistrinum" title="Bakery - Pistrinum">
+                        <span class="icon">◉</span>
+                        <span class="name">Pistrinum</span>
+                        <span class="cost">30</span>
+                    </button>
+                    <button class="build-btn" data-type="horrea" title="Granary - Horrea">
+                        <span class="icon">■</span>
+                        <span class="name">Horrea</span>
+                        <span class="cost">60</span>
+                    </button>
+                </div>
+
+                <div class="building-category">
+                    <h3>Aqua</h3>
+                    <button class="build-btn" data-type="aquaeductus" title="Aqueduct Source - Aquaeductus">
+                        <span class="icon">⌒</span>
+                        <span class="name">Aquaeductus</span>
+                        <span class="cost">100</span>
+                    </button>
+                    <button class="build-btn" data-type="fons" title="Public Fountain - Fons">
+                        <span class="icon">◈</span>
+                        <span class="name">Fons</span>
+                        <span class="cost">25</span>
+                    </button>
+                    <button class="build-btn" data-type="latrina" title="Public Toilet - Latrina">
+                        <span class="icon">⊐</span>
+                        <span class="name">Latrina</span>
+                        <span class="cost">20</span>
+                    </button>
+                </div>
+
+                <div class="building-category">
+                    <h3>Labor</h3>
+                    <button class="build-btn" data-type="tabernae" title="Shops - Tabernae">
+                        <span class="icon">⌘</span>
+                        <span class="name">Tabernae</span>
+                        <span class="cost">35</span>
+                    </button>
+                    <button class="build-btn" data-type="officina" title="Workshop - Officina">
+                        <span class="icon">⚒</span>
+                        <span class="name">Officina</span>
+                        <span class="cost">40</span>
+                    </button>
+                </div>
+
+                <div class="building-category">
+                    <h3>Publica</h3>
+                    <button class="build-btn" data-type="thermae" title="Baths - Thermae">
+                        <span class="icon">≋</span>
+                        <span class="name">Thermae</span>
+                        <span class="cost">80</span>
+                    </button>
+                    <button class="build-btn" data-type="templum" title="Temple - Templum">
+                        <span class="icon">⛬</span>
+                        <span class="name">Templum</span>
+                        <span class="cost">70</span>
+                    </button>
+                    <button class="build-btn" data-type="basilica" title="Civic Building - Basilica">
+                        <span class="icon">⌂</span>
+                        <span class="name">Basilica</span>
+                        <span class="cost">90</span>
+                    </button>
+                    <button class="build-btn" data-type="forum" title="Forum - Forum">
+                        <span class="icon">◇</span>
+                        <span class="name">Forum</span>
+                        <span class="cost">100</span>
+                    </button>
+                </div>
+
+                <div class="building-category">
+                    <h3>Ludi</h3>
+                    <button class="build-btn" data-type="amphitheatrum" title="Amphitheater - Amphitheatrum">
+                        <span class="icon">◎</span>
+                        <span class="name">Amphitheatrum</span>
+                        <span class="cost">150</span>
+                    </button>
+                    <button class="build-btn" data-type="theatrum" title="Theater - Theatrum">
+                        <span class="icon">⊙</span>
+                        <span class="name">Theatrum</span>
+                        <span class="cost">100</span>
+                    </button>
+                </div>
+
+                <div class="building-category">
+                    <h3>Tools</h3>
+                    <button class="build-btn" id="demolish-btn" data-type="demolish" title="Demolish">
+                        <span class="icon">✖</span>
+                        <span class="name">Demolish</span>
+                        <span class="cost">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Center - Grid Map -->
+            <div id="center-panel">
+                <canvas id="game-canvas"></canvas>
+                <div id="tile-info"></div>
+            </div>
+
+            <!-- Right Panel - Stats -->
+            <div id="right-panel">
+                <h2>Status Urbis</h2>
+                <p class="panel-subtitle">City Status</p>
+
+                <div class="stat-group">
+                    <h3>Tempus</h3>
+                    <div class="stat-row">
+                        <span class="stat-label">Dies:</span>
+                        <span class="stat-value" id="stat-day">1</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Hora:</span>
+                        <span class="stat-value" id="stat-time">06:00</span>
+                    </div>
+                </div>
+
+                <div class="stat-group">
+                    <h3>Aes</h3>
+                    <div class="stat-row">
+                        <span class="stat-label">Treasury:</span>
+                        <span class="stat-value" id="stat-aes">500</span>
+                    </div>
+                </div>
+
+                <div class="stat-group">
+                    <h3>Populatio</h3>
+                    <div class="stat-row">
+                        <span class="stat-label">Total:</span>
+                        <span class="stat-value" id="stat-population">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Households:</span>
+                        <span class="stat-value" id="stat-households">0</span>
+                    </div>
+                </div>
+
+                <div class="stat-group">
+                    <h3>Ordo</h3>
+                    <div class="stat-bar">
+                        <div class="bar-fill" id="bar-order" style="width: 100%"></div>
+                        <span class="bar-text" id="text-order">100</span>
+                    </div>
+                </div>
+
+                <div class="stat-group">
+                    <h3>Felicitas</h3>
+                    <div class="stat-bar">
+                        <div class="bar-fill happiness" id="bar-happiness" style="width: 100%"></div>
+                        <span class="bar-text" id="text-happiness">100</span>
+                    </div>
+                </div>
+
+                <div class="stat-group">
+                    <h3>Coverage</h3>
+                    <div class="stat-row">
+                        <span class="stat-label">Aqua:</span>
+                        <span class="stat-value" id="stat-aqua">0%</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Cibus:</span>
+                        <span class="stat-value" id="stat-cibus">0%</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Thermae:</span>
+                        <span class="stat-value" id="stat-baths">0%</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Sanitas:</span>
+                        <span class="stat-value" id="stat-sanitas">0%</span>
+                    </div>
+                </div>
+
+                <div class="stat-group">
+                    <h3>Actions</h3>
+                    <button class="action-btn" id="census-btn">Census Urbis</button>
+                    <button class="action-btn" id="glossary-btn">Glossarium</button>
+                    <button class="action-btn" id="help-btn">Auxilium</button>
+                </div>
+
+                <div id="alerts-panel">
+                    <h3>Alerts</h3>
+                    <div id="alerts-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Control Bar -->
+        <div id="bottom-bar">
+            <div id="speed-controls">
+                <button id="pause-btn" class="control-btn">⏸ Pause</button>
+                <button id="speed-1x" class="control-btn active">1x</button>
+                <button id="speed-2x" class="control-btn">2x</button>
+                <button id="speed-4x" class="control-btn">4x</button>
+                <button id="undo-btn" class="control-btn" style="display:none" title="Undo last action">↶ Undo</button>
+                <button id="redo-btn" class="control-btn" style="display:none" title="Redo last action">↷ Redo</button>
+            </div>
+            <div id="info-text">Select a building to place, or click tiles to inspect</div>
+            <button id="restart-btn" class="control-btn">🔄 Restart City</button>
+        </div>
+    </div>
+
+    <!-- Overlay Screens -->
+    
+    <!-- Welcome/Tutorial Overlay -->
+    <div id="welcome-overlay" class="overlay active">
+        <div class="overlay-content">
+            <h2>URBS IN MANVS</h2>
+            <h3>Welcome, Praetor!</h3>
+            <p>Build and manage a thriving Roman city.</p>
+            
+            <div class="tutorial-section">
+                <h4>Quick Start</h4>
+                <ol>
+                    <li><strong>Build roads</strong> (Via) - Citizens walk only on roads</li>
+                    <li><strong>Add housing</strong> (Insula/Domus) near roads</li>
+                    <li><strong>Provide water</strong> - Build Aquaeductus first, then Fons fountains</li>
+                    <li><strong>Supply food</strong> - Build Macellum or Pistrinum markets</li>
+                    <li><strong>Keep citizens happy</strong> - Add Thermae (baths) and Templum (temples)</li>
+                </ol>
+            </div>
+
+            <div class="tutorial-section">
+                <h4>💡 Tips</h4>
+                <ul>
+                    <li><strong>Hover over buildings</strong> to see details and requirements</li>
+                    <li><strong>Green outline = can build, Red = cannot</strong> (shows reason)</li>
+                    <li><strong>Drag to build roads</strong> quickly</li>
+                    <li><strong>Pan/zoom:</strong> Arrow keys or WASD to pan, mouse wheel to zoom</li>
+                    <li><strong>Pause anytime</strong> to plan without pressure</li>
+                </ul>
+            </div>
+
+            <div class="tutorial-section">
+                <h4>🎯 Goal</h4>
+                <p>Reach <strong>500 population</strong> with <strong>Ordo (order) above 50</strong> for 5 days.</p>
+                <p>Don't let Ordo drop to 0 or lose too many unhappy citizens!</p>
+            </div>
+
+            <button class="overlay-btn" id="start-game-btn">Start Building!</button>
+            <p style="margin-top: 10px; font-size: 0.9em; color: #999;">Click "Glossarium" or "Auxilium" buttons in-game for detailed help</p>
+        </div>
+    </div>
+
+    <!-- Census Overlay -->
+    <div id="census-overlay" class="overlay">
+        <div class="overlay-content">
+            <h2>CENSUS VRBIS</h2>
+            <p class="subtitle">A count of residents and resources for civic planning</p>
+            
+            <div id="census-content">
+                <div class="census-section">
+                    <h3>Populatio</h3>
+                    <div class="census-row">
+                        <span>Total Population:</span>
+                        <span id="census-pop">0</span>
+                    </div>
+                    <div class="census-row">
+                        <span>Households:</span>
+                        <span id="census-households">0</span>
+                    </div>
+                </div>
+
+                <div class="census-section">
+                    <h3>Classes</h3>
+                    <div class="census-row">
+                        <span>Plebs (Common):</span>
+                        <span id="census-plebs">0</span>
+                    </div>
+                    <div class="census-row">
+                        <span>Equites (Middle):</span>
+                        <span id="census-equites">0</span>
+                    </div>
+                    <div class="census-row">
+                        <span>Ordo Senatorius (Elite):</span>
+                        <span id="census-senators">0</span>
+                    </div>
+                </div>
+
+                <div class="census-section">
+                    <h3>Coverage</h3>
+                    <div class="census-row">
+                        <span>Water Access:</span>
+                        <span id="census-water">0%</span>
+                    </div>
+                    <div class="census-row">
+                        <span>Food Access:</span>
+                        <span id="census-food">0%</span>
+                    </div>
+                    <div class="census-row">
+                        <span>Bath Access:</span>
+                        <span id="census-baths">0%</span>
+                    </div>
+                    <div class="census-row">
+                        <span>Worship Access:</span>
+                        <span id="census-worship">0%</span>
+                    </div>
+                </div>
+
+                <div class="census-section">
+                    <h3>City Health</h3>
+                    <div class="census-row">
+                        <span>Order:</span>
+                        <span id="census-order">100</span>
+                    </div>
+                    <div class="census-row">
+                        <span>Average Happiness:</span>
+                        <span id="census-happiness">100</span>
+                    </div>
+                    <div class="census-row">
+                        <span>Unrest Level:</span>
+                        <span id="census-unrest">Low</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="overlay-btn" id="close-census-btn">Close</button>
+        </div>
+    </div>
+
+    <!-- Glossary Overlay -->
+    <div id="glossary-overlay" class="overlay">
+        <div class="overlay-content scrollable">
+            <h2>GLOSSARIVM</h2>
+            <p class="subtitle">Building Types and Their Functions</p>
+            
+            <div class="glossary-grid">
+                <div class="glossary-item">
+                    <h4>Via</h4>
+                    <p>Road. Citizens can only walk on roads to reach services.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Insula</h4>
+                    <p>Apartment block. High density housing for common citizens. Higher fire risk.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Domus</h4>
+                    <p>Private house. Low density housing for wealthy families. Higher comfort.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Macellum</h4>
+                    <p>Market for food. Essential for daily food needs.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Pistrinum</h4>
+                    <p>Bakery. Provides food to nearby residents.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Horrea</h4>
+                    <p>Granary and storage. Improves food stability and prevents shortages.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Aquaeductus</h4>
+                    <p>Aqueduct source. Enables fountains to function. Only one needed per city.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Fons</h4>
+                    <p>Public fountain. Provides daily water access. Requires aqueduct.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Latrina</h4>
+                    <p>Public toilet. Reduces sanitation problems near dense housing.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Tabernae</h4>
+                    <p>Shops along streets. Provides jobs and daily goods.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Officina</h4>
+                    <p>Workshop. Provides jobs but creates noise. Lowers happiness of nearby Domus.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Thermae</h4>
+                    <p>Public baths. Major happiness boost. Citizens need weekly access.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Templum</h4>
+                    <p>Temple. Provides steady happiness and reduces unrest. Weekly worship need.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Basilica</h4>
+                    <p>Civic building and business hall. Improves order and trade.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Forum</h4>
+                    <p>Central public space. Boosts nearby tiles and city stability.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Amphitheatrum</h4>
+                    <p>Large amphitheater for games. Major happiness boost during events.</p>
+                </div>
+                <div class="glossary-item">
+                    <h4>Theatrum</h4>
+                    <p>Theater. Provides steady entertainment and cultural enrichment.</p>
+                </div>
+            </div>
+
+            <div class="sources-section">
+                <h3>Sources and Notes</h3>
+                <p>This simulation is based on common features of Roman urban planning:</p>
+                <ul>
+                    <li>Roman cities featured mixed public and private spaces</li>
+                    <li>Insulae (apartment blocks) housed most urban residents</li>
+                    <li>Public fountains, baths, markets, and temples were central to daily life</li>
+                    <li>The census was used to count citizens and assess social status</li>
+                    <li>This is a simplified model for educational and gameplay purposes</li>
+                </ul>
+            </div>
+
+            <button class="overlay-btn" id="close-glossary-btn">Close</button>
+        </div>
+    </div>
+
+    <!-- Win Overlay -->
+    <div id="win-overlay" class="overlay">
+        <div class="overlay-content">
+            <h2>VICTORIA!</h2>
+            <h3>Your City Thrives!</h3>
+            <p>You have successfully built a thriving Roman city that serves its citizens well.</p>
+            
+            <div id="win-stats">
+                <div class="final-stat">
+                    <span>Final Population:</span>
+                    <span id="win-population">0</span>
+                </div>
+                <div class="final-stat">
+                    <span>Ordo (Order):</span>
+                    <span id="win-order">0</span>
+                </div>
+                <div class="final-stat">
+                    <span>Felicitas (Happiness):</span>
+                    <span id="win-happiness">0</span>
+                </div>
+                <div class="final-stat">
+                    <span>Days Survived:</span>
+                    <span id="win-days">0</span>
+                </div>
+            </div>
+
+            <p class="win-message">The Senate recognizes your excellent civic planning!</p>
+
+            <button class="overlay-btn" id="restart-from-win-btn">Build Another City</button>
+        </div>
+    </div>
+
+    <!-- Loss Overlay -->
+    <div id="loss-overlay" class="overlay">
+        <div class="overlay-content">
+            <h2>CIVITAS COLLAPSUS</h2>
+            <h3>City Collapse</h3>
+            <p id="loss-reason">Your city has failed...</p>
+            
+            <div id="loss-stats">
+                <div class="final-stat">
+                    <span>Final Population:</span>
+                    <span id="loss-population">0</span>
+                </div>
+                <div class="final-stat">
+                    <span>Ordo (Order):</span>
+                    <span id="loss-order">0</span>
+                </div>
+                <div class="final-stat">
+                    <span>Felicitas (Happiness):</span>
+                    <span id="loss-happiness">0</span>
+                </div>
+                <div class="final-stat">
+                    <span>Days Survived:</span>
+                    <span id="loss-days">0</span>
+                </div>
+            </div>
+
+            <div class="loss-tips">
+                <h4>Tips for Success:</h4>
+                <ul id="loss-tips-list"></ul>
+            </div>
+
+            <button class="overlay-btn" id="restart-from-loss-btn">Try Again</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
