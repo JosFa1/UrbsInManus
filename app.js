@@ -264,17 +264,31 @@ function buildingsOverlap(x1, y1, w1, h1, x2, y2, w2, h2) {
 }
 
 function hasRoadNearby(x, y, width, height) {
-  const checkRadius = 60
-  const centerX = x + width / 2
-  const centerY = y + height / 2
+  // Measure proximity in *tiles* from the building's footprint edge to the nearest road tile.
+  // This avoids large buildings failing the check just because their center is far away.
+  const checkRadiusTiles = 1.5
+
+  const buildingMinTileX = Math.floor(x / TILE_SIZE)
+  const buildingMinTileY = Math.floor(y / TILE_SIZE)
+  const buildingMaxTileX = Math.ceil((x + width) / TILE_SIZE) - 1
+  const buildingMaxTileY = Math.ceil((y + height) / TILE_SIZE) - 1
+
   for (let building of gameState.buildings) {
     const def = BUILDINGS[building.type]
-    if (def && def.isRoad) {
-      const roadCenterX = building.x + building.width / 2
-      const roadCenterY = building.y + building.height / 2
-      const dist = Math.hypot(centerX - roadCenterX, centerY - roadCenterY)
-      if (dist < checkRadius) return true
-    }
+    if (!def || !def.isRoad) continue
+
+    const roadMinTileX = Math.floor(building.x / TILE_SIZE)
+    const roadMinTileY = Math.floor(building.y / TILE_SIZE)
+    const roadMaxTileX = Math.ceil((building.x + building.width) / TILE_SIZE) - 1
+    const roadMaxTileY = Math.ceil((building.y + building.height) / TILE_SIZE) - 1
+
+    // Compute minimum Euclidean distance in tiles between the two tile rectangles.
+    // If rectangles overlap/touch, dx/dy becomes 0.
+    const dx = Math.max(0, roadMinTileX - buildingMaxTileX, buildingMinTileX - roadMaxTileX)
+    const dy = Math.max(0, roadMinTileY - buildingMaxTileY, buildingMinTileY - roadMaxTileY)
+    const distTiles = Math.hypot(dx, dy)
+
+    if (distTiles <= checkRadiusTiles) return true
   }
   return false
 }
@@ -283,25 +297,104 @@ function getBuildingDescription(buildType) {
   const def = BUILDINGS[buildType]
   if (!def) return ""
   
-  let desc = `${def.name} - ${def.cost} Aes\n`
-  desc += `Size: ${def.width}x${def.height} px\n`
+  const tiles = { w: Math.round(def.width / TILE_SIZE), h: Math.round(def.height / TILE_SIZE) }
+  let desc = `<strong>${def.name}</strong> - ${def.cost} Aes\n`
+  desc += `Size: ${tiles.w}x${tiles.h} tiles\n\n`
   
-  if (def.isRoad) desc += "Road - Connect buildings\n"
-  if (def.isHousing) desc += `Housing - ${def.capacity} families (${def.type})\n`
-  if (def.isFood) desc += `Food - Serves ${def.capacity} people\n`
-  if (def.isWater) {
-    if (buildType === "aquaeductus") desc += "Water Source - Build first!\n"
-    else desc += `Water - Serves ${def.capacity} people\n`
+  // Detailed descriptions
+  if (def.isRoad) {
+    desc += "<em>Road network for citizen movement</em>\n"
+    desc += "Citizens walk only on roads to access services\n"
   }
-  if (def.isSanitation) desc += `Sanitation - Serves ${def.capacity} people\n`
-  if (def.isWork) desc += `Work - ${def.capacity} jobs\n`
-  if (def.isBaths) desc += `Baths - Serves ${def.capacity} people\n`
-  if (def.isWorship) desc += `Worship - Serves ${def.capacity} people\n`
-  if (def.isCivic) desc += `Civic - Serves ${def.capacity} people\n`
-  if (def.isEntertainment) desc += `Entertainment - Serves ${def.capacity} people\n`
-  if (def.isStorage) desc += "Storage - Prevents shortages\n"
+  if (def.isHousing) {
+    if (buildType === "insula") {
+      desc += "<em>Multi-story apartment blocks</em>\n"
+      desc += `Houses ${def.capacity} families of common citizens (Plebs)\n`
+      desc += "Dense housing with fire risk if overcrowded\n"
+    } else if (buildType === "domus") {
+      desc += "<em>Private houses for wealthy citizens</em>\n"
+      desc += `Houses ${def.capacity} families (Equites/Senators)\n`
+      desc += "Prefers quiet areas, dislikes workshops\n"
+    }
+  }
+  if (def.isFood) {
+    if (buildType === "macellum") {
+      desc += "<em>Large food market</em>\n"
+      desc += `Daily food for ${def.capacity} people\n`
+      desc += "Central distribution point for produce\n"
+    } else if (buildType === "pistrinum") {
+      desc += "<em>Bakery producing bread</em>\n"
+      desc += `Daily food for ${def.capacity} people\n`
+      desc += "Smaller but more affordable than market\n"
+    }
+  }
+  if (def.isStorage) {
+    desc += "<em>Food storage warehouse</em>\n"
+    desc += "Prevents food shortages during events\n"
+    desc += "Increases city resilience\n"
+  }
+  if (def.isWater) {
+    if (buildType === "aquaeductus") {
+      desc += "<em>Aqueduct water source</em>\n"
+      desc += "Build ONE first to enable fountains!\n"
+      desc += "Required for all Fons to function\n"
+    } else if (buildType === "fons") {
+      desc += "<em>Public fountain</em>\n"
+      desc += `Daily water for ${def.capacity} people\n`
+      desc += "Requires Aquaeductus to operate\n"
+    }
+  }
+  if (def.isSanitation) {
+    desc += "<em>Public toilet facilities</em>\n"
+    desc += `Serves ${def.capacity} people\n`
+    desc += "Improves hygiene and prevents disease\n"
+  }
+  if (def.isWork) {
+    if (buildType === "tabernae") {
+      desc += "<em>Shops and retail spaces</em>\n"
+      desc += `Provides ${def.capacity} jobs\n`
+      desc += "Commercial activity for citizens\n"
+    } else if (buildType === "officina") {
+      desc += "<em>Workshop for craftsmen</em>\n"
+      desc += `Provides ${def.capacity} jobs\n`
+      desc += "Industrial work, generates noise\n"
+    }
+  }
+  if (def.isBaths) {
+    desc += "<em>Public bath complex</em>\n"
+    desc += `Weekly bathing for ${def.capacity} people\n`
+    desc += "Major social center and happiness boost\n"
+  }
+  if (def.isWorship) {
+    if (buildType === "templum") {
+      desc += "<em>Temple for religious worship</em>\n"
+      desc += `Weekly worship for ${def.capacity} people\n`
+      desc += "Reduces unrest and provides fulfillment\n"
+    } else if (buildType === "forum") {
+      desc += "<em>Central public square</em>\n"
+      desc += `Serves ${def.capacity} people\n`
+      desc += "Civic and religious hub, boosts nearby tiles\n"
+    }
+  }
+  if (def.isCivic && buildType === "basilica") {
+    desc += "<em>Administrative and legal center</em>\n"
+    desc += `Serves ${def.capacity} people\n`
+    desc += "Increases order and civic pride\n"
+  }
+  if (def.isEntertainment) {
+    if (buildType === "amphitheatrum") {
+      desc += "<em>Large arena for games</em>\n"
+      desc += `Entertainment for ${def.capacity} people\n`
+      desc += "Major happiness boost during events\n"
+    } else if (buildType === "theatrum") {
+      desc += "<em>Theater for performances</em>\n"
+      desc += `Entertainment for ${def.capacity} people\n`
+      desc += "Cultural enrichment for citizens\n"
+    }
+  }
   
-  if (def.needsRoad) desc += "⚠️ Requires road nearby\n"
+  desc += "\n"
+  if (def.needsRoad) desc += "⚠️ Must be within 1.5 tiles of a road\n"
   if (def.noise) desc += "🔊 Noisy - avoid near Domus\n"
   
   return desc.trim()
@@ -335,7 +428,7 @@ function getPlacementError(x, y, buildType) {
   }
 
   if (def.needsRoad && !hasRoadNearby(x, y, def.width, def.height)) {
-    return "No road nearby - Build Via within 60px"
+    return "No road nearby - Build Via within 1.5 tiles"
   }
   
   return null
