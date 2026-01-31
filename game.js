@@ -61,6 +61,7 @@ class Tile {
         this.type = type;        // Tile type (terrain)
         this.building = null;    // Future: building on this tile
         this.buildingData = {};  // Future: additional building data
+        this.zone = null;        // Zone type (housing, market, etc.)
     }
     
     getColor() {
@@ -89,6 +90,7 @@ class World {
         this.height = height;
         this.tiles = [];
         this.buildings = [];  // Array of buildings
+        this.zones = {};       // Map of zone types by tile key
 
         // Occupancy grid: null or building id
         this.occupancy = [];
@@ -127,6 +129,24 @@ class World {
         if (tile) {
             tile.type = type;
         }
+    }
+    
+    setZone(x, y, zoneType) {
+        const tile = this.getTile(x, y);
+        if (tile) {
+            tile.zone = zoneType;
+            const key = `${x},${y}`;
+            if (zoneType) {
+                this.zones[key] = zoneType;
+            } else {
+                delete this.zones[key];
+            }
+        }
+    }
+    
+    getZone(x, y) {
+        const tile = this.getTile(x, y);
+        return tile ? tile.zone : null;
     }
     
     addBuilding(building) {
@@ -191,123 +211,6 @@ class World {
     expand(newWidth, newHeight) {
         // Implementation for dynamic expansion
         // This will be used when the city grows
-    }
-}
-
-// ========================================
-// MAP CONFIGURATION - Design Rome Here!
-// ========================================
-function configureMap(world) {
-    // ==========================================
-    // TIBER RIVER (Flumen Tiberis)
-    // The iconic S-shape of the Tiber flowing north to south
-    // Tiber Island is around coordinates (100, 72)
-    // ==========================================
-    
-    // Upper section of Tiber (north)
-    for (let y = 0; y < 50; y++) {
-        const xOffset = Math.sin(y * 0.1) * 8;
-        const centerX = 85 + xOffset;
-        
-        for (let dx = -4; dx <= 4; dx++) {
-            world.setTileType(Math.floor(centerX + dx), y, TileType.FLUMEN);
-        }
-    }
-    
-    // Middle section with Tiber Island
-    for (let y = 50; y < 100; y++) {
-        const xOffset = Math.sin(y * 0.08) * 10;
-        const centerX = 95 + xOffset;
-        
-        for (let dx = -5; dx <= 5; dx++) {
-            const x = Math.floor(centerX + dx);
-            // Create Tiber Island gap at y=68-76
-            if (y >= 68 && y <= 76 && dx >= -2 && dx <= 2) {
-                world.setTileType(x, y, TileType.HARENA); // Island
-            } else {
-                world.setTileType(x, y, TileType.FLUMEN);
-            }
-        }
-    }
-    
-    // Lower section (south)
-    for (let y = 100; y < 144; y++) {
-        const xOffset = Math.sin(y * 0.06) * 12;
-        const centerX = 105 + xOffset;
-        
-        for (let dx = -5; dx <= 5; dx++) {
-            world.setTileType(Math.floor(centerX + dx), y, TileType.FLUMEN);
-        }
-    }
-    
-    // ==========================================
-    // THE SEVEN HILLS (Septem Colles)
-    // ==========================================
-    
-    // Helper function to create a hill
-    function createHill(centerX, centerY, radiusX, radiusY) {
-        for (let dy = -radiusY; dy <= radiusY; dy++) {
-            for (let dx = -radiusX; dx <= radiusX; dx++) {
-                const distance = Math.sqrt((dx/radiusX)**2 + (dy/radiusY)**2);
-                if (distance <= 1.0) {
-                    const x = centerX + dx;
-                    const y = centerY + dy;
-                    if (x >= 0 && x < world.width && y >= 0 && y < world.height) {
-                        world.setTileType(x, y, TileType.COLLIS);
-                    }
-                }
-            }
-        }
-    }
-    
-    // 1. Palatine Hill (Collis Palatinus) - The central hill, southeast of island
-    createHill(120, 80, 12, 10);
-    
-    // 2. Capitoline Hill (Collis Capitolinus) - Northwest of Palatine
-    createHill(108, 68, 8, 7);
-    
-    // 3. Aventine Hill (Collis Aventinus) - South, near the river
-    createHill(115, 95, 10, 9);
-    
-    // 4. Caelian Hill (Collis Caelius) - Southeast
-    createHill(135, 85, 11, 9);
-    
-    // 5. Esquiline Hill (Collis Esquilinus) - East
-    createHill(145, 70, 12, 10);
-    
-    // 6. Viminal Hill (Collis Viminalis) - Northeast
-    createHill(135, 55, 8, 7);
-    
-    // 7. Quirinal Hill (Collis Quirinalis) - North
-    createHill(120, 50, 10, 8);
-    
-    // Add riverbanks (sand along the Tiber)
-    for (let y = 0; y < world.height; y++) {
-        for (let x = 0; x < world.width; x++) {
-            const tile = world.getTile(x, y);
-            if (tile && tile.type === TileType.AGER) {
-                // Check if adjacent to river
-                const neighbors = [
-                    world.getTile(x-1, y),
-                    world.getTile(x+1, y),
-                    world.getTile(x, y-1),
-                    world.getTile(x, y+1)
-                ];
-                
-                const hasRiverNeighbor = neighbors.some(n => n && n.type === TileType.FLUMEN);
-                if (hasRiverNeighbor && Math.random() < 0.6) {
-                    world.setTileType(x, y, TileType.HARENA);
-                }
-            }
-        }
-    }
-    
-    // ==========================================
-    // SAMPLE BUILDING (2x3) on Tiber Island
-    // ==========================================
-    if (DEV_CONFIG.SHOW_SAMPLE_BUILDING) {
-        const sampleBuilding = new Building(99, 71, 2, 3, 'Aedificium exemplare');
-        world.addBuilding(sampleBuilding);
     }
 }
 
@@ -419,6 +322,203 @@ class PNGMapLoader {
             img.src = imagePath;
         });
     }
+}
+
+// ========================================
+// MAP CONFIGURATION - Design Rome Here!
+// ========================================
+function configureMap(world) {
+    // ==========================================
+    // TIBER RIVER (Flumen Tiberis)
+    // The iconic S-shape of the Tiber flowing north to south
+    // Tiber Island is around coordinates (100, 72)
+    // ==========================================
+    
+    // Upper section of Tiber (north)
+    for (let y = 0; y < 50; y++) {
+        const xOffset = Math.sin(y * 0.1) * 8;
+        const centerX = 85 + xOffset;
+        
+        for (let dx = -4; dx <= 4; dx++) {
+            world.setTileType(Math.floor(centerX + dx), y, TileType.FLUMEN);
+        }
+    }
+    
+    // Middle section with Tiber Island
+    for (let y = 50; y < 100; y++) {
+        const xOffset = Math.sin(y * 0.08) * 10;
+        const centerX = 95 + xOffset;
+        
+        for (let dx = -5; dx <= 5; dx++) {
+            const x = Math.floor(centerX + dx);
+            // Create Tiber Island gap at y=68-76
+            if (y >= 68 && y <= 76 && dx >= -2 && dx <= 2) {
+                world.setTileType(x, y, TileType.HARENA); // Island
+            } else {
+                world.setTileType(x, y, TileType.FLUMEN);
+            }
+        }
+    }
+    
+    // Lower section (south)
+    for (let y = 100; y < 144; y++) {
+        const xOffset = Math.sin(y * 0.06) * 12;
+        const centerX = 105 + xOffset;
+        
+        for (let dx = -5; dx <= 5; dx++) {
+            world.setTileType(Math.floor(centerX + dx), y, TileType.FLUMEN);
+        }
+    }
+    
+    // ==========================================
+    // THE SEVEN HILLS (Septem Colles)
+    // ==========================================
+    
+    // Helper function to create a hill
+    function createHill(centerX, centerY, radiusX, radiusY) {
+        for (let dy = -radiusY; dy <= radiusY; dy++) {
+            for (let dx = -radiusX; dx <= radiusX; dx++) {
+                const distance = Math.sqrt((dx/radiusX)**2 + (dy/radiusY)**2);
+                if (distance <= 1.0) {
+                    const x = centerX + dx;
+                    const y = centerY + dy;
+                    if (x >= 0 && x < world.width && y >= 0 && y < world.height) {
+                        world.setTileType(x, y, TileType.COLLIS);
+                    }
+                }
+            }
+        }
+    }
+    
+    // Palatine Hill
+    createHill(110, 80, 12, 8);
+    
+    // Capitoline Hill
+    createHill(95, 75, 10, 6);
+    
+    // Aventine Hill
+    createHill(125, 95, 14, 10);
+    
+    // Esquiline Hill
+    createHill(115, 65, 16, 12);
+    
+    // Viminal Hill
+    createHill(105, 60, 12, 8);
+    
+    // Quirinal Hill
+    createHill(100, 55, 14, 10);
+    
+    // Caelian Hill
+    createHill(120, 85, 10, 6);
+// ========================================
+// PNG MAP LOADER
+// ========================================
+class PNGMapLoader {
+    // Convert hex color to RGB
+    static hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : { r: 0, g: 0, b: 0 };
+    }
+    
+    // Calculate color distance (Euclidean)
+    static colorDistance(color1, color2) {
+        const dr = color1.r - color2.r;
+        const dg = color1.g - color2.g;
+        const db = color1.b - color2.b;
+        return Math.sqrt(dr * dr + dg * dg + db * db);
+    }
+    
+    // Find closest tile type for a given color
+    static findClosestTileType(color) {
+        const tileColors = {};
+        
+        // Build tile color lookup
+        for (const [tileType, hexColor] of Object.entries(TileColors)) {
+            tileColors[tileType] = this.hexToRgb(hexColor);
+        }
+        
+        // Find closest match
+        let closestType = TileType.AGER;
+        let minDistance = Infinity;
+        
+        for (const [tileType, tileColor] of Object.entries(tileColors)) {
+            const distance = this.colorDistance(color, tileColor);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestType = tileType;
+            }
+        }
+        
+        return closestType;
+    }
+    
+    // Load PNG and convert to tilemap
+    static loadPNG(imagePath, world) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            
+            img.onload = () => {
+                // Check if image is too large
+                if (img.width > world.width || img.height > world.height) {
+                    reject(new Error(`PNG image is too large (${img.width}x${img.height}). Max size: ${world.width}x${world.height}`));
+                    return;
+                }
+                
+                // Create canvas to read pixel data
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                
+                const imageData = ctx.getImageData(0, 0, img.width, img.height);
+                const data = imageData.data;
+                
+                // Reset world to grass
+                for (let y = 0; y < world.height; y++) {
+                    for (let x = 0; x < world.width; x++) {
+                        world.getTile(x, y).type = TileType.AGER;
+                    }
+                }
+                
+                // Convert PNG pixels to tiles
+                for (let y = 0; y < img.height; y++) {
+                    for (let x = 0; x < img.width; x++) {
+                        const pixelIndex = (y * img.width + x) * 4;
+                        const color = {
+                            r: data[pixelIndex],
+                            g: data[pixelIndex + 1],
+                            b: data[pixelIndex + 2],
+                            a: data[pixelIndex + 3]
+                        };
+                        
+                        // Skip fully transparent pixels
+                        if (color.a < 128) {
+                            world.getTile(x, y).type = TileType.AGER;
+                        } else {
+                            const tileType = this.findClosestTileType(color);
+                            world.getTile(x, y).type = tileType;
+                        }
+                    }
+                }
+                
+                console.log(`✅ PNG map loaded successfully (${img.width}x${img.height})`);
+                resolve();
+            };
+            
+            img.onerror = () => {
+                reject(new Error(`Failed to load PNG image: ${imagePath}`));
+            };
+            
+            img.src = imagePath;
+        });
+    }
+}
 }
 
 // ========================================
@@ -709,6 +809,22 @@ class Renderer {
 
         this.ctx.fillStyle = tile.getColor();
         this.ctx.fillRect(x0, y0, w, h);
+
+        // Draw zone overlay if present
+        if (tile.zone) {
+            const zoneColors = {
+                housing: 'rgba(201, 123, 99, 0.35)',
+                market: 'rgba(215, 163, 75, 0.35)',
+                workshops: 'rgba(160, 160, 160, 0.28)',
+                civic: 'rgba(120, 170, 255, 0.25)',
+                entertainment: 'rgba(255, 215, 0, 0.22)',
+                sacred: 'rgba(170, 120, 255, 0.22)',
+                farms: 'rgba(144, 238, 144, 0.22)',
+                port: 'rgba(70, 130, 180, 0.22)'
+            };
+            this.ctx.fillStyle = zoneColors[tile.zone] || 'rgba(255, 0, 0, 0.3)';
+            this.ctx.fillRect(x0, y0, w, h);
+        }
     }
     
     drawBuildings() {
@@ -1036,6 +1152,180 @@ function setupLatinTerms() {
 }
 
 // ========================================
+// GAME STATE AND ECONOMY
+// ========================================
+class GameState {
+    constructor() {
+        this.turn = 1;  // Starts at 1 (753-734 a.C.n.)
+        this.year = -753;
+        this.citizens = 0;
+        this.approval = 50;  // 0-100
+        this.health = 50;
+        this.food = 50;
+        this.income = 0;
+        this.fireRisk = 20;  // 0-100, lower is better
+        this.order = 50;
+        this.coffers = 100;
+        this.annualBudget = 100;
+        this.yearSpent = 0;
+        this.unlockedBuildings = new Set(['via', 'zona_habitationis']);  // Start with roads and housing zones
+        this.tutorialMode = true;
+        this.advisorTips = [];
+    }
+
+    advanceTurn() {
+        this.turn += 1;
+        this.year += 20;
+        this.yearSpent = 0;
+        this.annualBudget = Math.max(50, this.annualBudget + Math.floor(this.citizens / 10));  // Scale budget with population
+        // Recalculate stats based on city state
+        this.recalculateStats();
+        // Trigger event
+        this.triggerEvent();
+        // Unlock new buildings
+        this.unlockForTurn();
+        if (this.turn > 10) this.tutorialMode = false;
+        // Check win at turn 38
+        if (this.turn >= 38) {
+            this.checkWinCondition();
+        }
+    }
+
+    checkWinCondition() {
+        const score = this.citizens;  // Primary goal: largest city
+        const legacy = this.getLegacyTitle();
+        alert(`Annus Ultimus! (Final Year)\n\nCives: ${score}\nLegatum: ${legacy}\n\nGratias tibi ago pro ludo! (Thank you for playing!)`);
+    }
+
+    getLegacyTitle() {
+        if (this.citizens >= 1000) return 'Urbs Magna (Great City)';
+        if (this.citizens >= 500) return 'Urbs Potens (Powerful City)';
+        if (this.citizens >= 200) return 'Urbs Cresciens (Growing City)';
+        return 'Oppidum Parvum (Small Town)';
+    }
+
+    recalculateStats() {
+        // Simplified stat calculation based on buildings and zones
+        // Citizens: based on housing zones with road access
+        this.citizens = this.calculateCitizens();
+        // Other stats: placeholder logic
+        this.approval = Math.min(100, 50 + Math.floor(this.citizens / 20));
+        this.health = Math.min(100, 50 + (this.countBuildings('puteus') * 5));
+        this.food = Math.min(100, 50 + (this.countBuildings('horrea') * 10));
+        this.income = this.countBuildings('forum') * 5 + this.countBuildings('portus') * 10;
+        this.fireRisk = Math.max(0, 50 - (this.countBuildings('vigiles') * 10));
+        this.order = Math.min(100, 50 + (this.countBuildings('murus') * 5) + (this.countBuildings('curia') * 5));
+    }
+
+    calculateCitizens() {
+        let count = 0;
+        for (let y = 0; y < WORLD_HEIGHT; y++) {
+            for (let x = 0; x < WORLD_WIDTH; x++) {
+                const zone = window.game.world.getZone(x, y);
+                if (zone === 'housing' && this.hasRoadAccess(x, y)) {
+                    count += 1;  // 1 citizen per housing zone tile with road access
+                }
+            }
+        }
+        return count;
+    }
+
+    hasRoadAccess(x, y) {
+        // Check adjacent tiles for roads
+        const neighbors = [
+            [x-1, y], [x+1, y], [x, y-1], [x, y+1]
+        ];
+        for (const [nx, ny] of neighbors) {
+            if (nx >= 0 && ny >= 0 && nx < WORLD_WIDTH && ny < WORLD_HEIGHT) {
+                const id = window.game.world.occupancy[ny][nx];
+                if (id) {
+                    const b = window.game.world.buildings.find(bb => bb.id === id);
+                    if (b && (b.type === 'via' || b.type === 'via_lapidea' || b.type === 'pons')) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    countBuildings(type) {
+        return window.game.world.buildings.filter(b => b.type === type).length;
+    }
+
+    triggerEvent() {
+        const events = this.getEventsForTurn();
+        if (events.length > 0) {
+            const event = events[Math.floor(Math.random() * events.length)];
+            this.showEventModal(event);
+        }
+    }
+
+    getEventsForTurn() {
+        // Define events based on turn
+        const eventData = {
+            1: [{ title: 'Dies Condendae Urbis', subtitle: '753–734 a.C.n.', body: 'The founding day of Rome. Choose how to begin.', choices: [
+                { label: 'Viae primum', effects: { income: -5, order: 5 }, desc: '+Order, -Income' },
+                { label: 'Forum primum', effects: { approval: 5, citizens: -10 }, desc: '+Approval, -Citizens' },
+                { label: 'Ager et frumentum', effects: { food: 10, income: -10 }, desc: '+Food, -Income' }
+            ]}],
+            // Add more events for other turns...
+            // For brevity, I'll add a few; in full game, expand to 38 turns
+        };
+        return eventData[this.turn] || [];
+    }
+
+    showEventModal(event) {
+        const modal = document.getElementById('eventModal');
+        const title = document.getElementById('eventTitle');
+        const subtitle = document.getElementById('eventSubtitle');
+        const body = document.getElementById('eventBody');
+        const choices = document.getElementById('eventChoices');
+
+        title.innerHTML = `<span class="latin-term" data-definition="${event.title}">${event.title}</span>`;
+        subtitle.textContent = event.subtitle;
+        body.textContent = event.body;
+        choices.innerHTML = '';
+
+        event.choices.forEach(choice => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.innerHTML = `
+                <div class="choice-label"><span class="latin-term" data-definition="${choice.label}">${choice.label}</span></div>
+                <div class="choice-effects">${choice.desc}</div>
+            `;
+            btn.addEventListener('click', () => {
+                this.applyChoiceEffects(choice.effects);
+                modal.classList.remove('show');
+            });
+            choices.appendChild(btn);
+        });
+
+        modal.classList.add('show');
+    }
+
+    applyChoiceEffects(effects) {
+        for (const [stat, delta] of Object.entries(effects)) {
+            if (stat in this) {
+                this[stat] = Math.max(0, Math.min(100, this[stat] + delta));
+            }
+        }
+        this.recalculateStats();
+        updateUI();
+    }
+
+    unlockForTurn() {
+        const unlocks = {
+            2: ['forum', 'zona_mercatus'],
+            3: ['puteus'],
+            // Add more unlocks...
+        };
+        if (unlocks[this.turn]) {
+            unlocks[this.turn].forEach(type => this.unlockedBuildings.add(type));
+        }
+        updateSidebar();
+    }
+}
+
+// ========================================
 // CANVAS SIZING
 // ========================================
 function resizeCanvas() {
@@ -1064,6 +1354,130 @@ function resizeCanvas() {
 }
 
 // ========================================
+// UI UPDATE FUNCTION
+// ========================================
+function updateUI() {
+    if (!window.game || !window.game.gameState) return;
+
+    const gs = window.game.gameState;
+    const ui = {
+        coffers: document.getElementById('statCoffers'),
+        year: document.getElementById('statYear'),
+        budget: document.getElementById('statBudget'),
+        spent: document.getElementById('statSpent'),
+        citizens: document.getElementById('statCitizens'),
+        approval: document.getElementById('statApproval'),
+        health: document.getElementById('statHealth'),
+        food: document.getElementById('statFood'),
+        income: document.getElementById('statIncome'),
+        fireRisk: document.getElementById('statFireRisk'),
+        order: document.getElementById('statOrder'),
+        goalRow: document.querySelector('.goal-row'),
+        advisorPanel: document.getElementById('advisorPanel'),
+        advisorBody: document.getElementById('advisorBody')
+    };
+
+    // Update stats
+    if (ui.coffers) ui.coffers.textContent = gs.coffers;
+    if (ui.year) ui.year.textContent = `${Math.abs(gs.year)} ${gs.year < 0 ? 'a.C.n.' : 'a.D.n.'}`;
+    if (ui.budget) ui.budget.textContent = gs.annualBudget;
+    if (ui.spent) ui.spent.textContent = gs.yearSpent;
+    if (ui.citizens) ui.citizens.textContent = gs.citizens;
+    if (ui.approval) ui.approval.textContent = gs.approval;
+    if (ui.health) ui.health.textContent = gs.health;
+    if (ui.food) ui.food.textContent = gs.food;
+    if (ui.income) ui.income.textContent = gs.income;
+    if (ui.fireRisk) ui.fireRisk.textContent = gs.fireRisk;
+    if (ui.order) ui.order.textContent = gs.order;
+
+    // Update goal
+    if (ui.goalRow) {
+        const goal = gs.tutorialMode ? `Tutorial: Turn ${gs.turn}/10` : `Build the greatest city by Year 0!`;
+        ui.goalRow.innerHTML = `
+            <span class="latin-term" data-definition="Goal">Finis</span>:
+            <span class="latin-term" data-definition="${goal}">Cresce maximam urbem ad annum 0</span>
+        `;
+    }
+
+    // Update advisor
+    if (ui.advisorPanel && ui.advisorBody) {
+        let advice = '';
+        if (gs.tutorialMode) {
+            const tutorialTips = {
+                1: 'Welcome to Rome! Start by placing roads (Viae) and housing zones (Zona Habitationis).',
+                2: 'Build a forum to increase income and approval.',
+                3: 'Add wells (Putei) to improve health.',
+                // Add more tutorial tips...
+            };
+            advice = tutorialTips[gs.turn] || 'Continue building your city!';
+        } else {
+            if (gs.approval < 30) advice = 'Citizens are unhappy. Build more civic buildings!';
+            else if (gs.health < 30) advice = 'Disease spreads! Add more wells and drains.';
+            else if (gs.food < 30) advice = 'Famine threatens! Build granaries.';
+            else if (gs.fireRisk > 70) advice = 'Fire risk is high! Add more vigiles.';
+            else advice = 'Your city prospers. Continue expanding!';
+        }
+        ui.advisorBody.textContent = advice;
+    }
+}
+
+// ========================================
+// SIDEBAR UPDATE FUNCTION
+// ========================================
+function updateSidebar() {
+    if (!window.game || !window.game.gameState) return;
+    
+    const gameState = window.game.gameState;
+    const toolSections = document.getElementById('toolSections');
+    if (!toolSections) return;
+
+    const categories = {
+        roads: { title: 'Viae (Roads)', items: [] },
+        zones: { title: 'Zonae (Zones)', items: [] },
+        buildings: { title: 'Aedificia (Buildings)', items: [] },
+        services: { title: 'Servitia (Services)', items: [] },
+        landmarks: { title: 'Monumenta (Landmarks)', items: [] },
+        civic: { title: 'Civica (Civic)', items: [] }
+    };
+
+    const catalog = window.BuildingCatalog;
+    if (catalog) {
+        for (const def of catalog.list()) {
+            if (gameState.unlockedBuildings.has(def.type)) {
+                const cat = categories[def.category];
+                if (cat) cat.items.push(def);
+            }
+        }
+    }
+
+    toolSections.innerHTML = '';
+    for (const [key, cat] of Object.entries(categories)) {
+        if (cat.items.length > 0) {
+            const section = document.createElement('div');
+            section.className = 'tool-section';
+            section.innerHTML = `<div class="tool-section-title">${cat.title}</div>`;
+            for (const def of cat.items) {
+                const btn = document.createElement('button');
+                btn.className = 'tool-btn';
+                btn.setAttribute('data-tool', def.type);
+                btn.innerHTML = `
+                    <span class="latin">${def.latinName}</span>
+                    <span class="english">${def.englishName}</span>
+                `;
+                btn.addEventListener('click', () => {
+                    if (window.game.buildTool) {
+                        window.game.buildTool.selectType(def.type);
+                        window.game.renderer.requestRender();
+                    }
+                });
+                section.appendChild(btn);
+            }
+            toolSections.appendChild(section);
+        }
+    }
+}
+
+// ========================================
 // GAME INITIALIZATION
 // ========================================
 function initGame() {
@@ -1084,23 +1498,12 @@ function initGame() {
             configureMap(world);
         }
 
-        // Economy state (kept minimal: coffers + year budget tracking)
-        const economy = {
-            coffers: 100,
-            year: -753,
-            annualBudget: 100,
-            yearSpent: 0
-        };
+        const gameState = new GameState();
 
-        // Load placed buildings + economy (if any) after the base map is ready.
-        if (window.SaveAdapter && window.BuildingCatalog) {
-            window.SaveAdapter.tryLoadIntoWorld(world, window.BuildingCatalog, economy);
-        }
-        
-        completeInitialization(world, economy);
+        completeInitialization(world, gameState);
     }
     
-    function completeInitialization(world, economy) {
+    function completeInitialization(world, gameState) {
         // Create camera
         const camera = new Camera(WORLD_WIDTH, WORLD_HEIGHT);
         
@@ -1128,17 +1531,24 @@ function initGame() {
             year: document.getElementById('statYear'),
             budget: document.getElementById('statBudget'),
             spent: document.getElementById('statSpent'),
+            citizens: document.getElementById('statCitizens'),
+            approval: document.getElementById('statApproval'),
+            health: document.getElementById('statHealth'),
+            food: document.getElementById('statFood'),
+            income: document.getElementById('statIncome'),
+            fireRisk: document.getElementById('statFireRisk'),
+            order: document.getElementById('statOrder'),
             endYearBtn: document.getElementById('endYearBtn'),
             saveBtn: document.getElementById('saveBtn'),
             restartBtn: document.getElementById('restartBtn')
         };
 
         const saveFn = () => {
-            if (window.SaveAdapter) window.SaveAdapter.save(world, economy);
+            if (window.SaveAdapter) window.SaveAdapter.save(world, gameState);
         };
 
         const buildTool = window.BuildTool
-            ? new window.BuildTool({ world, camera, renderer, catalog: window.BuildingCatalog, onSave: saveFn, ui, economy })
+            ? new window.BuildTool({ world, camera, renderer, catalog: window.BuildingCatalog, onSave: saveFn, ui, economy: gameState })
             : null;
 
         if (buildTool) {
@@ -1158,113 +1568,12 @@ function initGame() {
             });
         }
 
-        function updateEconomyBar() {
-            if (!ui.coffers) return;
-            ui.coffers.textContent = String(economy.coffers);
-
-            const y = economy.year;
-            const absY = Math.abs(y);
-            ui.year.textContent = y < 0 ? `${absY} a.C.n.` : `${absY} p.C.n.`;
-            ui.budget.textContent = String(economy.annualBudget);
-            ui.spent.textContent = String(economy.yearSpent);
-        }
-
-        function isRoadType(t) {
-            return t === 'via' || t === 'pons';
-        }
-
-        function hasAdjacentRoad(building) {
-            const w = building.width;
-            const h = building.height;
-            const originX = building.x;
-            const originY = building.y;
-
-            for (let dy = 0; dy < h; dy++) {
-                for (let dx = 0; dx < w; dx++) {
-                    const tx = originX + dx;
-                    const ty = originY + dy;
-                    const neighbors = [
-                        [tx - 1, ty],
-                        [tx + 1, ty],
-                        [tx, ty - 1],
-                        [tx, ty + 1]
-                    ];
-                    for (const [nx, ny] of neighbors) {
-                        if (nx < 0 || ny < 0 || nx >= world.width || ny >= world.height) continue;
-                        if (nx >= originX && nx < originX + w && ny >= originY && ny < originY + h) continue;
-                        const id = world.occupancy?.[ny]?.[nx] || null;
-                        if (!id) continue;
-                        const b = (world.buildings || []).find(bb => bb && bb.id === id) || null;
-                        if (b && isRoadType(b.type)) return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        function minManhattanDistance(a, b) {
-            let best = Infinity;
-            for (let ay = 0; ay < a.height; ay++) {
-                for (let ax = 0; ax < a.width; ax++) {
-                    const atx = a.x + ax;
-                    const aty = a.y + ay;
-                    for (let by = 0; by < b.height; by++) {
-                        for (let bx = 0; bx < b.width; bx++) {
-                            const btx = b.x + bx;
-                            const bty = b.y + by;
-                            const d = Math.abs(atx - btx) + Math.abs(aty - bty);
-                            if (d < best) best = d;
-                            if (best === 0) return 0;
-                        }
-                    }
-                }
-            }
-            return best;
-        }
-
-        function countHousesNearForum(forum, maxDist) {
-            const houses = (world.buildings || []).filter(b => b && b.type === 'domus');
-            let count = 0;
-            for (const h of houses) {
-                if (minManhattanDistance(forum, h) <= maxDist) count += 1;
-            }
-            return count;
-        }
-
-        function evaluateDemoWin() {
-            const placed = (world.buildings || []).filter(b => b && b.id && b.type);
-            const houses = placed.filter(b => b.type === 'domus');
-            const forums = placed.filter(b => b.type === 'forum');
-
-            const budgetOk = economy.yearSpent <= economy.annualBudget;
-            const coffersOk = economy.coffers >= 0;
-
-            const housesConnected = houses.every(hasAdjacentRoad);
-            const forumOk = forums.length >= 1 && forums.some(f => countHousesNearForum(f, 6) >= 2);
-
-            const win = houses.length >= 3 && forums.length >= 1 && housesConnected && forumOk && budgetOk && coffersOk;
-            return {
-                win,
-                counts: { domus: houses.length, forum: forums.length },
-                checks: { housesConnected, forumOk, budgetOk }
-            };
-        }
+        updateSidebar();
 
         ui.endYearBtn?.addEventListener('click', () => {
-            // 5-minute demo: End Year is a "check win" button (no multi-year loop required).
-            const result = evaluateDemoWin();
-            if (result.win) {
-                buildTool?.toast?.('Vicisti! (You win!)', 'info');
-            } else {
-                const parts = [];
-                parts.push(`Domūs: ${result.counts.domus}/3`);
-                parts.push(`Forum: ${result.counts.forum}/1`);
-                if (!result.checks.housesConnected) parts.push('Domūs sine via.');
-                if (!result.checks.forumOk) parts.push('Forum procul.');
-                if (!result.checks.budgetOk) parts.push('Pecunia annua superata.');
-                buildTool?.toast?.(`Nondum. (Not yet.) ${parts.join(' ')}`, 'info');
-            }
-            updateEconomyBar();
+            gameState.advanceTurn();
+            updateUI();
+            updateSidebar();
             saveFn();
             renderer.requestRender();
         });
@@ -1279,15 +1588,26 @@ function initGame() {
             if (!ok) return;
 
             buildTool?.cancelAll?.();
-            world.clearPlacedBuildings?.();
+            world.clearPlacedBuildings();
+            world.zones = {};  // Clear zones
 
-            economy.coffers = 100;
-            economy.year = -753;
-            economy.annualBudget = 100;
-            economy.yearSpent = 0;
+            gameState.turn = 1;
+            gameState.year = -753;
+            gameState.citizens = 0;
+            gameState.approval = 50;
+            gameState.health = 50;
+            gameState.food = 50;
+            gameState.income = 0;
+            gameState.fireRisk = 20;
+            gameState.order = 50;
+            gameState.coffers = 100;
+            gameState.annualBudget = 100;
+            gameState.yearSpent = 0;
+            gameState.unlockedBuildings = new Set(['via', 'zona_habitationis']);
+            gameState.tutorialMode = true;
 
             saveFn();
-            updateEconomyBar();
+            updateUI();
             renderer.requestRender();
             buildTool?.toast?.('Urbs iterum incipit.', 'info');
         });
@@ -1309,17 +1629,16 @@ function initGame() {
             inputHandler,
             buildTool,
             save: saveFn,
-            economy
+            gameState
         };
 
         // Keep the top bar in sync
-        updateEconomyBar();
+        updateUI();
 
-        // Also update economy bar after any render request (cheap) by piggybacking on RAF.
-        // BuildTool calls updateUI() internally; this just mirrors economy numbers.
+        // Also update UI after any render request (cheap) by piggybacking on RAF.
         const originalRequestRender = renderer.requestRender.bind(renderer);
         renderer.requestRender = () => {
-            updateEconomyBar();
+            updateUI();
             return originalRequestRender();
         };
         

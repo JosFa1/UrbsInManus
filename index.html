@@ -16,26 +16,61 @@
                     <span title="Build Rome from its beginning">Romam ab initio aedifica</span>
                 </p>
             </div>
+
+            <div class="goal-row">
+                <span class="latin-term" data-definition="Goal">Finis</span>:
+                <span class="latin-term" data-definition="Grow the largest city possible by Year 0">Cresce maximam urbem ad annum 0</span>
+            </div>
         </div>
 
         <div class="top-right" id="economyBar">
+            <div class="stat stat-primary">
+                <div class="label"><span class="latin-term" data-definition="Citizens (population)">Cives</span></div>
+                <div class="value" id="statCitizens">—</div>
+            </div>
             <div class="stat">
-                <div class="label" title="Coffers">Aerarium</div>
+                <div class="label"><span class="latin-term" data-definition="Coffers">Aerarium</span></div>
                 <div class="value" id="statCoffers">—</div>
             </div>
             <div class="stat">
-                <div class="label" title="Year">Annus</div>
+                <div class="label"><span class="latin-term" data-definition="Year">Annus</span></div>
                 <div class="value" id="statYear">—</div>
             </div>
             <div class="stat">
-                <div class="label" title="Budget">Pecunia annua</div>
+                <div class="label"><span class="latin-term" data-definition="Turn budget (20 years)">Pecunia per vicennium</span></div>
                 <div class="value" id="statBudget">—</div>
             </div>
             <div class="stat">
-                <div class="label" title="Spent">Impensa</div>
+                <div class="label"><span class="latin-term" data-definition="Spent this turn">Impensa</span></div>
                 <div class="value" id="statSpent">—</div>
             </div>
-            <button class="end-year" id="endYearBtn" title="Demo: check win condition">Finis anni</button>
+
+            <div class="stat stat-compact">
+                <div class="label"><span class="latin-term" data-definition="Approval">Favor</span></div>
+                <div class="value" id="statApproval">—</div>
+            </div>
+            <div class="stat stat-compact">
+                <div class="label"><span class="latin-term" data-definition="Health">Salus</span></div>
+                <div class="value" id="statHealth">—</div>
+            </div>
+            <div class="stat stat-compact">
+                <div class="label"><span class="latin-term" data-definition="Food">Cibus</span></div>
+                <div class="value" id="statFood">—</div>
+            </div>
+            <div class="stat stat-compact">
+                <div class="label"><span class="latin-term" data-definition="Income">Vectigal</span></div>
+                <div class="value" id="statIncome">—</div>
+            </div>
+            <div class="stat stat-compact">
+                <div class="label"><span class="latin-term" data-definition="Fire risk">Periculum ignis</span></div>
+                <div class="value" id="statFireRisk">—</div>
+            </div>
+            <div class="stat stat-compact">
+                <div class="label"><span class="latin-term" data-definition="Order">Ordo</span></div>
+                <div class="value" id="statOrder">—</div>
+            </div>
+
+            <button class="end-year" id="endYearBtn" title="Advance 20 years">Progredere</button>
             <button class="top-action" id="saveBtn" title="Save">Serva</button>
             <button class="top-action danger" id="restartBtn" title="Restart City (clears placed buildings and resets economy)">Ab initio</button>
         </div>
@@ -43,28 +78,16 @@
     
     <div class="game-container">
         <aside class="sidebar" id="buildSidebar">
-            <div class="sidebar-header">Instrumenta</div>
-            <button class="tool-btn" data-tool="via">
-                <span class="latin">Via</span>
-                <span class="english">Road</span>
-            </button>
-            <button class="tool-btn" data-tool="domus">
-                <span class="latin">Domus</span>
-                <span class="english">House</span>
-            </button>
-            <button class="tool-btn" data-tool="forum">
-                <span class="latin">Forum</span>
-                <span class="english">Market</span>
-            </button>
-            <button class="tool-btn" data-tool="pons" title="Optional: build a bridge on the river">
-                <span class="latin">Pons</span>
-                <span class="english">Bridge</span>
-            </button>
+            <div class="sidebar-header"><span class="latin-term" data-definition="Tools">Instrumenta</span></div>
+
+            <div class="tool-sections" id="toolSections">
+                <!-- Populated by game.js from BuildingCatalog + turn unlocks -->
+            </div>
 
             <div class="sidebar-sep"></div>
 
             <button class="tool-btn tool-demolish" id="demolishBtn">
-                <span class="latin">Dirue</span>
+                <span class="latin-term" data-definition="Demolish">Dirue</span>
                 <span class="english">Demolish</span>
             </button>
 
@@ -74,6 +97,26 @@
         <div class="canvas-wrap">
             <canvas id="gameCanvas"></canvas>
         </div>
+    </div>
+
+    <div class="modal-backdrop" id="eventModal" aria-hidden="true">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="eventTitle">—</div>
+                <div class="modal-subtitle" id="eventSubtitle">—</div>
+            </div>
+            <div class="modal-body" id="eventBody">—</div>
+            <div class="modal-meta" id="eventMeta"></div>
+            <div class="modal-choices" id="eventChoices"></div>
+        </div>
+    </div>
+
+    <div class="advisor" id="advisorPanel" aria-hidden="true">
+        <div class="advisor-header">
+            <span class="latin-term" data-definition="Advisor">Consiliarius</span>
+            <button class="advisor-close" id="advisorCloseBtn" title="Close">×</button>
+        </div>
+        <div class="advisor-body" id="advisorBody"></div>
     </div>
     
     <div class="tooltip" id="tooltip"></div>
