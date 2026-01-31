@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && npm run postbuild",
-    "postbuild": "copy buildingCatalog.js dist && copy saveAdapter.js dist && copy buildTool.js dist && copy game.js dist && copy map.png dist && copy favicon.ico dist",
+    "postbuild": "node copy-files.js",
     "preview": "vite preview"
   },
   "devDependencies": {
