@@ -3,16 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Urbs in Manus - A Roman City Builder</title>
+    <title>Urbs in Manus — Urbem Romanam aedifica</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header class="top-bar">
-        <h1>Urbs in Manus</h1>
-        <p class="subtitle">
-            <span class="latin-term" data-definition="Cities in Hands">Urbs in Manus</span> - 
-            Build Rome from its beginning
-        </p>
+        <div class="top-left">
+            <div class="title-row">
+                <h1>Urbs in Manus</h1>
+                <p class="subtitle">
+                    <span class="latin-term" data-definition="Cities in Hands">Urbs in Manus</span> - 
+                    <span title="Build Rome from its beginning">Romam ab initio aedifica</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="top-right" id="economyBar">
+            <div class="stat">
+                <div class="label" title="Coffers">Aerarium</div>
+                <div class="value" id="statCoffers">—</div>
+            </div>
+            <div class="stat">
+                <div class="label" title="Year">Annus</div>
+                <div class="value" id="statYear">—</div>
+            </div>
+            <div class="stat">
+                <div class="label" title="Budget">Pecunia annua</div>
+                <div class="value" id="statBudget">—</div>
+            </div>
+            <div class="stat">
+                <div class="label" title="Spent">Impensa</div>
+                <div class="value" id="statSpent">—</div>
+            </div>
+            <button class="end-year" id="endYearBtn" title="Demo: check win condition">Finis anni</button>
+            <button class="top-action" id="saveBtn" title="Save">Serva</button>
+            <button class="top-action danger" id="restartBtn" title="Restart City (clears placed buildings and resets economy)">Ab initio</button>
+        </div>
     </header>
     
     <div class="game-container">
@@ -26,23 +52,23 @@
                 <span class="latin">Domus</span>
                 <span class="english">House</span>
             </button>
-            <button class="tool-btn" data-tool="insula">
-                <span class="latin">Insula</span>
-                <span class="english">Apartment block</span>
+            <button class="tool-btn" data-tool="forum">
+                <span class="latin">Forum</span>
+                <span class="english">Market</span>
             </button>
-            <button class="tool-btn" data-tool="pistrinum">
-                <span class="latin">Pistrinum</span>
-                <span class="english">Bakery</span>
+            <button class="tool-btn" data-tool="pons" title="Optional: build a bridge on the river">
+                <span class="latin">Pons</span>
+                <span class="english">Bridge</span>
             </button>
 
             <div class="sidebar-sep"></div>
 
             <button class="tool-btn tool-demolish" id="demolishBtn">
-                <span class="latin">Demoliri</span>
+                <span class="latin">Dirue</span>
                 <span class="english">Demolish</span>
             </button>
 
-            <div class="status" id="buildStatus">Tool: — | Footprint: — | Hover: [0, 0]</div>
+            <div class="status" id="buildStatus">Instrumentum: — | Vestigium: — | Sub: [0, 0]</div>
         </aside>
 
         <div class="canvas-wrap">

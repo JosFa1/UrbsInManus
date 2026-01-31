@@ -9,7 +9,8 @@
             englishName: 'Road',
             size: { w: 1, h: 1 },
             rotation: 0,
-            color: '#b8b8b8'
+            color: '#b8b8b8',
+            cost: 1
         },
         domus: {
             type: 'domus',
@@ -17,23 +18,26 @@
             englishName: 'House',
             size: { w: 2, h: 2 },
             rotation: 0,
-            color: '#c97b63'
+            color: '#c97b63',
+            cost: 10
         },
-        insula: {
-            type: 'insula',
-            latinName: 'Insula',
-            englishName: 'Apartment block',
+        forum: {
+            type: 'forum',
+            latinName: 'Forum',
+            englishName: 'Market',
             size: { w: 2, h: 2 },
             rotation: 0,
-            color: '#9a6b3f'
+            color: '#d7a34b',
+            cost: 30
         },
-        pistrinum: {
-            type: 'pistrinum',
-            latinName: 'Pistrinum',
-            englishName: 'Bakery',
+        pons: {
+            type: 'pons',
+            latinName: 'Pons',
+            englishName: 'Bridge',
             size: { w: 1, h: 1 },
             rotation: 0,
-            color: '#d7a34b'
+            color: '#9aa3ad',
+            cost: 25
         }
     };
 

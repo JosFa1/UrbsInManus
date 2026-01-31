@@ -8,7 +8,7 @@
     }
 
     class BuildTool {
-        constructor({ world, camera, renderer, catalog, onSave, ui }) {
+        constructor({ world, camera, renderer, catalog, onSave, ui, economy }) {
             this.world = world;
             this.camera = camera;
             this.renderer = renderer;
@@ -16,11 +16,18 @@
             this.onSave = typeof onSave === 'function' ? onSave : () => {};
 
             this.ui = ui;
+            this.economy = economy;
 
             this.selectedType = null;
             this.demolishMode = false;
             this.hover = { x: 0, y: 0 };
             this.lastErrorAt = 0;
+
+            this._isDraggingBuild = false;
+            this._dragPlacedIds = new Set();
+
+            this._undoStack = [];
+            this._redoStack = [];
 
             this.updateUI();
         }
@@ -59,6 +66,183 @@
             return this.catalog.get(this.selectedType);
         }
 
+        _tileTypeAt(x, y) {
+            const tile = this.world.getTile(x, y);
+            return tile ? tile.type : null;
+        }
+
+        _isAllowedGround(type) {
+            // 5-minute demo rules: buildable ground is Field or Sand.
+            return type === 'ager' || type === 'harena';
+        }
+
+        _isRoadBuilding(building) {
+            if (!building) return false;
+            return building.type === 'via' || building.type === 'pons';
+        }
+
+        _hasAdjacentRoad(originX, originY, w, h) {
+            // True if any tile of the footprint touches a road/bridge (4-neighborhood).
+            for (let dy = 0; dy < h; dy++) {
+                for (let dx = 0; dx < w; dx++) {
+                    const tx = originX + dx;
+                    const ty = originY + dy;
+                    const neighbors = [
+                        [tx - 1, ty],
+                        [tx + 1, ty],
+                        [tx, ty - 1],
+                        [tx, ty + 1]
+                    ];
+                    for (const [nx, ny] of neighbors) {
+                        if (nx < 0 || ny < 0 || nx >= this.world.width || ny >= this.world.height) continue;
+                        // Ignore neighbors that are still inside our own footprint.
+                        if (nx >= originX && nx < originX + w && ny >= originY && ny < originY + h) continue;
+
+                        const id = this.world.occupancy?.[ny]?.[nx] || null;
+                        if (!id) continue;
+                        const b = this.getBuildingById(id);
+                        if (this._isRoadBuilding(b)) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        _minManhattanDistance(a, b) {
+            // Minimum Manhattan distance between two building footprints.
+            // Returns 0 if footprints touch/overlap.
+            let best = Infinity;
+            for (let ay = 0; ay < a.height; ay++) {
+                for (let ax = 0; ax < a.width; ax++) {
+                    const atx = a.x + ax;
+                    const aty = a.y + ay;
+                    for (let by = 0; by < b.height; by++) {
+                        for (let bx = 0; bx < b.width; bx++) {
+                            const btx = b.x + bx;
+                            const bty = b.y + by;
+                            const d = Math.abs(atx - btx) + Math.abs(aty - bty);
+                            if (d < best) best = d;
+                            if (best === 0) return 0;
+                        }
+                    }
+                }
+            }
+            return best;
+        }
+
+        _countHousesNear(originX, originY, w, h, maxDist) {
+            const probe = { x: originX, y: originY, width: w, height: h };
+            let count = 0;
+            for (const b of (this.world.buildings || [])) {
+                if (!b || b.type !== 'domus') continue;
+                const d = this._minManhattanDistance(probe, b);
+                if (d <= maxDist) count += 1;
+            }
+            return count;
+        }
+
+        _computeVariant(def, originX, originY) {
+            // Roads become bridges when placed on river.
+            if (def.type === 'via') {
+                const terrain = this._tileTypeAt(originX, originY);
+                if (terrain === 'flumen') {
+                    return {
+                        latinName: def.bridge?.latinName || 'Pons',
+                        englishName: def.bridge?.englishName || 'Bridge',
+                        color: def.bridge?.color || def.color,
+                        baseCost: typeof def.bridge?.cost === 'number' ? def.bridge.cost : (typeof def.cost === 'number' ? def.cost : 0)
+                    };
+                }
+            }
+
+            return {
+                latinName: def.latinName,
+                englishName: def.englishName,
+                color: def.color,
+                baseCost: typeof def.cost === 'number' ? def.cost : 0
+            };
+        }
+
+        validatePlacement(originX, originY, def) {
+            const w = def.size.w;
+            const h = def.size.h;
+
+            const terrainLabel = (t) => (t ? (t.charAt(0).toUpperCase() + t.slice(1)) : '—');
+
+            // Bounds
+            if (originX < 0 || originY < 0 || originX + w > this.world.width || originY + h > this.world.height) {
+                return { ok: false, reason: 'Non licet. (Not allowed) Extra fines. (Out of bounds)' };
+            }
+
+            // Occupancy
+            for (let dy = 0; dy < h; dy++) {
+                for (let dx = 0; dx < w; dx++) {
+                    const tx = originX + dx;
+                    const ty = originY + dy;
+                    const occ = this.world.occupancy?.[ty]?.[tx];
+                    if (occ) return { ok: false, reason: 'Non licet. (Not allowed) Locus occupatus. (Occupied)' };
+                }
+            }
+
+            // Terrain constraints
+            const terrainSet = new Set();
+            for (let dy = 0; dy < h; dy++) {
+                for (let dx = 0; dx < w; dx++) {
+                    terrainSet.add(this._tileTypeAt(originX + dx, originY + dy));
+                }
+            }
+
+            if (def.type === 'via') {
+                // Viae (roads) only on Ager/Harena.
+                const t = this._tileTypeAt(originX, originY);
+                if (!this._isAllowedGround(t)) {
+                    return { ok: false, reason: 'Non licet. (Not allowed) Via solum in agro/harena. (Road only on field/sand)' };
+                }
+            } else if (def.type === 'pons') {
+                // Pons (bridge) only on Flumen.
+                const t = this._tileTypeAt(originX, originY);
+                if (t !== 'flumen') {
+                    return { ok: false, reason: 'Non licet. (Not allowed) Pons solum in flumine. (Bridge only on river)' };
+                }
+            } else {
+                // Buildings must be fully on Ager OR fully on Harena.
+                const terrains = Array.from(terrainSet).map(terrainLabel);
+                if (terrains.length !== 1) {
+                    return { ok: false, reason: 'Non licet. (Not allowed) Terra miscetur. (Mixed terrain)' };
+                }
+                const t = this._tileTypeAt(originX, originY);
+                if (!this._isAllowedGround(t)) {
+                    return { ok: false, reason: 'Non licet. (Not allowed) Debet esse ager aut harena. (Must be field/sand)' };
+                }
+            }
+
+            // Adjacency / proximity constraints
+            if (def.type === 'domus') {
+                if (!this._hasAdjacentRoad(originX, originY, w, h)) {
+                    return { ok: false, reason: 'Domus sine via. (House needs a road)' };
+                }
+            }
+
+            if (def.type === 'forum') {
+                const near = this._countHousesNear(originX, originY, w, h, 6);
+                if (near < 2) {
+                    return { ok: false, reason: 'Forum procul. (Market needs 2 houses within 6 tiles)' };
+                }
+            }
+
+            // Cost + afford
+            const variant = this._computeVariant(def, originX, originY);
+            const cost = this._currentCost(def, variant.baseCost);
+            if (!this._canAfford(cost)) {
+                if (this.economy && (this.economy.yearSpent + cost > this.economy.annualBudget)) {
+                    return { ok: false, reason: 'Non licet. (Not allowed) Pecunia annua superata. (Over budget)' };
+                }
+                return { ok: false, reason: 'Non licet. (Not allowed) Aerarium vacuum. (No coffers)' };
+            }
+
+            return { ok: true, cost, variant };
+        }
+
         getGhost() {
             if (this.demolishMode) {
                 const id = this.getBuildingIdAt(this.hover.x, this.hover.y);
@@ -76,7 +260,7 @@
             const def = this.getSelectedDef();
             if (!def) return null;
             const origin = { x: this.hover.x, y: this.hover.y };
-            const canPlace = this.canPlaceAt(origin.x, origin.y, def.size.w, def.size.h);
+            const canPlace = this.validatePlacement(origin.x, origin.y, def).ok;
             return {
                 mode: 'place',
                 origin,
@@ -86,33 +270,107 @@
         }
 
         canPlaceAt(x, y, w, h) {
-            // Bounds
-            if (x < 0 || y < 0 || x + w > this.world.width || y + h > this.world.height) return false;
-
-            for (let dy = 0; dy < h; dy++) {
-                for (let dx = 0; dx < w; dx++) {
-                    const tx = x + dx;
-                    const ty = y + dy;
-                    const occ = this.world.occupancy?.[ty]?.[tx];
-                    if (occ) return false;
-                }
-            }
-            return true;
+            // Compatibility wrapper (older callers). Prefer validatePlacement().
+            const def = this.getSelectedDef();
+            if (!def) return false;
+            if (def.size.w !== w || def.size.h !== h) return false;
+            return this.validatePlacement(x, y, def).ok;
         }
 
-        place() {
+        _currentCost(def, baseOverride = null) {
+            const base = baseOverride !== null ? baseOverride : (typeof def.cost === 'number' ? def.cost : 0);
+            if (!this.economy) return base;
+
+            // Small penalty: once you go over budget, subsequent builds cost +10%.
+            const overBudget = this.economy.yearSpent > this.economy.annualBudget;
+            const multiplier = overBudget ? 1.10 : 1.0;
+            return Math.ceil(base * multiplier);
+        }
+
+        _canAfford(cost) {
+            if (!this.economy) return true;
+            if (this.economy.coffers < cost) return false;
+            return (this.economy.yearSpent + cost) <= this.economy.annualBudget;
+        }
+
+        _spend(cost) {
+            if (!this.economy) return;
+            this.economy.coffers -= cost;
+            this.economy.yearSpent += cost;
+        }
+
+        _refund(cost) {
+            if (!this.economy) return;
+            this.economy.coffers += cost;
+            this.economy.yearSpent = Math.max(0, this.economy.yearSpent - cost);
+        }
+
+        _pushUndo(action) {
+            this._undoStack.push(action);
+            this._redoStack = [];
+        }
+
+        undo() {
+            const action = this._undoStack.pop();
+            if (!action) return;
+            if (action.kind === 'place') {
+                for (const id of action.buildingIds) {
+                    this.world.removePlacedBuildingById(id);
+                }
+                this._refund(action.totalCost || 0);
+                this._redoStack.push(action);
+            } else if (action.kind === 'demolish') {
+                for (const b of action.buildings) {
+                    this.world.addPlacedBuilding(b);
+                    this.world.occupyBuildingFootprint(b);
+                }
+                // No refund/charge for demolish.
+                this._redoStack.push(action);
+            }
+            this.onSave();
+            this.updateUI();
+            this.renderer.requestRender();
+        }
+
+        redo() {
+            const action = this._redoStack.pop();
+            if (!action) return;
+            if (action.kind === 'place') {
+                // Recreate buildings from snapshots
+                for (const b of action.buildings) {
+                    this.world.addPlacedBuilding(b);
+                    this.world.occupyBuildingFootprint(b);
+                }
+                this._spend(action.totalCost || 0);
+                this._undoStack.push(action);
+            } else if (action.kind === 'demolish') {
+                for (const b of action.buildings) {
+                    this.world.removePlacedBuildingById(b.id);
+                }
+                this._undoStack.push(action);
+            }
+            this.onSave();
+            this.updateUI();
+            this.renderer.requestRender();
+        }
+
+        place(atX = null, atY = null, { silent = false } = {}) {
             const def = this.getSelectedDef();
             if (!def) return;
 
-            const x = this.hover.x;
-            const y = this.hover.y;
+            const x = atX !== null ? atX : this.hover.x;
+            const y = atY !== null ? atY : this.hover.y;
             const w = def.size.w;
             const h = def.size.h;
 
-            if (!this.canPlaceAt(x, y, w, h)) {
-                this.toast(`Non licet: locus occupatus (${w}x${h}).`, 'error');
+            const validation = this.validatePlacement(x, y, def);
+            if (!validation.ok) {
+                if (!silent) this.toast(validation.reason || 'Non licet.', 'error');
                 return;
             }
+
+            const variant = validation.variant || this._computeVariant(def, x, y);
+            const cost = validation.cost;
 
             const id = uuid();
             const placedAt = Date.now();
@@ -121,8 +379,8 @@
             const building = {
                 id,
                 type: def.type,
-                latinName: def.latinName,
-                englishName: def.englishName,
+                latinName: variant.latinName,
+                englishName: variant.englishName,
                 x,
                 y,
                 width: w,
@@ -131,8 +389,8 @@
                 size: { w, h },
                 rotation: 0,
                 placedAt,
-                name: def.latinName,
-                color: def.color
+                name: variant.latinName,
+                color: variant.color
             };
 
             if (typeof this.world.addPlacedBuilding === 'function') {
@@ -145,8 +403,33 @@
                 this.world.occupyBuildingFootprint(building);
             }
 
+            this._spend(cost);
+
+            if (!silent) {
+                const msgByType = {
+                    via: 'Via posita. (Road placed)',
+                    pons: 'Pons positus. (Bridge placed)',
+                    domus: 'Domus posita. (House placed)',
+                    forum: 'Forum positum. (Market placed)'
+                };
+                this.toast(msgByType[def.type] || 'Recte. (OK)', 'info');
+            }
+
+            // Single placements record undo immediately. Drag placements are recorded on drag end.
+            if (!this._isDraggingBuild) {
+                this._pushUndo({
+                    kind: 'place',
+                    buildingIds: [id],
+                    buildings: [building],
+                    totalCost: cost
+                });
+            }
+
             this.onSave();
+            this.updateUI();
             this.renderer.requestRender();
+
+            return { id, building, cost };
         }
 
         demolish() {
@@ -156,11 +439,17 @@
                 return;
             }
 
+            const building = this.getBuildingById(id);
+            if (building) {
+                this._pushUndo({ kind: 'demolish', buildings: [building] });
+            }
+
             if (typeof this.world.removePlacedBuildingById === 'function') {
                 this.world.removePlacedBuildingById(id);
             }
 
             this.onSave();
+            this.updateUI();
             this.renderer.requestRender();
         }
 
@@ -172,6 +461,51 @@
             if (this.selectedType) {
                 this.place();
             }
+        }
+
+        // Drag building for 1x1 tools (roads/bakery). Call begin/drag/end from input.
+        beginBuildDrag() {
+            const def = this.getSelectedDef();
+            if (!def) return;
+            if (def.size.w !== 1 || def.size.h !== 1) return;
+
+            this._isDraggingBuild = true;
+            this._dragPlacedIds.clear();
+        }
+
+        dragBuildTo(x, y) {
+            if (!this._isDraggingBuild) return;
+            const def = this.getSelectedDef();
+            if (!def) return;
+
+            // Avoid placing repeatedly on the same tile.
+            const key = `${x},${y}`;
+            if (this._dragPlacedIds.has(key)) return;
+
+            const result = this.place(x, y, { silent: true });
+            if (result && result.id) {
+                this._dragPlacedIds.add(key);
+                // Track for undo batching
+                if (!this._dragBatch) {
+                    this._dragBatch = { kind: 'place', buildingIds: [], buildings: [], totalCost: 0 };
+                }
+                this._dragBatch.buildingIds.push(result.id);
+                this._dragBatch.buildings.push(result.building);
+                this._dragBatch.totalCost += result.cost;
+            }
+        }
+
+        endBuildDrag() {
+            if (!this._isDraggingBuild) return;
+            this._isDraggingBuild = false;
+            this._dragPlacedIds.clear();
+            if (this._dragBatch && this._dragBatch.buildingIds.length > 0) {
+                this._pushUndo(this._dragBatch);
+            }
+            this._dragBatch = null;
+            this.onSave();
+            this.updateUI();
+            this.renderer.requestRender();
         }
 
         getBuildingIdAt(x, y) {
@@ -204,7 +538,7 @@
             if (!this.ui) return;
 
             const selectedLabel = this.demolishMode
-                ? 'Demoliri'
+                ? 'Dirue'
                 : (this.selectedType ? this.catalog.get(this.selectedType)?.latinName : '—');
 
             const def = this.getSelectedDef();
@@ -216,8 +550,16 @@
                 })()
                 : (def ? `${def.size.w}x${def.size.h}` : '—');
 
+            const cost = def ? this._currentCost(def, this._computeVariant(def, this.hover.x, this.hover.y).baseCost) : null;
+            const coffers = this.economy ? this.economy.coffers : null;
+            const budget = this.economy ? this.economy.annualBudget : null;
+            const spent = this.economy ? this.economy.yearSpent : null;
+            const over = this.economy ? (this.economy.yearSpent > this.economy.annualBudget) : false;
+
             if (this.ui.status) {
-                this.ui.status.textContent = `Tool: ${selectedLabel} | Footprint: ${footprint} | Hover: [${this.hover.x}, ${this.hover.y}]`;
+                const costText = cost !== null ? ` | Pretium: ${cost}` : '';
+                const econText = this.economy ? ` | Aerarium: ${coffers} | Impensa/Pecunia: ${spent}/${budget}${over ? ' (poena)' : ''}` : '';
+                this.ui.status.textContent = `Instrumentum: ${selectedLabel} | Vestigium: ${footprint} | Sub: [${this.hover.x}, ${this.hover.y}]${costText}${econText}`;
             }
 
             // Button highlighting

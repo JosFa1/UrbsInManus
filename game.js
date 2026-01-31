@@ -68,7 +68,7 @@ class Tile {
     }
     
     getName() {
-        return TileNames[this.type] || 'Unknown';
+        return TileNames[this.type] || 'Ignotum (Unknown)';
     }
 }
 
@@ -306,7 +306,7 @@ function configureMap(world) {
     // SAMPLE BUILDING (2x3) on Tiber Island
     // ==========================================
     if (DEV_CONFIG.SHOW_SAMPLE_BUILDING) {
-        const sampleBuilding = new Building(99, 71, 2, 3, 'Sample Building');
+        const sampleBuilding = new Building(99, 71, 2, 3, 'Aedificium exemplare');
         world.addBuilding(sampleBuilding);
     }
 }
@@ -486,46 +486,48 @@ class Camera {
         this.centerOn(115, 72);
     }
     
-    zoomIn(focusX = null, focusY = null) {
-        const oldZoom = this.zoom;
-        this.zoom = Math.min(this.zoom * 1.2, 10); // Max zoom 10x
-
-        const { width: canvasWidth, height: canvasHeight } = getCanvasCssSize();
-        
-        if (focusX !== null && focusY !== null) {
-            // Zoom towards mouse position
-            const worldPos = this.screenToWorld(focusX, focusY);
-            this.viewportWidth = canvasWidth / (TILE_SIZE * this.zoom);
-            this.viewportHeight = canvasHeight / (TILE_SIZE * this.zoom);
-            this.centerOn(worldPos.x, worldPos.y);
-        } else {
-            this.viewportWidth = canvasWidth / (TILE_SIZE * this.zoom);
-            this.viewportHeight = canvasHeight / (TILE_SIZE * this.zoom);
-            this.clamp();
-        }
-    }
-    
-    zoomOut(focusX = null, focusY = null) {
-        const { width: canvasWidth, height: canvasHeight } = getCanvasCssSize();
-        // Smallest allowed zoom where the viewport is not larger than the world.
-        // viewportWidth  = canvas.width  / (TILE_SIZE * zoom) <= worldWidth  => zoom >= canvas.width  / (TILE_SIZE * worldWidth)
-        // viewportHeight = canvas.height / (TILE_SIZE * zoom) <= worldHeight => zoom >= canvas.height / (TILE_SIZE * worldHeight)
+    _minZoomForCanvas(canvasWidth, canvasHeight) {
         const minZoomX = canvasWidth / (TILE_SIZE * this.worldWidth);
         const minZoomY = canvasHeight / (TILE_SIZE * this.worldHeight);
-        const minZoom = Math.max(minZoomX, minZoomY);
+        return Math.max(minZoomX, minZoomY);
+    }
 
-        this.zoom = Math.max(this.zoom / 1.2, minZoom);
-        
+    zoomBy(factor, focusX = null, focusY = null) {
+        const { width: canvasWidth, height: canvasHeight } = getCanvasCssSize();
+        const minZoom = this._minZoomForCanvas(canvasWidth, canvasHeight);
+        const maxZoom = 14;
+
+        const oldZoom = this.zoom;
+
+        // World position under the mouse BEFORE zoom.
+        const anchorWorldX = (focusX !== null) ? (this.x + focusX / (TILE_SIZE * oldZoom)) : (this.x + this.viewportWidth / 2);
+        const anchorWorldY = (focusY !== null) ? (this.y + focusY / (TILE_SIZE * oldZoom)) : (this.y + this.viewportHeight / 2);
+
+        // Apply zoom.
+        const unclamped = oldZoom * factor;
+        this.zoom = Math.max(minZoom, Math.min(unclamped, maxZoom));
+
+        // Recompute viewport for new zoom.
         this.viewportWidth = canvasWidth / (TILE_SIZE * this.zoom);
         this.viewportHeight = canvasHeight / (TILE_SIZE * this.zoom);
-        
+
+        // Keep the anchor point under the mouse after zoom.
         if (focusX !== null && focusY !== null) {
-            // Zoom towards mouse position
-            const worldPos = this.screenToWorld(focusX, focusY);
-            this.centerOn(worldPos.x, worldPos.y);
+            this.x = anchorWorldX - focusX / (TILE_SIZE * this.zoom);
+            this.y = anchorWorldY - focusY / (TILE_SIZE * this.zoom);
         } else {
-            this.clamp();
+            this.centerOn(anchorWorldX, anchorWorldY);
         }
+
+        this.clamp();
+    }
+
+    zoomIn(focusX = null, focusY = null) {
+        this.zoomBy(1.2, focusX, focusY);
+    }
+
+    zoomOut(focusX = null, focusY = null) {
+        this.zoomBy(1 / 1.2, focusX, focusY);
     }
     
     pan(deltaX, deltaY) {
@@ -822,6 +824,8 @@ class InputHandler {
         this.lastPanX = 0;
         this.lastPanY = 0;
         this.spacePressed = false;
+        this.leftDown = false;
+        this._buildingDragActive = false;
         
         this.setupEventListeners();
     }
@@ -850,11 +854,10 @@ class InputHandler {
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
         
-        if (e.deltaY < 0) {
-            this.camera.zoomIn(mouseX, mouseY);
-        } else {
-            this.camera.zoomOut(mouseX, mouseY);
-        }
+        // Smooth, continuous zoom anchored to the mouse cursor.
+        // Typical wheel deltas are ~±100; exponent keeps it from feeling "jumpy".
+        const zoomFactor = Math.pow(1.0015, -e.deltaY);
+        this.camera.zoomBy(zoomFactor, mouseX, mouseY);
         
         this.renderer.requestRender();
     }
@@ -882,11 +885,35 @@ class InputHandler {
 
         // Left click places / demolishes
         if (e.button === 0 && this.buildTool) {
+            this.leftDown = true;
+
+            // Drag-to-build for 1x1 tools
+            const def = this.buildTool.getSelectedDef ? this.buildTool.getSelectedDef() : null;
+            if (def && def.size && def.size.w === 1 && def.size.h === 1) {
+                this._buildingDragActive = true;
+                this.buildTool.beginBuildDrag?.();
+
+                // Place immediately at current hover
+                const rect = this.canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                const worldPos = this.camera.screenToWorld(mouseX, mouseY);
+                this.buildTool.dragBuildTo?.(worldPos.x, worldPos.y);
+                this.renderer.requestRender();
+                return;
+            }
+
             this.buildTool.onLeftClick();
+            this.renderer.requestRender();
         }
     }
     
     handleMouseUp() {
+        this.leftDown = false;
+        if (this._buildingDragActive) {
+            this._buildingDragActive = false;
+            this.buildTool?.endBuildDrag?.();
+        }
         if (this.isPanning) {
             this.isPanning = false;
             this.canvas.style.cursor = 'default';
@@ -910,6 +937,10 @@ class InputHandler {
         }
         
         const worldPos = this.camera.screenToWorld(mouseX, mouseY);
+
+        if (this._buildingDragActive && this.buildTool) {
+            this.buildTool.dragBuildTo?.(worldPos.x, worldPos.y);
+        }
 
         if (this.buildTool) {
             this.buildTool.setHover(worldPos.x, worldPos.y);
@@ -939,6 +970,19 @@ class InputHandler {
                 this.buildTool.cancelAll();
                 this.renderer.requestRender();
             }
+            return;
+        }
+
+        if (this.buildTool && e.ctrlKey && !e.shiftKey && e.code === 'KeyZ') {
+            e.preventDefault();
+            this.buildTool.undo?.();
+            return;
+        }
+
+        if (this.buildTool && e.ctrlKey && (e.code === 'KeyY' || (e.shiftKey && e.code === 'KeyZ'))) {
+            e.preventDefault();
+            this.buildTool.redo?.();
+            return;
         }
     }
     
@@ -995,7 +1039,8 @@ function setupLatinTerms() {
 // CANVAS SIZING
 // ========================================
 function resizeCanvas() {
-    const container = document.querySelector('.game-container');
+    // Size the canvas to the available area next to the sidebar.
+    const container = document.querySelector('.canvas-wrap');
     const cssWidth = container.clientWidth;
     const cssHeight = container.clientHeight;
     const dpr = window.devicePixelRatio || 1;
@@ -1032,22 +1077,30 @@ function initGame() {
                 await PNGMapLoader.loadPNG(DEV_CONFIG.LOAD_PNG_MAP, world);
             } catch (error) {
                 console.error('❌ Error loading PNG map:', error);
-                alert('Error loading PNG map: ' + error.message);
+                alert('Erratum: tabula PNG legi non potest. ' + error.message);
                 return;
             }
         } else {
             configureMap(world);
         }
 
-        // Load placed buildings (if any) after the base map is ready.
+        // Economy state (kept minimal: coffers + year budget tracking)
+        const economy = {
+            coffers: 100,
+            year: -753,
+            annualBudget: 100,
+            yearSpent: 0
+        };
+
+        // Load placed buildings + economy (if any) after the base map is ready.
         if (window.SaveAdapter && window.BuildingCatalog) {
-            window.SaveAdapter.tryLoadIntoWorld(world, window.BuildingCatalog);
+            window.SaveAdapter.tryLoadIntoWorld(world, window.BuildingCatalog, economy);
         }
         
-        completeInitialization(world);
+        completeInitialization(world, economy);
     }
     
-    function completeInitialization(world) {
+    function completeInitialization(world, economy) {
         // Create camera
         const camera = new Camera(WORLD_WIDTH, WORLD_HEIGHT);
         
@@ -1070,15 +1123,22 @@ function initGame() {
             status: document.getElementById('buildStatus'),
             toast: document.getElementById('toast'),
             demolishBtn: document.getElementById('demolishBtn'),
-            buttons: Array.from(document.querySelectorAll('.tool-btn[data-tool]'))
+            buttons: Array.from(document.querySelectorAll('.tool-btn[data-tool]')),
+            coffers: document.getElementById('statCoffers'),
+            year: document.getElementById('statYear'),
+            budget: document.getElementById('statBudget'),
+            spent: document.getElementById('statSpent'),
+            endYearBtn: document.getElementById('endYearBtn'),
+            saveBtn: document.getElementById('saveBtn'),
+            restartBtn: document.getElementById('restartBtn')
         };
 
         const saveFn = () => {
-            if (window.SaveAdapter) window.SaveAdapter.save(world);
+            if (window.SaveAdapter) window.SaveAdapter.save(world, economy);
         };
 
         const buildTool = window.BuildTool
-            ? new window.BuildTool({ world, camera, renderer, catalog: window.BuildingCatalog, onSave: saveFn, ui })
+            ? new window.BuildTool({ world, camera, renderer, catalog: window.BuildingCatalog, onSave: saveFn, ui, economy })
             : null;
 
         if (buildTool) {
@@ -1097,6 +1157,140 @@ function initGame() {
                 renderer.requestRender();
             });
         }
+
+        function updateEconomyBar() {
+            if (!ui.coffers) return;
+            ui.coffers.textContent = String(economy.coffers);
+
+            const y = economy.year;
+            const absY = Math.abs(y);
+            ui.year.textContent = y < 0 ? `${absY} a.C.n.` : `${absY} p.C.n.`;
+            ui.budget.textContent = String(economy.annualBudget);
+            ui.spent.textContent = String(economy.yearSpent);
+        }
+
+        function isRoadType(t) {
+            return t === 'via' || t === 'pons';
+        }
+
+        function hasAdjacentRoad(building) {
+            const w = building.width;
+            const h = building.height;
+            const originX = building.x;
+            const originY = building.y;
+
+            for (let dy = 0; dy < h; dy++) {
+                for (let dx = 0; dx < w; dx++) {
+                    const tx = originX + dx;
+                    const ty = originY + dy;
+                    const neighbors = [
+                        [tx - 1, ty],
+                        [tx + 1, ty],
+                        [tx, ty - 1],
+                        [tx, ty + 1]
+                    ];
+                    for (const [nx, ny] of neighbors) {
+                        if (nx < 0 || ny < 0 || nx >= world.width || ny >= world.height) continue;
+                        if (nx >= originX && nx < originX + w && ny >= originY && ny < originY + h) continue;
+                        const id = world.occupancy?.[ny]?.[nx] || null;
+                        if (!id) continue;
+                        const b = (world.buildings || []).find(bb => bb && bb.id === id) || null;
+                        if (b && isRoadType(b.type)) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function minManhattanDistance(a, b) {
+            let best = Infinity;
+            for (let ay = 0; ay < a.height; ay++) {
+                for (let ax = 0; ax < a.width; ax++) {
+                    const atx = a.x + ax;
+                    const aty = a.y + ay;
+                    for (let by = 0; by < b.height; by++) {
+                        for (let bx = 0; bx < b.width; bx++) {
+                            const btx = b.x + bx;
+                            const bty = b.y + by;
+                            const d = Math.abs(atx - btx) + Math.abs(aty - bty);
+                            if (d < best) best = d;
+                            if (best === 0) return 0;
+                        }
+                    }
+                }
+            }
+            return best;
+        }
+
+        function countHousesNearForum(forum, maxDist) {
+            const houses = (world.buildings || []).filter(b => b && b.type === 'domus');
+            let count = 0;
+            for (const h of houses) {
+                if (minManhattanDistance(forum, h) <= maxDist) count += 1;
+            }
+            return count;
+        }
+
+        function evaluateDemoWin() {
+            const placed = (world.buildings || []).filter(b => b && b.id && b.type);
+            const houses = placed.filter(b => b.type === 'domus');
+            const forums = placed.filter(b => b.type === 'forum');
+
+            const budgetOk = economy.yearSpent <= economy.annualBudget;
+            const coffersOk = economy.coffers >= 0;
+
+            const housesConnected = houses.every(hasAdjacentRoad);
+            const forumOk = forums.length >= 1 && forums.some(f => countHousesNearForum(f, 6) >= 2);
+
+            const win = houses.length >= 3 && forums.length >= 1 && housesConnected && forumOk && budgetOk && coffersOk;
+            return {
+                win,
+                counts: { domus: houses.length, forum: forums.length },
+                checks: { housesConnected, forumOk, budgetOk }
+            };
+        }
+
+        ui.endYearBtn?.addEventListener('click', () => {
+            // 5-minute demo: End Year is a "check win" button (no multi-year loop required).
+            const result = evaluateDemoWin();
+            if (result.win) {
+                buildTool?.toast?.('Vicisti! (You win!)', 'info');
+            } else {
+                const parts = [];
+                parts.push(`Domūs: ${result.counts.domus}/3`);
+                parts.push(`Forum: ${result.counts.forum}/1`);
+                if (!result.checks.housesConnected) parts.push('Domūs sine via.');
+                if (!result.checks.forumOk) parts.push('Forum procul.');
+                if (!result.checks.budgetOk) parts.push('Pecunia annua superata.');
+                buildTool?.toast?.(`Nondum. (Not yet.) ${parts.join(' ')}`, 'info');
+            }
+            updateEconomyBar();
+            saveFn();
+            renderer.requestRender();
+        });
+
+        ui.saveBtn?.addEventListener('click', () => {
+            saveFn();
+            buildTool?.toast?.('Servatum est.', 'info');
+        });
+
+        ui.restartBtn?.addEventListener('click', () => {
+            const ok = confirm('Urbem iterum incipere vis? Hoc aedificia posita delet et aerarium/annum restituit. Terra eadem manet.');
+            if (!ok) return;
+
+            buildTool?.cancelAll?.();
+            world.clearPlacedBuildings?.();
+
+            economy.coffers = 100;
+            economy.year = -753;
+            economy.annualBudget = 100;
+            economy.yearSpent = 0;
+
+            saveFn();
+            updateEconomyBar();
+            renderer.requestRender();
+            buildTool?.toast?.('Urbs iterum incipit.', 'info');
+        });
         
         // Create input handler
         const inputHandler = new InputHandler(canvas, world, camera, renderer, buildTool);
@@ -1114,7 +1308,19 @@ function initGame() {
             renderer,
             inputHandler,
             buildTool,
-            save: saveFn
+            save: saveFn,
+            economy
+        };
+
+        // Keep the top bar in sync
+        updateEconomyBar();
+
+        // Also update economy bar after any render request (cheap) by piggybacking on RAF.
+        // BuildTool calls updateUI() internally; this just mirrors economy numbers.
+        const originalRequestRender = renderer.requestRender.bind(renderer);
+        renderer.requestRender = () => {
+            updateEconomyBar();
+            return originalRequestRender();
         };
         
         console.log('✅ Urbs in Manus initialized!');

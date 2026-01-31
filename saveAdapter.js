@@ -43,11 +43,17 @@
         return occ;
     }
 
-    function save(world) {
+    function save(world, economy = null) {
         const buildings = (world.buildings || []).filter(b => b && b.id && b.type);
         const payload = {
             version: 1,
             savedAt: Date.now(),
+            economy: economy ? {
+                coffers: economy.coffers,
+                year: economy.year,
+                annualBudget: economy.annualBudget,
+                yearSpent: economy.yearSpent
+            } : null,
             buildings: buildings.map(b => ({
                 id: b.id,
                 type: b.type,
@@ -74,9 +80,17 @@
         }
     }
 
-    function tryLoadIntoWorld(world, buildingCatalog) {
+    function tryLoadIntoWorld(world, buildingCatalog, economy = null) {
         const data = loadRaw();
         if (!data || !Array.isArray(data.buildings)) return false;
+
+        if (economy && data.economy) {
+            const e = data.economy;
+            if (typeof e.coffers === 'number') economy.coffers = e.coffers;
+            if (typeof e.year === 'number') economy.year = e.year;
+            if (typeof e.annualBudget === 'number') economy.annualBudget = e.annualBudget;
+            if (typeof e.yearSpent === 'number') economy.yearSpent = e.yearSpent;
+        }
 
         // Reset placed buildings/occupancy before applying.
         if (typeof world.clearPlacedBuildings === 'function') {
@@ -93,8 +107,9 @@
             }
         }
 
-        // Recreate occupancy grid from saved data (we also rebuild occupancy from buildings after).
-        world.occupancy = deserializeOccupancy(data.occupancy, world.width, world.height);
+        // Rebuild occupancy from loaded buildings only.
+        // This avoids stale blocked tiles if the catalog no longer contains some old building types.
+        world.occupancy = makeEmptyOccupancy(world.width, world.height);
 
         for (const b of data.buildings) {
             const def = buildingCatalog?.get?.(b.type);
