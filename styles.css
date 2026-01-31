@@ -97,6 +97,17 @@ h1 {
     letter-spacing: 0.02em;
 }
 
+.stat .value.spent {
+    color: #ff6b6b;
+    font-size: 0.9em;
+}
+
+.stat .value.remaining {
+    color: #888;
+    font-size: 0.8em;
+    font-weight: normal;
+}
+
 .end-year {
     background: rgba(255, 215, 0, 0.16);
     border: 1px solid rgba(255, 215, 0, 0.85);
@@ -345,6 +356,27 @@ h1 {
     border-bottom: 1px solid rgba(245, 245, 220, 0.16);
     padding-bottom: 10px;
     margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-btn {
+    background: transparent;
+    border: 1px solid rgba(245, 245, 220, 0.3);
+    color: #f5f5dc;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.close-btn:hover {
+    background: rgba(245, 245, 220, 0.1);
 }
 
 .modal-title {
@@ -446,4 +478,217 @@ h1 {
 .advisor-body {
     padding: 10px 12px 12px 12px;
     line-height: 1.35;
+}
+
+/* Turn Report Modal */
+.turn-report .modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.report-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(139, 69, 19, 0.1);
+    border: 1px solid rgba(139, 69, 19, 0.3);
+    border-radius: 8px;
+}
+
+.report-section h3 {
+    margin-bottom: 10px;
+    color: #d4af37;
+    font-size: 1.1em;
+}
+
+.report-section p {
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(245, 245, 220, 0.16);
+    padding-top: 15px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.btn-primary {
+    background: rgba(139, 69, 19, 0.8);
+    border: 1px solid rgba(139, 69, 19, 0.9);
+    color: #f5f5dc;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.btn-primary:hover {
+    background: rgba(139, 69, 19, 0.9);
+}
+
+.btn-primary:disabled {
+    background: rgba(100, 100, 100, 0.6);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Tutorial System */
+.tutorial-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* Allow clicks through to the game */
+    z-index: 1400;
+    background: rgba(0, 0, 0, 0.1); /* Subtle overlay to focus attention */
+}
+
+.tutorial-modal-overlay.has-highlight {
+    background: radial-gradient(circle at var(--highlight-x) var(--highlight-y), 
+                                transparent 0%, 
+                                rgba(0, 0, 0, 0.3) 70%);
+}
+
+.tutorial-content {
+    position: fixed;
+    top: 120px; /* Position below the top bar */
+    right: 20px;
+    width: 320px;
+    background: rgba(20, 20, 20, 0.96);
+    border: 2px solid rgba(139, 69, 19, 0.85);
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.65);
+    padding: 14px 14px 12px 14px;
+    pointer-events: auto; /* Re-enable pointer events for the modal itself */
+    z-index: 1500;
+}
+
+.tutorial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.tutorial-step {
+    background: rgba(139, 69, 19, 0.2);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    color: #d4af37;
+}
+
+.tutorial-body {
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.tutorial-action {
+    font-weight: bold;
+    color: #d4af37;
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid #d4af37;
+}
+
+.tutorial-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.btn-secondary {
+    background: rgba(100, 100, 100, 0.8);
+    border: 1px solid rgba(100, 100, 100, 0.9);
+    color: #f5f5dc;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.btn-secondary:hover {
+    background: rgba(100, 100, 100, 0.9);
+}
+
+.tutorial-highlight {
+    animation: tutorial-pulse 1.5s infinite, tutorial-glow 2s infinite;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.8), 0 0 40px rgba(212, 175, 55, 0.4) !important;
+    position: relative;
+    z-index: 1000;
+}
+
+.tutorial-highlight::before {
+    content: "👆";
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px;
+    animation: tutorial-bounce 1.5s infinite;
+    z-index: 1001;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+}
+
+.tutorial-highlight::after {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 3px solid #d4af37;
+    border-radius: 8px;
+    animation: tutorial-border-pulse 1.5s infinite;
+    pointer-events: none;
+}
+
+@keyframes tutorial-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+
+@keyframes tutorial-glow {
+    0%, 100% { 
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.8), 0 0 40px rgba(212, 175, 55, 0.4);
+    }
+    50% { 
+        box-shadow: 0 0 30px rgba(212, 175, 55, 1), 0 0 60px rgba(212, 175, 55, 0.6);
+    }
+}
+
+@keyframes tutorial-bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-8px); }
+}
+
+@keyframes tutorial-border-pulse {
+    0%, 100% { 
+        border-color: #d4af37;
+        opacity: 1;
+    }
+    50% { 
+        border-color: #ffd700;
+        opacity: 0.7;
+    }
+}
+
+.tutorial-hint {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 6px;
+    font-weight: bold;
+    color: #d4af37;
+    text-align: center;
+    animation: tutorial-hint-pulse 2s infinite;
+}
+
+@keyframes tutorial-hint-pulse {
+    0%, 100% { background: rgba(212, 175, 55, 0.1); }
+    50% { background: rgba(212, 175, 55, 0.2); }
 }

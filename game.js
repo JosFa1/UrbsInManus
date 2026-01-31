@@ -839,15 +839,28 @@ class Renderer {
         const baseX = -this.camera.x * tilePx;
         const baseY = -this.camera.y * tilePx;
 
-        const x0 = Math.floor(baseX + building.x * tilePx);
-        const x1 = Math.floor(baseX + (building.x + building.width) * tilePx);
-        const y0 = Math.floor(baseY + building.y * tilePx);
-        const y1 = Math.floor(baseY + (building.y + building.height) * tilePx);
+        let x, y, w, h;
+        
+        if (building.type === 'domus') {
+            // Draw houses as smaller boxes (not full tiles)
+            const houseSize = Math.max(6, tilePx * 0.6); // Minimum 6px, or 60% of tile size
+            x = Math.floor(baseX + building.x * tilePx + (tilePx - houseSize) / 2);
+            y = Math.floor(baseY + building.y * tilePx + (tilePx - houseSize) / 2);
+            w = houseSize;
+            h = houseSize;
+        } else {
+            // Regular buildings
+            const x0 = Math.floor(baseX + building.x * tilePx);
+            const x1 = Math.floor(baseX + (building.x + building.width) * tilePx);
+            const y0 = Math.floor(baseY + building.y * tilePx);
+            const y1 = Math.floor(baseY + (building.y + building.height) * tilePx);
 
-        const x = x0;
-        const y = y0;
-        const w = x1 - x0;
-        const h = y1 - y0;
+            x = x0;
+            y = y0;
+            w = x1 - x0;
+            h = y1 - y0;
+        }
+        
         if (w <= 0 || h <= 0) return;
         
         // Draw building
@@ -856,12 +869,14 @@ class Renderer {
         
         // Draw border
         this.ctx.strokeStyle = '#654321';
-        this.ctx.lineWidth = 2;
+        this.ctx.lineWidth = 1;
         this.ctx.strokeRect(x, y, w, h);
         
-        // Draw simple roof indication
-        this.ctx.fillStyle = '#654321';
-        this.ctx.fillRect(x, y, w, Math.round(h * 0.2));
+        // Draw simple roof indication for regular buildings
+        if (building.type !== 'domus') {
+            this.ctx.fillStyle = '#654321';
+            this.ctx.fillRect(x, y, w, Math.round(h * 0.2));
+        }
     }
     
     drawGrid() {
@@ -1161,27 +1176,553 @@ class GameState {
         this.citizens = 0;
         this.approval = 50;  // 0-100
         this.health = 50;
-        this.food = 50;
         this.income = 0;
-        this.fireRisk = 20;  // 0-100, lower is better
         this.order = 50;
         this.coffers = 100;
-        this.annualBudget = 100;
         this.yearSpent = 0;
-        this.unlockedBuildings = new Set(['via', 'zona_habitationis']);  // Start with roads and housing zones
+        this.unlockedBuildings = new Set(['via', 'zona_habitationis', 'zona_mercatus']);  // Start with roads and housing zones
         this.tutorialMode = true;
-        this.advisorTips = [];
+        this.tutorialStep = 0;  // Current tutorial step
+        this.tutorialSteps = [
+            {
+                title: "Welcome to Rome!",
+                message: "You are founding Rome in 753 BC. Let's build the greatest city in history! At the top you can see your city stats - citizens, money (aerarium), year, and more. Click 'Continue' to learn how to build roads.",
+                action: "Click 'Continue' to start building."
+            },
+            {
+                title: "Build Roads First",
+                message: "Cities need roads for transportation and growth. Roads connect your buildings and allow citizens to move around. Look at the tools panel on the right - click on 'Viae' (Road) to select it.",
+                highlight: "#toolSections .tool-btn[data-tool='via']",
+                action: "Click on the 'Viae' (Road) button in the tools panel.",
+                waitForClick: true
+            },
+            {
+                title: "Place Your Roads",
+                message: "Now click on the map to place roads. Build at least 3 connected road tiles to connect your city. Roads are cheap (1 coin each) and essential for everything else.",
+                action: "Click on the map 3 times to place roads.",
+                waitForAction: () => this.countBuildings('via') >= 3
+            },
+            {
+                title: "Create Housing Zones",
+                message: "People need places to live. Select 'Zona Habitationis' (Housing Zone) from the tools panel. Paint zones where you want residential areas to grow.",
+                highlight: "#toolSections .tool-btn[data-tool='zona_habitationis']",
+                action: "Click on 'Zona Habitationis' in the tools panel.",
+                waitForClick: true
+            },
+            {
+                title: "Zone Residential Areas",
+                message: "Click and drag on the map to paint housing zones. Red houses of various shapes and sizes will organically appear over time, clustering densely in the most desirable areas near roads and services. Houses fit wherever there's space and can rotate to fill gaps efficiently.",
+                action: "Paint a housing zone connected to your roads.",
+                waitForAction: () => {
+                    if (!window.game || !window.game.world) return false;
+                    // Check if any tiles are zoned as housing
+                    return Object.values(window.game.world.zones || {}).some(zone => zone === 'housing');
+                }
+            },
+            {
+                title: "Build a Well for Health",
+                message: "Your citizens need clean water to stay healthy. Build a well (Puteus) to improve the 'Salus' (Health) stat at the top. Healthy citizens are happier and your city grows faster. The well tool has been unlocked for you.",
+                highlight: "#toolSections .tool-btn[data-tool='puteus']",
+                action: "Build one well near your housing.",
+                unlock: ['puteus'],
+                waitForAction: () => this.countBuildings('puteus') >= 1
+            },
+            {
+                title: "Build a Forum for Income",
+                message: "Markets generate income and keep citizens happy. Paint a market zone (Zona Mercatus) and forums will gradually appear over time, especially near populated areas. Without income, your city will struggle to grow!",
+                highlight: "#toolSections .tool-btn[data-tool='zona_mercatus']",
+                action: "Paint a market zone in your city.",
+                unlock: ['zona_mercatus'],
+                waitForAction: () => {
+                    if (!window.game || !window.game.world) return false;
+                    // Check if any tiles are zoned as market
+                    return Object.values(window.game.world.zones || {}).some(zone => zone === 'market');
+                }
+            },
+            {
+                title: "Understanding Your Stats",
+                message: "Look at the top bar: 'Cives' (Citizens) = population, 'Aerarium' (Coffers) = money, 'Favor' (Approval) = happiness, 'Salus' (Health) = well-being, 'Vectigal' (Income) = money earned, 'Ordo' (Order) = security. Keep these high for a successful city!",
+                action: "Review your city stats at the top of the screen."
+            },
+            {
+                title: "Advance Time",
+                message: "Time passes in 20-year increments. Click the 'Progredere' (Progress) button to advance to 733 BC. Watch as houses and markets gradually appear in your zoned areas over multiple turns!",
+                highlight: "#endYearBtn",
+                action: "Click the 'Progredere' button to advance 20 years and see organic growth.",
+                waitForAction: () => this.turn > 1
+            },
+            {
+                title: "City Growth & Economics",
+                message: "Great! Your city has grown. Houses appear organically in desirable locations (near roads, with services). Markets generate income as merchants move in. Keep zoning new areas and advancing time!",
+                action: "Continue zoning housing and market areas, then advance time to watch growth."
+            },
+            {
+                title: "Economic Safety Net",
+                message: "If your city isn't making money, don't worry! The game provides a minimum budget to keep you going. Focus on zoning market areas and advancing time - merchants will gradually move in and generate income. Zone housing areas near roads for population growth!",
+                action: "Remember: Market Zones = Income over time, Housing Zones = Citizens over time, Roads = Access for both"
+            }
+        ];
+        
+        // Population tracking for turn reports
+        this.previousCitizens = 0;
+        this.birthsThisTurn = 0;
+        this.immigrationThisTurn = 0;
+        this.peopleWants = 'Basic housing and roads';  // Default wants
+    }
+
+    generateOrganicBuildings() {
+        if (!window.game || !window.game.world) return;
+        
+        const world = window.game.world;
+        const buildings = world.buildings || [];
+        
+        // Generate houses in housing zones
+        this.generateHousesInZones(world, buildings);
+        
+        // Generate markets in market zones
+        this.generateMarketsInZones(world, buildings);
+    }
+
+    generateHousesInZones(world, buildings) {
+        const housingZones = [];
+        
+        // Find all housing zone tiles
+        for (const [key, zoneType] of Object.entries(world.zones || {})) {
+            if (zoneType === 'housing') {
+                const [x, y] = key.split(',').map(Number);
+                housingZones.push({ x, y });
+            }
+        }
+        
+        if (housingZones.length === 0) return;
+        
+        // Calculate desirability for each housing zone tile
+        const desirabilityMap = new Map();
+        for (const zone of housingZones) {
+            const desirability = this.calculateHousingDesirability(zone.x, zone.y, world, buildings);
+            desirabilityMap.set(`${zone.x},${zone.y}`, desirability);
+        }
+        
+        // Sort zones by desirability (highest first) - take more zones for denser clustering
+        const sortedZones = Array.from(desirabilityMap.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, Math.min(8, housingZones.length)); // Consider top 8 most desirable zones
+        
+        // Try to place houses in desirable locations - more aggressive placement
+        for (const [key, desirability] of sortedZones) {
+            // Higher chance for more desirable areas (40-90% chance)
+            if (Math.random() < 0.4 + (desirability * 0.5)) {
+                const [x, y] = key.split(',').map(Number);
+                this.tryPlaceHouseInZone(x, y, world, buildings, desirability);
+            }
+        }
+    }
+
+    calculateHousingDesirability(x, y, world, buildings) {
+        let desirability = 0.3; // Base desirability
+        
+        // Distance to nearest road (closer is MUCH better)
+        const nearestRoad = this.findNearestRoad(x, y, world);
+        if (nearestRoad) {
+            const distance = Math.abs(x - nearestRoad.x) + Math.abs(y - nearestRoad.y);
+            desirability += Math.max(0, 0.5 - (distance * 0.08)); // Bonus up to 0.5 for being very close
+        } else {
+            desirability -= 0.2; // Penalty for no road access
+        }
+        
+        // Nearby services (wells, forums) - big bonus
+        const nearbyServices = buildings.filter(b => 
+            (b.type === 'puteus' || b.type === 'forum') &&
+            Math.abs(b.x - x) + Math.abs(b.y - y) <= 6
+        );
+        desirability += nearbyServices.length * 0.15; // 0.15 per nearby service
+        
+        // Population density (HEAVILY prefer areas with existing housing for clustering)
+        const nearbyHouses = buildings.filter(b => 
+            b.type === 'domus' &&
+            Math.abs(b.x - x) + Math.abs(b.y - y) <= 4
+        );
+        desirability += nearbyHouses.length * 0.12; // Strong preference for clustering
+        
+        // Distance from zone edge (prefer center of zones)
+        const zoneNeighbors = this.countZoneNeighbors(x, y, world, 'housing');
+        desirability += zoneNeighbors * 0.03; // Small bonus for being surrounded by housing zones
+        
+        return Math.min(1.0, Math.max(0, desirability)); // Cap between 0 and 1.0
+    }
+
+    countZoneNeighbors(x, y, world, zoneType) {
+        let count = 0;
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                if (dx === 0 && dy === 0) continue;
+                if (world.zones[`${x + dx},${y + dy}`] === zoneType) count++;
+            }
+        }
+        return count;
+    }
+
+    findNearestRoad(x, y, world) {
+        // Check adjacent tiles first, then expand outward
+        for (let radius = 0; radius <= 5; radius++) {
+            for (let dx = -radius; dx <= radius; dx++) {
+                for (let dy = -radius; dy <= radius; dy++) {
+                    if (Math.abs(dx) + Math.abs(dy) === radius || radius === 0) {
+                        const checkX = x + dx;
+                        const checkY = y + dy;
+                        if (world.getTile(checkX, checkY) === 'via' || 
+                            world.getTile(checkX, checkY) === 'via_lapidea' ||
+                            world.getTile(checkX, checkY) === 'pons') {
+                            return { x: checkX, y: checkY };
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    tryPlaceHouseInZone(zoneX, zoneY, world, buildings, desirability) {
+        // Generate a random house type
+        const houseType = this.generateRandomHouseType(desirability);
+        
+        // Try multiple positions around the zone center, preferring clustered areas
+        const candidates = [];
+        
+        // Search in a larger area for clustering opportunities
+        for (let dx = -4; dx <= 4; dx++) {
+            for (let dy = -4; dy <= 4; dy++) {
+                const x = zoneX + dx;
+                const y = zoneY + dy;
+                
+                // Must be in housing zone
+                if (world.zones[`${x},${y}`] !== 'housing') continue;
+                
+                // Check if space is clear for this house size and rotation
+                const canPlace = this.canPlaceHouseAt(x, y, houseType, world, buildings);
+                if (!canPlace) continue;
+                
+                // Calculate placement score (favor clustering and road access)
+                let score = desirability * 10; // Base score from zone desirability
+                
+                // Bonus for being near existing houses (clustering)
+                const nearbyHouses = buildings.filter(b => 
+                    b.type === 'domus' &&
+                    Math.abs(b.x - x) + Math.abs(b.y - y) <= 3
+                );
+                score += nearbyHouses.length * 5;
+                
+                // Bonus for road access
+                const nearestRoad = this.findNearestRoad(x, y, world);
+                if (nearestRoad) {
+                    const distance = Math.abs(x - nearestRoad.x) + Math.abs(y - nearestRoad.y);
+                    score += Math.max(0, 8 - distance);
+                }
+                
+                candidates.push({ x, y, score, houseType });
+            }
+        }
+        
+        if (candidates.length === 0) return;
+        
+        // Sort by score and pick the best
+        candidates.sort((a, b) => b.score - a.score);
+        const best = candidates[0];
+        
+        // Place the house
+        this.placeHouseAt(best.x, best.y, best.houseType, world);
+    }
+
+    generateRandomHouseType(desirability) {
+        // Generate houses of different sizes based on desirability
+        // Higher desirability = larger houses
+        const rand = Math.random();
+        const sizeRand = Math.random();
+        
+        if (desirability > 0.8 && rand < 0.3) {
+            // Large houses in prime locations
+            return {
+                width: sizeRand < 0.5 ? 3 : 4,
+                height: sizeRand < 0.5 ? 2 : 3,
+                rotation: Math.floor(Math.random() * 4) * 90, // 0, 90, 180, 270 degrees
+                color: '#8B0000' // Dark red for large houses
+            };
+        } else if (desirability > 0.6 && rand < 0.5) {
+            // Medium houses
+            return {
+                width: sizeRand < 0.6 ? 2 : 3,
+                height: sizeRand < 0.6 ? 2 : 2,
+                rotation: Math.floor(Math.random() * 4) * 90,
+                color: '#B22222' // Firebrick red
+            };
+        } else if (desirability > 0.4 && rand < 0.7) {
+            // Small houses
+            return {
+                width: sizeRand < 0.7 ? 1 : 2,
+                height: sizeRand < 0.7 ? 2 : 1,
+                rotation: Math.floor(Math.random() * 4) * 90,
+                color: '#CD5C5C' // Indian red
+            };
+        } else {
+            // Tiny houses/shacks in less desirable areas
+            return {
+                width: 1,
+                height: 1,
+                rotation: 0, // Tiny houses don't rotate
+                color: '#DC143C' // Crimson red
+            };
+        }
+    }
+
+    canPlaceHouseAt(x, y, houseType, world, buildings) {
+        // Get the actual footprint based on rotation
+        const footprint = this.getHouseFootprint(x, y, houseType);
+        
+        // Check if all tiles in footprint are clear
+        for (const tile of footprint) {
+            const checkX = tile.x;
+            const checkY = tile.y;
+            
+            // Check for existing buildings
+            const hasBuilding = buildings.some(b => 
+                checkX >= b.x && checkX < b.x + b.width &&
+                checkY >= b.y && checkY < b.y + b.height
+            );
+            if (hasBuilding) return false;
+            
+            // Check terrain (avoid water, mountains)
+            const tileType = world.getTile(checkX, checkY);
+            if (tileType === 'water' || tileType === 'mountain') return false;
+            
+            // Must be in housing zone
+            if (world.zones[`${checkX},${checkY}`] !== 'housing') return false;
+        }
+        
+        return true;
+    }
+
+    getHouseFootprint(x, y, houseType) {
+        const tiles = [];
+        const { width, height, rotation } = houseType;
+        
+        // Generate footprint based on rotation
+        if (rotation === 0) {
+            // Normal orientation
+            for (let dx = 0; dx < width; dx++) {
+                for (let dy = 0; dy < height; dy++) {
+                    tiles.push({ x: x + dx, y: y + dy });
+                }
+            }
+        } else if (rotation === 90) {
+            // Rotated 90 degrees clockwise
+            for (let dx = 0; dx < height; dx++) {
+                for (let dy = 0; dy < width; dy++) {
+                    tiles.push({ x: x + dx, y: y - dy });
+                }
+            }
+        } else if (rotation === 180) {
+            // Rotated 180 degrees
+            for (let dx = 0; dx < width; dx++) {
+                for (let dy = 0; dy < height; dy++) {
+                    tiles.push({ x: x - dx, y: y - dy });
+                }
+            }
+        } else if (rotation === 270) {
+            // Rotated 270 degrees clockwise
+            for (let dx = 0; dx < height; dx++) {
+                for (let dy = 0; dy < width; dy++) {
+                    tiles.push({ x: x - dx, y: y + dy });
+                }
+            }
+        }
+        
+        return tiles;
+    }
+
+    placeHouseAt(x, y, houseType, world) {
+        const id = 'house_' + Date.now() + '_' + Math.random();
+        const building = {
+            id,
+            type: 'domus',
+            latinName: 'Domus',
+            englishName: 'House',
+            x,
+            y,
+            width: houseType.width,
+            height: houseType.height,
+            origin: { x, y },
+            size: { w: houseType.width, h: houseType.height },
+            rotation: houseType.rotation,
+            placedAt: Date.now(),
+            name: 'Domus',
+            color: houseType.color,
+            organic: true, // Mark as organically generated
+            houseType: houseType // Store the house type info
+        };
+        
+        if (typeof world.addPlacedBuilding === 'function') {
+            world.addPlacedBuilding(building);
+        }
+    }
+
+    generateMarketsInZones(world, buildings) {
+        const marketZones = [];
+        
+        // Find all market zone tiles
+        for (const [key, zoneType] of Object.entries(world.zones || {})) {
+            if (zoneType === 'market') {
+                const [x, y] = key.split(',').map(Number);
+                marketZones.push({ x, y });
+            }
+        }
+        
+        if (marketZones.length === 0) return;
+        
+        // Markets are less dense than housing - only place occasionally
+        if (Math.random() < 0.2) { // 20% chance per turn to place a market
+            const randomZone = marketZones[Math.floor(Math.random() * marketZones.length)];
+            this.tryPlaceMarketNearZone(randomZone.x, randomZone.y, world, buildings);
+        }
+    }
+
+    tryPlaceMarketNearZone(zoneX, zoneY, world, buildings) {
+        // Try to place a forum (market) in the market zone
+        const candidates = [];
+        
+        // Check tiles within 3 units of zone center
+        for (let dx = -3; dx <= 3; dx++) {
+            for (let dy = -3; dy <= 3; dy++) {
+                const x = zoneX + dx;
+                const y = zoneY + dy;
+                
+                // Must be in market zone
+                if (world.zones[`${x},${y}`] !== 'market') continue;
+                
+                // Check if space is clear (forums are 2x2)
+                if (!this.canPlaceForumAt(x, y, world, buildings)) continue;
+                
+                // Prefer locations near roads and population
+                let score = 0;
+                const nearestRoad = this.findNearestRoad(x, y, world);
+                if (nearestRoad) {
+                    const distance = Math.abs(x - nearestRoad.x) + Math.abs(y - nearestRoad.y);
+                    score += Math.max(0, 4 - distance);
+                }
+                
+                // Bonus for being near existing population
+                const nearbyHouses = buildings.filter(b => 
+                    b.type === 'domus' &&
+                    Math.abs(b.x - x) + Math.abs(b.y - y) <= 8
+                );
+                score += nearbyHouses.length * 0.5;
+                
+                candidates.push({ x, y, score });
+            }
+        }
+        
+        if (candidates.length === 0) return;
+        
+        // Sort by score and pick the best
+        candidates.sort((a, b) => b.score - a.score);
+        const best = candidates[0];
+        
+        // Place the forum
+        this.placeForumAt(best.x, best.y, world);
+    }
+
+    canPlaceForumAt(x, y, world, buildings) {
+        // Check if 2x2 area is clear
+        for (let dx = 0; dx < 2; dx++) {
+            for (let dy = 0; dy < 2; dy++) {
+                const checkX = x + dx;
+                const checkY = y + dy;
+                
+                // Check for existing buildings
+                const hasBuilding = buildings.some(b => 
+                    checkX >= b.x && checkX < b.x + b.width &&
+                    checkY >= b.y && checkY < b.y + b.height
+                );
+                if (hasBuilding) return false;
+                
+                // Check terrain
+                const tile = world.getTile(checkX, checkY);
+                if (tile === 'water' || tile === 'mountain') return false;
+            }
+        }
+        return true;
+    }
+
+    placeForumAt(x, y, world) {
+        const forumDef = window.BuildingCatalog.get('forum');
+        if (!forumDef) return;
+        
+        const id = 'forum_' + Date.now() + '_' + Math.random();
+        const building = {
+            id,
+            type: 'forum',
+            latinName: forumDef.latinName,
+            englishName: forumDef.englishName,
+            x,
+            y,
+            width: forumDef.size.w,
+            height: forumDef.size.h,
+            origin: { x, y },
+            size: { w: forumDef.size.w, h: forumDef.size.h },
+            rotation: 0,
+            placedAt: Date.now(),
+            name: forumDef.latinName,
+            color: forumDef.color,
+            organic: true // Mark as organically generated
+        };
+        
+        if (typeof world.addPlacedBuilding === 'function') {
+            world.addPlacedBuilding(building);
+        }
     }
 
     advanceTurn() {
+        // Store previous population for report
+        this.previousCitizens = this.citizens;
+        
         this.turn += 1;
         this.year += 20;
+        
+        // Add income to coffers and reset spending
+        this.coffers += this.income;
+        this.previousSpent = this.yearSpent;
+        this.previousIncome = this.income;
         this.yearSpent = 0;
-        this.annualBudget = Math.max(50, this.annualBudget + Math.floor(this.citizens / 10));  // Scale budget with population
+        
         // Recalculate stats based on city state
         this.recalculateStats();
-        // Trigger event
-        this.triggerEvent();
+        
+        // Economic stimulus: prevent getting stuck with no income
+        if (this.income < 5 && this.citizens > 0 && this.turn <= 10) {
+            // Early game stimulus: grant temporary income boost
+            const stimulusAmount = Math.max(10, Math.floor(this.citizens / 2));
+            this.coffers += stimulusAmount;
+            this.stimulusGranted = stimulusAmount;
+        } else {
+            this.stimulusGranted = 0;
+        }
+        
+        // Generate new buildings in zones organically
+        this.generateOrganicBuildings();
+        
+        // Calculate population changes
+        const populationIncrease = this.citizens - this.previousCitizens;
+        this.birthsThisTurn = Math.max(0, Math.floor(populationIncrease * 0.7));  // 70% from births
+        this.immigrationThisTurn = Math.max(0, populationIncrease - this.birthsThisTurn);  // Rest from immigration
+        
+        // Update people's wants based on turn/decade
+        this.updatePeopleWants();
+        
+        // Show turn report
+        this.showTurnReport();
+        
+        // Check tutorial progress after turn advancement
+        this.checkTutorialAction();
+        
         // Unlock new buildings
         this.unlockForTurn();
         if (this.turn > 10) this.tutorialMode = false;
@@ -1195,6 +1736,203 @@ class GameState {
         const score = this.citizens;  // Primary goal: largest city
         const legacy = this.getLegacyTitle();
         alert(`Annus Ultimus! (Final Year)\n\nCives: ${score}\nLegatum: ${legacy}\n\nGratias tibi ago pro ludo! (Thank you for playing!)`);
+    }
+
+    updatePeopleWants() {
+        
+        this.peopleWants = 'Basic housing and roads for settlement';
+    }
+
+    showTutorial() {
+        if (!this.tutorialMode || this.tutorialStep >= this.tutorialSteps.length) return;
+        
+        const step = this.tutorialSteps[this.tutorialStep];
+        const tutorialModal = document.createElement('div');
+        tutorialModal.className = 'tutorial-modal-overlay';
+        
+        // Position in top-right corner, away from interactive elements
+        const modalStyle = 'position: fixed; top: 20px; right: 20px; width: 320px; z-index: 1500;';
+        
+        tutorialModal.innerHTML = `
+            <div class="tutorial-content">
+                <div class="tutorial-header">
+                    <h2>${step.title}</h2>
+                    <span class="tutorial-step">${this.tutorialStep + 1}/${this.tutorialSteps.length}</span>
+                </div>
+                <div class="tutorial-body">
+                    <p>${step.message}</p>
+                    ${step.action ? `<p class="tutorial-action">${step.action}</p>` : ''}
+                    ${step.highlight ? '<div class="tutorial-hint">👆 Look for the pulsing button!</div>' : ''}
+                </div>
+                <div class="tutorial-footer">
+                    <button class="btn-secondary" id="skipTutorial">Skip Tutorial</button>
+                    ${step.waitForClick ? '<button class="btn-primary" id="nextTutorial" disabled>Waiting for you to click...</button>' : 
+                      step.waitForAction ? '<button class="btn-primary" id="nextTutorial" disabled>Complete the action above</button>' :
+                      '<button class="btn-primary" id="nextTutorial">Continue</button>'}
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(tutorialModal);
+        
+        // Highlight the target element if specified
+        if (step.highlight) {
+            const target = document.querySelector(step.highlight);
+            if (target) {
+                target.classList.add('tutorial-highlight');
+                tutorialModal.classList.add('has-highlight');
+                
+                // Set CSS variables for spotlight effect
+                const rect = target.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                tutorialModal.style.setProperty('--highlight-x', centerX + 'px');
+                tutorialModal.style.setProperty('--highlight-y', centerY + 'px');
+                
+                // Scroll into view if needed
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // If waiting for click, add click listener
+                if (step.waitForClick) {
+                    const clickHandler = () => {
+                        target.removeEventListener('click', clickHandler);
+                        this.advanceTutorial();
+                    };
+                    target.addEventListener('click', clickHandler);
+                }
+            }
+        }
+        
+        // Unlock buildings if specified
+        if (step.unlock) {
+            step.unlock.forEach(type => {
+                if (!this.unlockedBuildings.has(type)) {
+                    this.unlockedBuildings.add(type);
+                    updateSidebar();
+                }
+            });
+        }
+        
+        const nextBtn = tutorialModal.querySelector('#nextTutorial');
+        const skipBtn = tutorialModal.querySelector('#skipTutorial');
+        
+        const closeTutorial = (skip = false) => {
+            // Remove highlight
+            if (step.highlight) {
+                const target = document.querySelector(step.highlight);
+                if (target) target.classList.remove('tutorial-highlight');
+            }
+            
+            tutorialModal.remove();
+            
+            if (skip) {
+                this.tutorialMode = false;
+                this.tutorialStep = this.tutorialSteps.length;
+                // Unlock buildings that would have been unlocked during tutorial
+                this.unlockedBuildings.add('puteus');  // Unlocked in tutorial step 6
+                // zona_mercatus is already unlocked initially, but tutorial reinforces it
+            } else {
+                this.tutorialStep++;
+                // Auto-show next step after a delay
+                setTimeout(() => this.showTutorial(), 500);
+            }
+        };
+        
+        nextBtn.addEventListener('click', () => closeTutorial(false));
+        skipBtn.addEventListener('click', () => closeTutorial(true));
+        
+        // Start checking for action completion if needed
+        if (step.waitForAction) {
+            this.checkTutorialAction();
+        }
+    }
+
+    advanceTutorial() {
+        // Remove current tutorial modal
+        const currentModal = document.querySelector('.tutorial-modal-overlay');
+        if (currentModal) {
+            currentModal.remove();
+        }
+        
+        this.tutorialStep++;
+        setTimeout(() => this.showTutorial(), 500);
+    }
+
+    checkTutorialAction() {
+        if (!this.tutorialMode) return;
+        
+        const step = this.tutorialSteps[this.tutorialStep];
+        if (!step || !step.waitForAction) return;
+        
+        const completed = step.waitForAction.call(this);
+        
+        if (completed) {
+            // Enable the continue button
+            const nextBtn = document.querySelector('#nextTutorial');
+            if (nextBtn) {
+                nextBtn.disabled = false;
+                nextBtn.textContent = 'Continue';
+            }
+        } else {
+            // Keep checking
+            setTimeout(() => this.checkTutorialAction(), 500);
+        }
+    }
+
+    checkTutorialProgress() {
+        // This method is now handled by the waitForAction functions in showTutorial
+        // Keep for backward compatibility but it's not used in the new system
+    }
+
+    showTurnReport() {
+        const populationIncrease = this.citizens - this.previousCitizens;
+        const reportModal = document.createElement('div');
+        reportModal.className = 'modal-backdrop show';
+        reportModal.innerHTML = `
+            <div class="modal turn-report">
+                <div class="modal-header">
+                    <h2>Progressio Annua (Annual Progress)</h2>
+                    <span class="close-btn">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="report-section">
+                        <h3>Populatio (Population)</h3>
+                        <p>Previous: ${this.previousCitizens} citizens</p>
+                        <p>Current: ${this.citizens} citizens</p>
+                        <p>Increase: +${populationIncrease}</p>
+                        <p>From births: +${this.birthsThisTurn}</p>
+                        <p>From immigration: +${this.immigrationThisTurn}</p>
+                    </div>
+                    ${this.stimulusGranted > 0 ? `
+                    <div class="report-section">
+                        <h3>Stimulus Oeconomicus (Economic Stimulus)</h3>
+                        <p>Your city received ${this.stimulusGranted} coins in economic stimulus to help with early development.</p>
+                        <p>Build more forums (markets) to generate sustainable income!</p>
+                    </div>
+                    ` : ''}
+                    <div class="report-section">
+                        <h3>Desideria Populi (People's Wants)</h3>
+                        <p>${this.peopleWants}</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-primary">Continue</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(reportModal);
+        
+        const closeBtn = reportModal.querySelector('.close-btn');
+        const continueBtn = reportModal.querySelector('.btn-primary');
+        
+        const closeModal = () => {
+            reportModal.classList.remove('show');
+            setTimeout(() => document.body.removeChild(reportModal), 300);
+        };
+        
+        closeBtn.addEventListener('click', closeModal);
+        continueBtn.addEventListener('click', closeModal);
     }
 
     getLegacyTitle() {
@@ -1211,20 +1949,17 @@ class GameState {
         // Other stats: placeholder logic
         this.approval = Math.min(100, 50 + Math.floor(this.citizens / 20));
         this.health = Math.min(100, 50 + (this.countBuildings('puteus') * 5));
-        this.food = Math.min(100, 50 + (this.countBuildings('horrea') * 10));
         this.income = this.countBuildings('forum') * 5 + this.countBuildings('portus') * 10;
-        this.fireRisk = Math.max(0, 50 - (this.countBuildings('vigiles') * 10));
         this.order = Math.min(100, 50 + (this.countBuildings('murus') * 5) + (this.countBuildings('curia') * 5));
     }
 
     calculateCitizens() {
+        // Citizens now come from actual residential buildings (houses) with road access
         let count = 0;
-        for (let y = 0; y < WORLD_HEIGHT; y++) {
-            for (let x = 0; x < WORLD_WIDTH; x++) {
-                const zone = window.game.world.getZone(x, y);
-                if (zone === 'housing' && this.hasRoadAccess(x, y)) {
-                    count += 1;  // 1 citizen per housing zone tile with road access
-                }
+        const buildings = window.game ? window.game.world.buildings : [];
+        for (const building of buildings) {
+            if (building.type === 'domus' && this.hasRoadAccess(building.x, building.y)) {
+                count += 4;  // Each house holds 4 citizens if it has road access
             }
         }
         return count;
@@ -1249,67 +1984,6 @@ class GameState {
 
     countBuildings(type) {
         return window.game.world.buildings.filter(b => b.type === type).length;
-    }
-
-    triggerEvent() {
-        const events = this.getEventsForTurn();
-        if (events.length > 0) {
-            const event = events[Math.floor(Math.random() * events.length)];
-            this.showEventModal(event);
-        }
-    }
-
-    getEventsForTurn() {
-        // Define events based on turn
-        const eventData = {
-            1: [{ title: 'Dies Condendae Urbis', subtitle: '753–734 a.C.n.', body: 'The founding day of Rome. Choose how to begin.', choices: [
-                { label: 'Viae primum', effects: { income: -5, order: 5 }, desc: '+Order, -Income' },
-                { label: 'Forum primum', effects: { approval: 5, citizens: -10 }, desc: '+Approval, -Citizens' },
-                { label: 'Ager et frumentum', effects: { food: 10, income: -10 }, desc: '+Food, -Income' }
-            ]}],
-            // Add more events for other turns...
-            // For brevity, I'll add a few; in full game, expand to 38 turns
-        };
-        return eventData[this.turn] || [];
-    }
-
-    showEventModal(event) {
-        const modal = document.getElementById('eventModal');
-        const title = document.getElementById('eventTitle');
-        const subtitle = document.getElementById('eventSubtitle');
-        const body = document.getElementById('eventBody');
-        const choices = document.getElementById('eventChoices');
-
-        title.innerHTML = `<span class="latin-term" data-definition="${event.title}">${event.title}</span>`;
-        subtitle.textContent = event.subtitle;
-        body.textContent = event.body;
-        choices.innerHTML = '';
-
-        event.choices.forEach(choice => {
-            const btn = document.createElement('button');
-            btn.className = 'choice-btn';
-            btn.innerHTML = `
-                <div class="choice-label"><span class="latin-term" data-definition="${choice.label}">${choice.label}</span></div>
-                <div class="choice-effects">${choice.desc}</div>
-            `;
-            btn.addEventListener('click', () => {
-                this.applyChoiceEffects(choice.effects);
-                modal.classList.remove('show');
-            });
-            choices.appendChild(btn);
-        });
-
-        modal.classList.add('show');
-    }
-
-    applyChoiceEffects(effects) {
-        for (const [stat, delta] of Object.entries(effects)) {
-            if (stat in this) {
-                this[stat] = Math.max(0, Math.min(100, this[stat] + delta));
-            }
-        }
-        this.recalculateStats();
-        updateUI();
     }
 
     unlockForTurn() {
@@ -1363,14 +2037,12 @@ function updateUI() {
     const ui = {
         coffers: document.getElementById('statCoffers'),
         year: document.getElementById('statYear'),
-        budget: document.getElementById('statBudget'),
         spent: document.getElementById('statSpent'),
+        remaining: document.getElementById('statRemaining'),
         citizens: document.getElementById('statCitizens'),
         approval: document.getElementById('statApproval'),
         health: document.getElementById('statHealth'),
-        food: document.getElementById('statFood'),
         income: document.getElementById('statIncome'),
-        fireRisk: document.getElementById('statFireRisk'),
         order: document.getElementById('statOrder'),
         goalRow: document.querySelector('.goal-row'),
         advisorPanel: document.getElementById('advisorPanel'),
@@ -1380,14 +2052,12 @@ function updateUI() {
     // Update stats
     if (ui.coffers) ui.coffers.textContent = gs.coffers;
     if (ui.year) ui.year.textContent = `${Math.abs(gs.year)} ${gs.year < 0 ? 'a.C.n.' : 'a.D.n.'}`;
-    if (ui.budget) ui.budget.textContent = gs.annualBudget;
-    if (ui.spent) ui.spent.textContent = gs.yearSpent;
+    if (ui.spent) ui.spent.textContent = gs.yearSpent > 0 ? `-${gs.yearSpent}` : '0';
+    if (ui.remaining) ui.remaining.textContent = `(${gs.coffers - gs.yearSpent})`;
     if (ui.citizens) ui.citizens.textContent = gs.citizens;
     if (ui.approval) ui.approval.textContent = gs.approval;
     if (ui.health) ui.health.textContent = gs.health;
-    if (ui.food) ui.food.textContent = gs.food;
     if (ui.income) ui.income.textContent = gs.income;
-    if (ui.fireRisk) ui.fireRisk.textContent = gs.fireRisk;
     if (ui.order) ui.order.textContent = gs.order;
 
     // Update goal
@@ -1413,7 +2083,6 @@ function updateUI() {
         } else {
             if (gs.approval < 30) advice = 'Citizens are unhappy. Build more civic buildings!';
             else if (gs.health < 30) advice = 'Disease spreads! Add more wells and drains.';
-            else if (gs.food < 30) advice = 'Famine threatens! Build granaries.';
             else if (gs.fireRisk > 70) advice = 'Fire risk is high! Add more vigiles.';
             else advice = 'Your city prospers. Continue expanding!';
         }
@@ -1441,8 +2110,9 @@ function updateSidebar() {
     };
 
     const catalog = window.BuildingCatalog;
-    if (catalog) {
-        for (const def of catalog.list()) {
+    if (catalog && catalog.list) {
+        const buildings = catalog.list();
+        for (const def of buildings) {
             if (gameState.unlockedBuildings.has(def.type)) {
                 const cat = categories[def.category];
                 if (cat) cat.items.push(def);
@@ -1545,6 +2215,9 @@ function initGame() {
 
         const saveFn = () => {
             if (window.SaveAdapter) window.SaveAdapter.save(world, gameState);
+            gameState.recalculateStats();  // Recalculate stats after building changes
+            updateSidebar();
+            gameState.checkTutorialAction();  // Check if tutorial action is completed
         };
 
         const buildTool = window.BuildTool
@@ -1596,14 +2269,12 @@ function initGame() {
             gameState.citizens = 0;
             gameState.approval = 50;
             gameState.health = 50;
-            gameState.food = 50;
             gameState.income = 0;
             gameState.fireRisk = 20;
             gameState.order = 50;
             gameState.coffers = 100;
-            gameState.annualBudget = 100;
             gameState.yearSpent = 0;
-            gameState.unlockedBuildings = new Set(['via', 'zona_habitationis']);
+            gameState.unlockedBuildings = new Set(['via', 'zona_habitationis', 'zona_mercatus']);
             gameState.tutorialMode = true;
 
             saveFn();
@@ -1647,6 +2318,12 @@ function initGame() {
         console.log('   View mode: ' + (DEV_CONFIG.SHOW_FULL_MAP ? 'Full Map' : 'Tiber Island'));
         console.log('   Sample building: ' + (DEV_CONFIG.SHOW_SAMPLE_BUILDING ? 'Visible' : 'Hidden'));
         console.log('   Map source: ' + (DEV_CONFIG.LOAD_PNG_MAP ? 'PNG (' + DEV_CONFIG.LOAD_PNG_MAP + ')' : 'Procedural'));
+        
+        // Start tutorial for new players
+        setTimeout(() => {
+            updateSidebar(); // Make sure tools are visible
+            gameState.showTutorial();
+        }, 1000);
     }
     
     setupMap();

@@ -25,53 +25,39 @@
 
         <div class="top-right" id="economyBar">
             <div class="stat stat-primary">
-                <div class="label"><span class="latin-term" data-definition="Citizens (population)">Cives</span></div>
+                <div class="label"><span class="latin-term" data-definition="Citizens (population) - Your city's people. More citizens = more taxes but also more needs">Cives</span></div>
                 <div class="value" id="statCitizens">—</div>
             </div>
             <div class="stat">
-                <div class="label"><span class="latin-term" data-definition="Coffers">Aerarium</span></div>
+                <div class="label"><span class="latin-term" data-definition="Treasury - Your city's money and spending">Aerarium</span></div>
                 <div class="value" id="statCoffers">—</div>
+                <div class="value spent" id="statSpent">—</div>
+                <div class="value remaining" id="statRemaining">—</div>
             </div>
             <div class="stat">
-                <div class="label"><span class="latin-term" data-definition="Year">Annus</span></div>
+                <div class="label"><span class="latin-term" data-definition="Year - Current year in Rome's history">Annus</span></div>
                 <div class="value" id="statYear">—</div>
-            </div>
-            <div class="stat">
-                <div class="label"><span class="latin-term" data-definition="Turn budget (20 years)">Pecunia per vicennium</span></div>
-                <div class="value" id="statBudget">—</div>
-            </div>
-            <div class="stat">
-                <div class="label"><span class="latin-term" data-definition="Spent this turn">Impensa</span></div>
-                <div class="value" id="statSpent">—</div>
             </div>
 
             <div class="stat stat-compact">
-                <div class="label"><span class="latin-term" data-definition="Approval">Favor</span></div>
+                <div class="label"><span class="latin-term" data-definition="Approval (happiness) - How happy your citizens are. Keep this high to prevent unrest">Favor</span></div>
                 <div class="value" id="statApproval">—</div>
             </div>
             <div class="stat stat-compact">
-                <div class="label"><span class="latin-term" data-definition="Health">Salus</span></div>
+                <div class="label"><span class="latin-term" data-definition="Health - Citizen well-being. Improved by wells and good sanitation">Salus</span></div>
                 <div class="value" id="statHealth">—</div>
             </div>
             <div class="stat stat-compact">
-                <div class="label"><span class="latin-term" data-definition="Food">Cibus</span></div>
-                <div class="value" id="statFood">—</div>
-            </div>
-            <div class="stat stat-compact">
-                <div class="label"><span class="latin-term" data-definition="Income">Vectigal</span></div>
+                <div class="label"><span class="latin-term" data-definition="Income - Money earned from taxes and trade. Build forums to increase this">Vectigal</span></div>
                 <div class="value" id="statIncome">—</div>
             </div>
             <div class="stat stat-compact">
-                <div class="label"><span class="latin-term" data-definition="Fire risk">Periculum ignis</span></div>
-                <div class="value" id="statFireRisk">—</div>
-            </div>
-            <div class="stat stat-compact">
-                <div class="label"><span class="latin-term" data-definition="Order">Ordo</span></div>
+                <div class="label"><span class="latin-term" data-definition="Order (security) - Public safety. Improved by walls and government buildings">Ordo</span></div>
                 <div class="value" id="statOrder">—</div>
             </div>
 
-            <button class="end-year" id="endYearBtn" title="Advance 20 years">Progredere</button>
-            <button class="top-action" id="saveBtn" title="Save">Serva</button>
+            <button class="end-year" id="endYearBtn" title="Advance 20 years - Progress time and grow your city">Progredere</button>
+            <button class="top-action" id="saveBtn" title="Save your game progress">Serva</button>
             <button class="top-action danger" id="restartBtn" title="Restart City (clears placed buildings and resets economy)">Ab initio</button>
         </div>
     </header>
@@ -96,18 +82,6 @@
 
         <div class="canvas-wrap">
             <canvas id="gameCanvas"></canvas>
-        </div>
-    </div>
-
-    <div class="modal-backdrop" id="eventModal" aria-hidden="true">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title" id="eventTitle">—</div>
-                <div class="modal-subtitle" id="eventSubtitle">—</div>
-            </div>
-            <div class="modal-body" id="eventBody">—</div>
-            <div class="modal-meta" id="eventMeta"></div>
-            <div class="modal-choices" id="eventChoices"></div>
         </div>
     </div>
 

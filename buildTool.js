@@ -248,9 +248,6 @@
             const variant = this._computeVariant(def, originX, originY);
             const cost = this._currentCost(def, variant.baseCost);
             if (!this._canAfford(cost)) {
-                if (this.economy && (this.economy.yearSpent + cost > this.economy.annualBudget)) {
-                    return { ok: false, reason: 'Non licet. (Not allowed) Pecunia annua superata. (Over budget)' };
-                }
                 return { ok: false, reason: 'Non licet. (Not allowed) Aerarium vacuum. (No coffers)' };
             }
 
@@ -293,18 +290,12 @@
 
         _currentCost(def, baseOverride = null) {
             const base = baseOverride !== null ? baseOverride : (typeof def.cost === 'number' ? def.cost : 0);
-            if (!this.economy) return base;
-
-            // Small penalty: once you go over budget, subsequent builds cost +10%.
-            const overBudget = this.economy.yearSpent > this.economy.annualBudget;
-            const multiplier = overBudget ? 1.10 : 1.0;
-            return Math.ceil(base * multiplier);
+            return base;
         }
 
         _canAfford(cost) {
             if (!this.economy) return true;
-            if (this.economy.coffers < cost) return false;
-            return (this.economy.yearSpent + cost) <= this.economy.annualBudget;
+            return this.economy.coffers >= cost;
         }
 
         _spend(cost) {
@@ -387,10 +378,19 @@
             const cost = validation.cost;
 
             if (this._isZone(def)) {
-                // Paint zone on tiles
-                for (let dy = 0; dy < h; dy++) {
-                    for (let dx = 0; dx < w; dx++) {
-                        this.world.setZone(x + dx, y + dy, def.zoneType);
+                if (def.zoneType === 'housing') {
+                    // For residential zones, just paint the zone - houses will grow organically over time
+                    for (let dy = 0; dy < h; dy++) {
+                        for (let dx = 0; dx < w; dx++) {
+                            this.world.setZone(x + dx, y + dy, def.zoneType);
+                        }
+                    }
+                } else {
+                    // For other zones, just paint the zone
+                    for (let dy = 0; dy < h; dy++) {
+                        for (let dx = 0; dx < w; dx++) {
+                            this.world.setZone(x + dx, y + dy, def.zoneType);
+                        }
                     }
                 }
                 if (!silent) {
@@ -474,6 +474,62 @@
             this.renderer.requestRender();
 
             return { id, building, cost };
+        }
+
+        _placeHousesInZone(zoneX, zoneY, zoneW, zoneH, silent = false) {
+            const houseDef = this.catalog.get('domus');
+            if (!houseDef) return;
+
+            // Try to place houses in the zoned area, but only where there's space and road access
+            for (let dy = 0; dy < zoneH; dy += 3) {  // Space houses with some gap (house is 2x2, so +1 gap)
+                for (let dx = 0; dx < zoneW; dx += 3) {
+                    const houseX = zoneX + dx;
+                    const houseY = zoneY + dy;
+                    
+                    // Check if we can place a house here
+                    const validation = this.validatePlacement(houseX, houseY, houseDef);
+                    if (validation.ok) {
+                        // Place the house directly
+                        const id = uuid();
+                        const placedAt = Date.now();
+                        const variant = validation.variant || this._computeVariant(houseDef, houseX, houseY);
+                        
+                        const building = {
+                            id,
+                            type: houseDef.type,
+                            latinName: variant.latinName,
+                            englishName: variant.englishName,
+                            x: houseX,
+                            y: houseY,
+                            width: houseDef.size.w,
+                            height: houseDef.size.h,
+                            origin: { x: houseX, y: houseY },
+                            size: { w: houseDef.size.w, h: houseDef.size.h },
+                            rotation: 0,
+                            placedAt,
+                            name: variant.latinName,
+                            color: variant.color
+                        };
+
+                        if (typeof this.world.addPlacedBuilding === 'function') {
+                            this.world.addPlacedBuilding(building);
+                        } else {
+                            this.world.buildings.push(building);
+                        }
+
+                        if (typeof this.world.occupyBuildingFootprint === 'function') {
+                            this.world.occupyBuildingFootprint(building);
+                        }
+
+                        // Mark the zone as housing around the house
+                        for (let zy = Math.max(0, houseY - 1); zy <= Math.min(this.world.height - 1, houseY + 2); zy++) {
+                            for (let zx = Math.max(0, houseX - 1); zx <= Math.min(this.world.width - 1, houseX + 2); zx++) {
+                                this.world.setZone(zx, zy, 'housing');
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         demolish() {
@@ -596,14 +652,18 @@
 
             const cost = def ? this._currentCost(def, this._computeVariant(def, this.hover.x, this.hover.y).baseCost) : null;
             const coffers = this.economy ? this.economy.coffers : null;
-            const budget = this.economy ? this.economy.annualBudget : null;
             const spent = this.economy ? this.economy.yearSpent : null;
-            const over = this.economy ? (this.economy.yearSpent > this.economy.annualBudget) : false;
 
             if (this.ui.status) {
                 const costText = cost !== null ? ` | Pretium: ${cost}` : '';
-                const econText = this.economy ? ` | Aerarium: ${coffers} | Impensa/Pecunia: ${spent}/${budget}${over ? ' (poena)' : ''}` : '';
-                this.ui.status.textContent = `Instrumentum: ${selectedLabel} | Vestigium: ${footprint} | Sub: [${this.hover.x}, ${this.hover.y}]${costText}${econText}`;
+                const econText = this.economy ? ` | Aerarium: ${coffers} | Impensa: ${spent}` : '';
+                
+                // Check for house hover info
+                const buildingId = this.getBuildingIdAt(this.hover.x, this.hover.y);
+                const building = buildingId ? this.getBuildingById(buildingId) : null;
+                const houseInfo = building && building.type === 'domus' ? ` | Domus: ${building.latinName} (${building.englishName}) - Cives: 4` : '';
+                
+                this.ui.status.textContent = `Instrumentum: ${selectedLabel} | Vestigium: ${footprint} | Sub: [${this.hover.x}, ${this.hover.y}]${costText}${econText}${houseInfo}`;
             }
 
             // Button highlighting
