@@ -78,7 +78,12 @@
 
         _isRoadBuilding(building) {
             if (!building) return false;
-            return building.type === 'via' || building.type === 'pons';
+            return building.type === 'via' || building.type === 'via_lapidea' || building.type === 'pons';
+        }
+
+        _isZone(building) {
+            if (!building) return false;
+            return building.kind === 'zone';
         }
 
         _hasAdjacentRoad(originX, originY, w, h) {
@@ -174,7 +179,16 @@
                 return { ok: false, reason: 'Non licet. (Not allowed) Extra fines. (Out of bounds)' };
             }
 
-            // Occupancy
+            // For zones, no occupancy check, just terrain
+            if (this._isZone(def)) {
+                const terrain = this._tileTypeAt(originX, originY);
+                if (!this._isAllowedGround(terrain)) {
+                    return { ok: false, reason: 'Non licet. (Not allowed) Debet esse ager aut harena. (Must be field/sand)' };
+                }
+                return { ok: true, cost: 0, variant: { latinName: def.latinName, englishName: def.englishName, color: def.color, baseCost: 0 } };
+            }
+
+            // For buildings: Occupancy
             for (let dy = 0; dy < h; dy++) {
                 for (let dx = 0; dx < w; dx++) {
                     const tx = originX + dx;
@@ -184,7 +198,7 @@
                 }
             }
 
-            // Terrain constraints
+            // Terrain constraints for buildings
             const terrainSet = new Set();
             for (let dy = 0; dy < h; dy++) {
                 for (let dx = 0; dx < w; dx++) {
@@ -192,14 +206,14 @@
                 }
             }
 
-            if (def.type === 'via') {
-                // Viae (roads) only on Ager/Harena.
+            if (def.type === 'via' || def.type === 'via_lapidea') {
+                // Roads only on Ager/Harena.
                 const t = this._tileTypeAt(originX, originY);
                 if (!this._isAllowedGround(t)) {
                     return { ok: false, reason: 'Non licet. (Not allowed) Via solum in agro/harena. (Road only on field/sand)' };
                 }
             } else if (def.type === 'pons') {
-                // Pons (bridge) only on Flumen.
+                // Bridge only on Flumen.
                 const t = this._tileTypeAt(originX, originY);
                 if (t !== 'flumen') {
                     return { ok: false, reason: 'Non licet. (Not allowed) Pons solum in flumine. (Bridge only on river)' };
@@ -372,6 +386,23 @@
             const variant = validation.variant || this._computeVariant(def, x, y);
             const cost = validation.cost;
 
+            if (this._isZone(def)) {
+                // Paint zone on tiles
+                for (let dy = 0; dy < h; dy++) {
+                    for (let dx = 0; dx < w; dx++) {
+                        this.world.setZone(x + dx, y + dy, def.zoneType);
+                    }
+                }
+                if (!silent) {
+                    this.toast(`${variant.latinName} posita. (${variant.englishName} placed)`, 'info');
+                }
+                this.onSave();
+                this.updateUI();
+                this.renderer.requestRender();
+                return { zoneType: def.zoneType };
+            }
+
+            // Building placement
             const id = uuid();
             const placedAt = Date.now();
 
@@ -408,9 +439,22 @@
             if (!silent) {
                 const msgByType = {
                     via: 'Via posita. (Road placed)',
+                    via_lapidea: 'Via lapidea posita. (Paved road placed)',
                     pons: 'Pons positus. (Bridge placed)',
                     domus: 'Domus posita. (House placed)',
-                    forum: 'Forum positum. (Market placed)'
+                    forum: 'Forum positum. (Market placed)',
+                    puteus: 'Puteus positus. (Well placed)',
+                    cloaca: 'Cloaca posita. (Drainage placed)',
+                    vigiles: 'Vigiles positi. (Fire watch placed)',
+                    murus: 'Murus positus. (Wall placed)',
+                    curia: 'Curia posita. (Council house placed)',
+                    horrea: 'Horrea posita. (Granary placed)',
+                    portus: 'Portus positus. (Port placed)',
+                    aquaeductus: 'Aquaeductus positus. (Aqueduct placed)',
+                    thermae: 'Thermae positae. (Baths placed)',
+                    circus: 'Circus positus. (Circus placed)',
+                    amphitheatrum: 'Amphitheatrum positum. (Amphitheater placed)',
+                    templum_maius: 'Templum maius positum. (Great temple placed)'
                 };
                 this.toast(msgByType[def.type] || 'Recte. (OK)', 'info');
             }
