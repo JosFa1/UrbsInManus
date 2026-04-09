@@ -1,0 +1,1854 @@
+{
+  "petitions": [
+    {
+      "id": "mark_first_allotments",
+      "group": "veterans",
+      "groupLabel": "Veterans",
+      "petitionerName": "Gaius Ruso",
+      "petitionerTitle": "Veteran spokesman",
+      "petitionerPortraitUrl": "assets/portraits/surveyor-ruso.svg",
+      "title": "Mark the first allotments",
+      "body": "The surveyor says he can start marking out land today, but only if you decide whose claims count first. The veterans want their allotments set before civilians start spreading out. A few settlers argue that if you do that, the best land will be gone before the colony has even taken shape. This is not really about lines on a field. It is about whose promise comes first.",
+      "options": [
+        {
+          "id": "mark_veterans_first",
+          "label": "Mark the veterans first.",
+          "tone": "primary",
+          "effects": {
+            "orderDelta": 1,
+            "factionDeltas": { "veterans": 3, "settlers": -1, "locals": -1 }
+          },
+          "roll": { "factionBias": { "veterans": 0.7 }, "traitBias": { "harshness": 0.3 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Veterans calm down, order rises, early security improves.",
+              "effects": {
+                "orderDelta": 2,
+                "factionDeltas": { "veterans": 4, "garrison": 2 },
+                "setFlags": ["veterans_promised_land"],
+                "clearFlags": ["land_not_surveyed"]
+              }
+            },
+            "mixed": {
+              "resultText": "Veterans calm down, settlers resent favoritism.",
+              "effects": {
+                "orderDelta": 1,
+                "factionDeltas": { "veterans": 3, "settlers": -3 },
+                "setFlags": ["veterans_promised_land"],
+                "clearFlags": ["land_not_surveyed"]
+              }
+            },
+            "bad": {
+              "resultText": "Local claim dispute starts near the marked fields.",
+              "effects": {
+                "orderDelta": -2,
+                "factionDeltas": { "locals": -5 },
+                "setFlags": ["boundary_dispute"],
+                "schedulePetitions": [
+                  { "afterTurns": 2, "ids": ["boundary_stones_torn_up"], "logText": "Arguments over markers spread." }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "survey_before_granting",
+          "label": "Survey everything before granting anything.",
+          "tone": "secondary",
+          "effects": {
+            "laborDelta": -3,
+            "orderDelta": -1
+          },
+          "roll": { "traitBias": { "legalism": 1.0, "integrity": 0.4 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Legalist trait rises, future land disputes less likely.",
+              "effects": {
+                "traitDeltas": { "legalism": 8, "integrity": 3 },
+                "orderDelta": 1,
+                "clearFlags": ["land_not_surveyed"]
+              }
+            },
+            "mixed": {
+              "resultText": "Everyone is annoyed, but later petitions get safer outcomes.",
+              "effects": {
+                "orderDelta": -1,
+                "traitDeltas": { "legalism": 4 },
+                "flagValues": { "survey_plan": true }
+              }
+            },
+            "bad": {
+              "resultText": "Veterans think you are stalling and faction pressure rises.",
+              "effects": {
+                "orderDelta": -2,
+                "factionDeltas": { "veterans": -5 },
+                "setFlags": ["veterans_promised_land"]
+              }
+            }
+          }
+        },
+        {
+          "id": "split_by_lot",
+          "label": "Split priority by lot.",
+          "tone": "primary",
+          "effects": {
+            "orderDelta": 0,
+            "traitDeltas": { "integrity": 2 }
+          },
+          "roll": { "traitBias": { "integrity": 0.9, "generosity": 0.3 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Fairness rumor spreads, settler morale rises.",
+              "effects": {
+                "orderDelta": 1,
+                "factionDeltas": { "settlers": 4, "locals": 2 },
+                "traitDeltas": { "integrity": 3 }
+              }
+            },
+            "mixed": {
+              "resultText": "No one is happy, but no one explodes.",
+              "effects": {
+                "orderDelta": 0,
+                "factionDeltas": { "veterans": -1, "settlers": -1 }
+              }
+            },
+            "bad": {
+              "resultText": "Veterans take the lottery as an insult and order slips.",
+              "effects": {
+                "orderDelta": -3,
+                "factionDeltas": { "veterans": -6 }
+              }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "first_well",
+      "group": "settlers",
+      "groupLabel": "Settlers",
+      "petitionerName": "Aelia Sabina",
+      "petitionerTitle": "Quartermaster",
+      "petitionerPortraitUrl": "assets/portraits/quartermaster-sabina.svg",
+      "title": "The first well",
+      "body": "The nearest clean water is workable for now, but only if people keep walking and no carts break. The settlers want a proper well sunk near the first housing. Merchants want the same labor kept on roads so supplies stop arriving late. The decision sounds small until you remember every part of the colony uses water and everybody notices who gets the first convenience.",
+      "options": [
+        {
+          "id": "dig_now",
+          "label": "Dig the well now.",
+          "tone": "primary",
+          "effects": { "laborDelta": -3, "storesDelta": 1 },
+          "roll": { "statBias": { "labor": 0.7, "stores": 0.4 }, "factionBias": { "settlers": 0.6 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Settler morale rises, order rises, disease risk lowered later.",
+              "effects": {
+                "orderDelta": 2,
+                "factionDeltas": { "settlers": 4 },
+                "scheduledEffects": [
+                  { "afterTurns": 3, "effects": { "orderDelta": 1 }, "logText": "Clean water keeps tempers down." }
+                ]
+              }
+            },
+            "mixed": {
+              "resultText": "Labor bottleneck slows other work.",
+              "effects": {
+                "laborDelta": -3,
+                "orderDelta": 1,
+                "factionDeltas": { "settlers": 2 }
+              }
+            },
+            "bad": {
+              "resultText": "Bad ground wastes labor and the well underperforms.",
+              "effects": {
+                "laborDelta": -4,
+                "storesDelta": -2,
+                "orderDelta": -2
+              }
+            }
+          }
+        },
+        {
+          "id": "delay_for_roads",
+          "label": "Delay the well and improve access roads first.",
+          "tone": "secondary",
+          "effects": { "laborDelta": -2, "storesDelta": 1 },
+          "roll": { "factionBias": { "merchants": 0.7 }, "traitBias": { "legalism": 0.3 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Supply flow improves, merchants like it.",
+              "effects": {
+                "storesDelta": 2,
+                "factionDeltas": { "merchants": 4 },
+                "orderDelta": 1
+              }
+            },
+            "mixed": {
+              "resultText": "Settlers grumble but cope.",
+              "effects": {
+                "factionDeltas": { "settlers": -2 },
+                "orderDelta": -1
+              }
+            },
+            "bad": {
+              "resultText": "Water line incident or sickness rumor lowers order.",
+              "effects": {
+                "orderDelta": -3,
+                "storesDelta": -1,
+                "factionDeltas": { "settlers": -3 }
+              }
+            }
+          }
+        },
+        {
+          "id": "hire_private_crew",
+          "label": "Hire a private crew to do it quickly.",
+          "tone": "primary",
+          "effects": { "treasuryDelta": -500, "laborDelta": -1, "storesDelta": 1 },
+          "roll": { "statBias": { "treasury": 0.6 }, "traitBias": { "integrity": 0.3 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Both road work and well progress continue.",
+              "effects": { "storesDelta": 2, "orderDelta": 1, "laborDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Treasury hit plus contractor influence rises.",
+              "effects": {
+                "treasuryDelta": -250,
+                "setFlags": ["private_contractor_empowered"],
+                "factionDeltas": { "merchants": 2 }
+              }
+            },
+            "bad": {
+              "resultText": "Crew cuts corners, later repair petition appears.",
+              "effects": {
+                "orderDelta": -2,
+                "setFlags": ["private_contractor_empowered"],
+                "scheduledEffects": [
+                  { "afterTurns": 3, "effects": { "orderDelta": -1 }, "logText": "Repairs and complaints follow shoddy work." }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "timber_from_grove",
+      "group": "veterans",
+      "groupLabel": "Veterans",
+      "petitionerName": "Gaius Ruso",
+      "petitionerTitle": "Veteran spokesman (opposed by Neria)",
+      "petitionerPortraitUrl": "assets/portraits/surveyor-ruso.svg",
+      "title": "Timber from the grove",
+      "body": "There is good timber not far from camp and everyone knows it. The problem is that the local families treat part of that grove as set apart, and they are already watching to see what you do. The engineer says the colony needs wood now, not after a philosophical discussion. Neria says if you take it carelessly, people will remember the carelessness longer than the trees.",
+      "options": [
+        {
+          "id": "cut_freely",
+          "label": "Cut freely and post guards.",
+          "tone": "primary",
+          "effects": { "laborDelta": 1, "orderDelta": 1, "factionDeltas": { "garrison": 1, "locals": -2 } },
+          "roll": { "traitBias": { "harshness": 0.6 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Building speed rises, security looks firm.",
+              "effects": { "laborDelta": 2, "orderDelta": 1, "factionDeltas": { "veterans": 1, "garrison": 2 } }
+            },
+            "mixed": {
+              "resultText": "Locals resent it, but do not act immediately.",
+              "effects": { "factionDeltas": { "locals": -3 }, "orderDelta": 0 }
+            },
+            "bad": {
+              "resultText": "Local shrine or sacred grove anger flag set, later unrest.",
+              "effects": {
+                "orderDelta": -2,
+                "factionDeltas": { "locals": -5 },
+                "setFlags": ["local_shrine_disturbed"],
+                "schedulePetitions": [
+                  { "afterTurns": 2, "ids": ["followup_shrine_vandalized"], "logText": "Whispers gather around the shrine." }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "cut_outside_sacred",
+          "label": "Cut only outside the marked sacred area.",
+          "tone": "secondary",
+          "effects": { "laborDelta": -1, "factionDeltas": { "locals": 2 } },
+          "roll": { "traitBias": { "piety": 1.0 }, "factionBias": { "locals": 0.8 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Local relations rise, pious trait rises.",
+              "effects": { "factionDeltas": { "locals": 4 }, "traitDeltas": { "piety": 6 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Less timber gained, slower early building.",
+              "effects": { "laborDelta": -2, "storesDelta": -1 }
+            },
+            "bad": {
+              "resultText": "Veterans think locals are being handled too softly.",
+              "effects": { "factionDeltas": { "veterans": -3 }, "orderDelta": -1 }
+            }
+          }
+        },
+        {
+          "id": "pay_local_contract",
+          "label": "Pay local cutters and make it a contract.",
+          "tone": "primary",
+          "effects": { "treasuryDelta": -350, "factionDeltas": { "locals": 1, "merchants": 1 } },
+          "roll": { "traitBias": { "generosity": 0.7, "integrity": 0.4 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Timber gained, local relations rise, merchant confidence rises.",
+              "effects": { "laborDelta": 2, "factionDeltas": { "locals": 3, "merchants": 2 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "More expensive, contractor class grows.",
+              "effects": { "treasuryDelta": -250, "setFlags": ["private_contractor_empowered"], "factionDeltas": { "merchants": 1 } }
+            },
+            "bad": {
+              "resultText": "Council accuses you of wasting public leverage.",
+              "effects": { "factionDeltas": { "council": -3 }, "orderDelta": -1 }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "bread_before_stone",
+      "group": "council",
+      "groupLabel": "Council",
+      "petitionerName": "Aelia Sabina",
+      "petitionerTitle": "Against Lucius Cassian",
+      "petitionerPortraitUrl": "assets/portraits/quartermaster-sabina.svg",
+      "title": "Bread before stone",
+      "body": "Cassian wants work started on a proper public square so the colony stops looking like a camp. Sabina wants a grain store built first because the supply margin is thinner than people think. Both are right in the way that makes choices annoying. A square makes the place feel real. Grain makes it survive the part where it still is not.",
+      "options": [
+        {
+          "id": "granary_first",
+          "label": "Build the granary first.",
+          "tone": "primary",
+          "effects": { "treasuryDelta": -700, "storesDelta": 3, "laborDelta": -2 },
+          "roll": { "statBias": { "stores": 0.8 }, "traitBias": { "legalism": 0.4 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Stores stabilize, later shortages softened.",
+              "effects": {
+                "storesDelta": 4,
+                "orderDelta": 1,
+                "scheduledEffects": [
+                  { "afterTurns": 4, "effects": { "storesDelta": 2 }, "logText": "The granary smooths the worst shortages." }
+                ]
+              }
+            },
+            "mixed": {
+              "resultText": "Council says you think too small.",
+              "effects": { "factionDeltas": { "council": -2 }, "orderDelta": 0 }
+            },
+            "bad": {
+              "resultText": "Colony looks temporary too long and prestige slips.",
+              "effects": { "factionDeltas": { "council": -3 }, "favorInRomeDelta": -1, "orderDelta": -1 }
+            }
+          }
+        },
+        {
+          "id": "forum_foundation_first",
+          "label": "Build the forum foundation first.",
+          "tone": "primary",
+          "effects": { "treasuryDelta": -700, "laborDelta": -3, "factionDeltas": { "council": 1 } },
+          "roll": { "factionBias": { "council": 0.9 }, "traitBias": { "integrity": 0.2 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Council approval rises, order rises slightly.",
+              "effects": { "factionDeltas": { "council": 4 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Stores remain tight.",
+              "effects": { "storesDelta": -2, "orderDelta": 0 }
+            },
+            "bad": {
+              "resultText": "Grain disruption later hits harder because you chose appearance first.",
+              "effects": { "storesDelta": -4, "setFlags": ["grain_shortage_risk"], "orderDelta": -1 }
+            }
+          }
+        },
+        {
+          "id": "both_half_pace",
+          "label": "Start both with half pace.",
+          "tone": "secondary",
+          "effects": { "treasuryDelta": -800, "laborDelta": -4 },
+          "roll": { "traitBias": { "integrity": 0.4 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "No faction anger spike.",
+              "effects": { "orderDelta": 1, "factionDeltas": { "council": 1, "settlers": 1 } }
+            },
+            "mixed": {
+              "resultText": "Both finish slowly and labor stays strained.",
+              "effects": { "laborDelta": -4, "orderDelta": -1 }
+            },
+            "bad": {
+              "resultText": "Half-built projects become a symbol of drift.",
+              "effects": { "orderDelta": -3, "factionDeltas": { "council": -3 }, "setFlags": ["roads_neglected"] }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "rental_housing_offer",
+      "group": "merchants",
+      "groupLabel": "Merchants",
+      "petitionerName": "Marcia Luperca",
+      "petitionerTitle": "Speaking for an investor",
+      "petitionerPortraitUrl": "assets/portraits/merchant.svg",
+      "title": "A man offers rental housing",
+      "body": "A local investor says he can put up dense rental housing faster than the colony can build it itself. He wants the right plot, light oversight, and a promise that rent disputes will be handled in his favor. It is a clean offer if you only look at the speed. The part that is less clean is that whoever houses people first gets a lot of quiet power.",
+      "options": [
+        {
+          "id": "approve_light_oversight",
+          "label": "Approve the build with light oversight.",
+          "tone": "primary",
+          "effects": { "treasuryDelta": -200, "factionDeltas": { "merchants": 2 } },
+          "roll": { "traitBias": { "integrity": -0.4 }, "factionBias": { "merchants": 0.7 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Fast housing, settler pressure eased, treasury spared.",
+              "effects": { "orderDelta": 1, "factionDeltas": { "settlers": 3, "merchants": 2 } }
+            },
+            "mixed": {
+              "resultText": "Cheap_housing_built flag set, future sanitation petition.",
+              "effects": {
+                "setFlags": ["cheap_housing_built", "private_contractor_empowered"],
+                "factionDeltas": { "settlers": 2 },
+                "schedulePetitions": [
+                  { "afterTurns": 2, "ids": ["followup_cheap_roofs_fail"], "logText": "Fast work shows its seams." }
+                ]
+              }
+            },
+            "bad": {
+              "resultText": "Collapse rumor or abusive rents hurt order.",
+              "effects": {
+                "orderDelta": -3,
+                "factionDeltas": { "settlers": -3, "council": -2 },
+                "setFlags": ["cheap_housing_built", "private_contractor_empowered"],
+                "schedulePetitions": [
+                  { "afterTurns": 1, "ids": ["followup_cheap_roofs_fail"], "logText": "Tenants complain openly after the rain." }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "approve_with_limits",
+          "label": "Approve it with inspection and rent limits.",
+          "tone": "secondary",
+          "effects": { "treasuryDelta": -350, "orderDelta": 0 },
+          "roll": { "traitBias": { "legalism": 0.8, "integrity": 0.6 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Safer housing, legalist trait rises.",
+              "effects": { "traitDeltas": { "legalism": 6 }, "orderDelta": 1, "factionDeltas": { "settlers": 2 } }
+            },
+            "mixed": {
+              "resultText": "Slower and less profitable, investor resentful.",
+              "effects": { "factionDeltas": { "merchants": -2 }, "orderDelta": 0 }
+            },
+            "bad": {
+              "resultText": "Investor backs out and says you made it not worth doing.",
+              "effects": { "factionDeltas": { "settlers": -2, "merchants": -3 }, "orderDelta": -1 }
+            }
+          }
+        },
+        {
+          "id": "deny_private",
+          "label": "Deny private control and keep housing public.",
+          "tone": "danger",
+          "effects": { "orderDelta": -1, "factionDeltas": { "merchants": -2 } },
+          "roll": { "traitBias": { "integrity": 0.7 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Council respects control, private influence checked.",
+              "effects": { "factionDeltas": { "council": 3 }, "traitDeltas": { "integrity": 3 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Housing shortage remains.",
+              "effects": { "factionDeltas": { "settlers": -2 }, "orderDelta": -1 }
+            },
+            "bad": {
+              "resultText": "Settlers blame you for avoidable delay.",
+              "effects": { "factionDeltas": { "settlers": -4 }, "orderDelta": -2 }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "veterans_high_ground",
+      "group": "veterans",
+      "groupLabel": "Veterans",
+      "petitionerName": "Titus Fadius",
+      "petitionerTitle": "Veteran officer",
+      "petitionerPortraitUrl": "assets/portraits/veteran-spokesman.svg",
+      "title": "Veterans want the high ground",
+      "body": "The veterans want the higher, drier plots near the defended side of the camp. Settlers say those plots should be mixed so the colony does not split into favored and unfavored districts from the first month. Fadius says the men earned first choice and that a colony without respected veterans will turn soft fast. He is not wrong, but he is not neutral either.",
+      "options": [
+        {
+          "id": "give_high_ground",
+          "label": "Give veterans the high ground.",
+          "tone": "primary",
+          "effects": { "orderDelta": 1, "factionDeltas": { "veterans": 3, "garrison": 1, "settlers": -1 } },
+          "roll": { "factionBias": { "veterans": 0.8 }, "traitBias": { "harshness": 0.3 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Veteran favor jumps, security stronger.",
+              "effects": { "factionDeltas": { "veterans": 5, "garrison": 2 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Settlers form resentment memory.",
+              "effects": { "factionDeltas": { "settlers": -3 }, "orderDelta": 0 }
+            },
+            "bad": {
+              "resultText": "Locals see a fortified caste forming and relations worsen.",
+              "effects": { "factionDeltas": { "locals": -4 }, "orderDelta": -2 }
+            }
+          }
+        },
+        {
+          "id": "mix_plots",
+          "label": "Mix plots by district.",
+          "tone": "secondary",
+          "effects": { "orderDelta": 0, "traitDeltas": { "integrity": 1 } },
+          "roll": { "traitBias": { "integrity": 0.7 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Long term district balance improves.",
+              "effects": { "orderDelta": 1, "factionDeltas": { "settlers": 2, "locals": 1 }, "traitDeltas": { "integrity": 2 } }
+            },
+            "mixed": {
+              "resultText": "Veterans cool toward you.",
+              "effects": { "factionDeltas": { "veterans": -2 }, "orderDelta": 0 }
+            },
+            "bad": {
+              "resultText": "Veterans say promises are being reinterpreted.",
+              "effects": {
+                "orderDelta": -2,
+                "factionDeltas": { "veterans": -5 },
+                "flagValues": { "veterans_denied_high_ground": true },
+                "schedulePetitions": [
+                  { "afterTurns": 2, "ids": ["followup_veterans_remember_ridge"], "logText": "The ridge becomes a repeated argument." }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "reserve_public_use",
+          "label": "Reserve part of the high ground for public uses and split the rest.",
+          "tone": "secondary",
+          "effects": { "orderDelta": 0, "laborDelta": -1 },
+          "roll": { "traitBias": { "legalism": 0.4, "integrity": 0.4 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Compromise works, order steady.",
+              "effects": { "orderDelta": 1, "factionDeltas": { "veterans": 2, "settlers": 1 } }
+            },
+            "mixed": {
+              "resultText": "Nobody loves it.",
+              "effects": { "factionDeltas": { "veterans": -1, "settlers": -1 }, "orderDelta": 0 }
+            },
+            "bad": {
+              "resultText": "Both sides think you dodged the real choice.",
+              "effects": { "factionDeltas": { "council": -2, "veterans": -2, "settlers": -2 }, "orderDelta": -2 }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "shrine_at_crossing",
+      "group": "locals",
+      "groupLabel": "Locals",
+      "petitionerName": "Neria",
+      "petitionerTitle": "With a small priestly group",
+      "petitionerPortraitUrl": "assets/portraits/interpreter-neria.svg",
+      "title": "The shrine at the crossing",
+      "body": "A path your workers want to widen cuts close to a local shrine. The engineer says shifting the road would be annoying and expensive. Neria says leaving the shrine alone would matter more than the road itself because people are watching for signs that Roman rule means total disregard. This is the sort of thing that can stay small or become symbolic very quickly.",
+      "options": [
+        {
+          "id": "move_road",
+          "label": "Move the road.",
+          "tone": "secondary",
+          "effects": { "laborDelta": -4, "orderDelta": 0 },
+          "roll": { "traitBias": { "piety": 1.0 }, "factionBias": { "locals": 0.8 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Local relations rise, pious reputation rises.",
+              "effects": { "factionDeltas": { "locals": 5 }, "traitDeltas": { "piety": 6 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Labor and time cost.",
+              "effects": { "laborDelta": -3, "orderDelta": 0, "factionDeltas": { "locals": 2 } }
+            },
+            "bad": {
+              "resultText": "Merchants complain traffic is now worse than it needed to be.",
+              "effects": { "factionDeltas": { "merchants": -3 }, "storesDelta": -1, "orderDelta": -1 }
+            }
+          }
+        },
+        {
+          "id": "keep_road_compensate",
+          "label": "Keep the road and compensate the shrine keepers.",
+          "tone": "primary",
+          "effects": { "treasuryDelta": -300, "traitDeltas": { "integrity": 1 } },
+          "roll": { "traitBias": { "integrity": 0.7, "generosity": 0.4 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Practical compromise, locals partly satisfied.",
+              "effects": { "factionDeltas": { "locals": 2 }, "orderDelta": 1, "traitDeltas": { "integrity": 2 } }
+            },
+            "mixed": {
+              "resultText": "Treasury cost and some priestly anger remains.",
+              "effects": { "treasuryDelta": -200, "factionDeltas": { "locals": -1 }, "orderDelta": 0 }
+            },
+            "bad": {
+              "resultText": "Compensation is read as an insult, not respect.",
+              "effects": {
+                "orderDelta": -2,
+                "factionDeltas": { "locals": -4 },
+                "setFlags": ["local_shrine_disturbed"],
+                "schedulePetitions": [
+                  { "afterTurns": 2, "ids": ["followup_shrine_vandalized"], "logText": "The shrine becomes a point of anger." }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "keep_road_decree",
+          "label": "Keep the road and post a decree.",
+          "tone": "danger",
+          "effects": { "orderDelta": 1, "traitDeltas": { "harshness": 2 } },
+          "roll": { "traitBias": { "harshness": 1.0 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Road efficiency preserved, harsh reputation rises.",
+              "effects": { "traitDeltas": { "harshness": 5 }, "factionDeltas": { "merchants": 2 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Locals fall quiet for now.",
+              "effects": { "factionDeltas": { "locals": -2 }, "orderDelta": 0 }
+            },
+            "bad": {
+              "resultText": "Shrine disturbance becomes a future unrest trigger.",
+              "effects": {
+                "orderDelta": -3,
+                "factionDeltas": { "locals": -5 },
+                "setFlags": ["local_shrine_disturbed"],
+                "schedulePetitions": [
+                  { "afterTurns": 2, "ids": ["followup_shrine_vandalized"], "logText": "The shrine is watched, and then it is touched." }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "market_day_now_or_later",
+      "group": "merchants",
+      "groupLabel": "Merchants",
+      "petitionerName": "Marcia Luperca",
+      "petitionerTitle": "With town traders",
+      "petitionerPortraitUrl": "assets/portraits/merchant.svg",
+      "title": "Market day now or later",
+      "body": "The merchants want a designated market strip now while the camp still has room to shape around it. Sabina says food storage and roads matter more than designated stalls. Cassian says a visible market would make the colony feel less provisional. He is right, which is part of the problem, because a market also decides who gets to start earning first.",
+      "options": [
+        {
+          "id": "official_market_now",
+          "label": "Lay out a small official market now.",
+          "tone": "primary",
+          "effects": { "laborDelta": -3, "treasuryDelta": 200, "factionDeltas": { "merchants": 2 } },
+          "roll": { "factionBias": { "merchants": 0.8 }, "statBias": { "stores": 0.3 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Merchant confidence rises, early revenue begins.",
+              "effects": { "treasuryDelta": 150, "factionDeltas": { "merchants": 4 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Labor diverted from basic works.",
+              "effects": { "laborDelta": -3, "storesDelta": -1, "orderDelta": 0 }
+            },
+            "bad": {
+              "resultText": "Grain leakage and crowding create shortage pressure.",
+              "effects": { "storesDelta": -4, "orderDelta": -2, "setFlags": ["grain_shortage_risk"] }
+            }
+          }
+        },
+        {
+          "id": "delay_market",
+          "label": "Delay until the granary and road are secure.",
+          "tone": "secondary",
+          "effects": { "orderDelta": 0, "storesDelta": 1 },
+          "roll": { "traitBias": { "legalism": 0.3 }, "factionBias": { "council": 0.2 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Safer economy later.",
+              "effects": { "storesDelta": 2, "orderDelta": 1, "factionDeltas": { "merchants": -1 } }
+            },
+            "mixed": {
+              "resultText": "Merchants grumble and private side trading rises.",
+              "effects": { "factionDeltas": { "merchants": -2 }, "flagValues": { "side_trading": true } }
+            },
+            "bad": {
+              "resultText": "Unofficial market forms anyway and you lose control.",
+              "effects": { "factionDeltas": { "merchants": -3 }, "orderDelta": -2, "setFlags": ["smugglers_tolerated"] }
+            }
+          }
+        },
+        {
+          "id": "temporary_private_license",
+          "label": "Grant a temporary private market license.",
+          "tone": "primary",
+          "effects": { "treasuryDelta": 250, "factionDeltas": { "merchants": 3 } },
+          "roll": { "traitBias": { "integrity": -0.5 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Quick revenue, merchants happy.",
+              "effects": { "treasuryDelta": 150, "factionDeltas": { "merchants": 4 }, "setFlags": ["merchants_granted_monopoly"] }
+            },
+            "mixed": {
+              "resultText": "Monopoly risk rises.",
+              "effects": { "factionDeltas": { "council": -2 }, "setFlags": ["merchants_granted_monopoly"] }
+            },
+            "bad": {
+              "resultText": "Later petition over price gouging or market rights.",
+              "effects": {
+                "orderDelta": -2,
+                "factionDeltas": { "settlers": -2 },
+                "setFlags": ["merchants_granted_monopoly"],
+                "schedulePetitions": [
+                  { "afterTurns": 2, "ids": ["followup_market_monopoly_complaint"], "logText": "People complain about prices and rights." }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "garrison_pay_due",
+      "group": "garrison",
+      "groupLabel": "Garrison",
+      "petitionerName": "Camp prefect",
+      "petitionerTitle": "Through Titus Fadius",
+      "petitionerPortraitUrl": "assets/portraits/centurion.svg",
+      "title": "Garrison pay comes due",
+      "body": "The garrison pay chest is thinner than expected and the officers want clarity before rumor fills the gap. The amount is not impossible, but paying it now means someone else waits. Delaying it might work for a little while, but soldiers are not a group you want discovering they were the flexible expense.",
+      "options": [
+        {
+          "id": "pay_full",
+          "label": "Pay in full now.",
+          "tone": "primary",
+          "effects": { "treasuryDelta": -900, "factionDeltas": { "garrison": 2 }, "orderDelta": 1 },
+          "roll": { "statBias": { "treasury": 0.6 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Security solid, order steady.",
+              "effects": { "factionDeltas": { "garrison": 4 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Treasury tightens hard.",
+              "effects": { "treasuryDelta": -400, "storesDelta": -1 }
+            },
+            "bad": {
+              "resultText": "Merchant or labor petition later becomes worse because funds are gone.",
+              "effects": { "treasuryDelta": -500, "orderDelta": -1, "flagValues": { "treasury_strained": true } }
+            }
+          }
+        },
+        {
+          "id": "pay_half",
+          "label": "Pay half now and promise the rest after revenue.",
+          "tone": "secondary",
+          "effects": { "treasuryDelta": -500, "factionDeltas": { "garrison": 0 } },
+          "roll": { "factionBias": { "garrison": 1.0 }, "traitBias": { "integrity": 0.2 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Manageable compromise if garrison favor is decent.",
+              "effects": { "orderDelta": 1, "factionDeltas": { "garrison": 2 } }
+            },
+            "mixed": {
+              "resultText": "Underpaid_garrison flag set.",
+              "effects": { "setFlags": ["garrison_underpaid"], "factionDeltas": { "garrison": -2 }, "orderDelta": 0 }
+            },
+            "bad": {
+              "resultText": "Discipline slips, theft rumor or brawl event later.",
+              "effects": {
+                "setFlags": ["garrison_underpaid"],
+                "orderDelta": -3,
+                "factionDeltas": { "garrison": -4 },
+                "scheduledEffects": [
+                  { "afterTurns": 2, "effects": { "orderDelta": -1 }, "logText": "Patrols thin and small thefts grow." }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "land_credit",
+          "label": "Ask officers to accept land credit instead.",
+          "tone": "secondary",
+          "effects": { "treasuryDelta": -200, "factionDeltas": { "garrison": -1, "veterans": 1 } },
+          "roll": { "factionBias": { "veterans": 0.6 }, "traitBias": { "integrity": 0.2 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Treasury preserved, if veterans happy this can work.",
+              "effects": { "orderDelta": 1, "factionDeltas": { "garrison": 1, "veterans": 2 } }
+            },
+            "mixed": {
+              "resultText": "Future land pressure rises.",
+              "effects": { "setFlags": ["veterans_promised_land"], "orderDelta": 0 }
+            },
+            "bad": {
+              "resultText": "Soldiers think you are trying to buy time with paper.",
+              "effects": { "orderDelta": -3, "factionDeltas": { "garrison": -5 } }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "tax_arrears_lower_quarter",
+      "group": "council",
+      "groupLabel": "Council",
+      "petitionerName": "Lucius Cassian",
+      "petitionerTitle": "With a clerk",
+      "petitionerPortraitUrl": "assets/portraits/council-elder-cassian.svg",
+      "title": "Tax arrears in the lower quarter",
+      "body": "A cluster of newer settlers is behind on dues. Cassian wants a sharp example made early so the habit does not spread. Sabina says some of them are behind because the supply line and work assignments were worse than promised. This is less about the amount owed than what kind of opening rule you want the colony to remember.",
+      "options": [
+        {
+          "id": "enforce_strictly",
+          "label": "Enforce collection strictly.",
+          "tone": "danger",
+          "effects": { "treasuryDelta": 250, "orderDelta": 1, "traitDeltas": { "harshness": 1 } },
+          "roll": { "traitBias": { "harshness": 1.0 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Treasury rises, council approval rises.",
+              "effects": { "treasuryDelta": 200, "factionDeltas": { "council": 3 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Settler morale drops.",
+              "effects": { "factionDeltas": { "settlers": -3 }, "orderDelta": 0 }
+            },
+            "bad": {
+              "resultText": "Harsh reputation rises and later unrest grows faster.",
+              "effects": { "traitDeltas": { "harshness": 6 }, "factionDeltas": { "settlers": -4, "locals": -2 }, "orderDelta": -2 }
+            }
+          }
+        },
+        {
+          "id": "delay_for_labor",
+          "label": "Grant a one-time delay tied to labor service.",
+          "tone": "secondary",
+          "effects": { "laborDelta": 2, "orderDelta": 0 },
+          "roll": { "traitBias": { "integrity": 0.5, "generosity": 0.4 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Labor rises, settlers respect fairness.",
+              "effects": { "laborDelta": 3, "factionDeltas": { "settlers": 2 }, "traitDeltas": { "integrity": 3 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Council calls you soft.",
+              "effects": { "factionDeltas": { "council": -2 }, "orderDelta": -1 }
+            },
+            "bad": {
+              "resultText": "Others start expecting delay too.",
+              "effects": { "orderDelta": -2, "flagValues": { "dues_delay_expected": true } }
+            }
+          }
+        },
+        {
+          "id": "forgive_part",
+          "label": "Forgive part and publicize new rules.",
+          "tone": "secondary",
+          "effects": { "treasuryDelta": 50, "traitDeltas": { "generosity": 1 } },
+          "roll": { "statBias": { "treasury": 0.5 }, "traitBias": { "generosity": 0.8 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Morale rises if treasury is stable.",
+              "effects": { "factionDeltas": { "settlers": 3 }, "orderDelta": 1, "traitDeltas": { "generosity": 2 } }
+            },
+            "mixed": {
+              "resultText": "Treasury gain minimal.",
+              "effects": { "treasuryDelta": 50, "factionDeltas": { "council": -1 } }
+            },
+            "bad": {
+              "resultText": "Merchants and council think discipline is slipping.",
+              "effects": { "factionDeltas": { "council": -3, "merchants": -2 }, "orderDelta": -2 }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "boundary_stones_torn_up",
+      "group": "veterans",
+      "groupLabel": "Veterans",
+      "petitionerName": "Gaius Ruso",
+      "petitionerTitle": "Angry for once",
+      "petitionerPortraitUrl": "assets/portraits/surveyor-ruso.svg",
+      "title": "Boundary stones torn up",
+      "body": "Several boundary markers were pulled up in the night. That can mean prank, protest, or preparation for something worse. The surveyor wants guards and immediate re-marking. Neria says if you answer only with force, you may miss the reason it happened in the first place.",
+      "options": [
+        {
+          "id": "guards_and_reset",
+          "label": "Post guards and reset the markers at once.",
+          "tone": "primary",
+          "effects": { "orderDelta": 1, "factionDeltas": { "garrison": 1 } },
+          "roll": { "traitBias": { "harshness": 0.6 }, "statBias": { "order": 0.3 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Order restored quickly.",
+              "effects": { "orderDelta": 3, "factionDeltas": { "garrison": 2 } }
+            },
+            "mixed": {
+              "resultText": "Locals resent the show of force.",
+              "effects": { "factionDeltas": { "locals": -3 }, "orderDelta": 1 }
+            },
+            "bad": {
+              "resultText": "Hidden grievance remains and returns later.",
+              "effects": {
+                "orderDelta": -1,
+                "factionDeltas": { "locals": -2 },
+                "setFlags": ["boundary_dispute"],
+                "scheduledEffects": [
+                  { "afterTurns": 4, "effects": { "orderDelta": -2 }, "logText": "The dispute returns, sharper." }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "hold_hearing",
+          "label": "Hold a hearing before re-marking.",
+          "tone": "secondary",
+          "effects": { "orderDelta": -1, "traitDeltas": { "legalism": 1 } },
+          "roll": { "traitBias": { "legalism": 1.0, "integrity": 0.4 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Dispute source identified, long term stability better.",
+              "effects": { "traitDeltas": { "legalism": 5, "integrity": 3 }, "orderDelta": 1, "factionDeltas": { "locals": 2 } }
+            },
+            "mixed": {
+              "resultText": "Looks slow and weak for a turn.",
+              "effects": { "orderDelta": -2, "factionDeltas": { "council": -1 } }
+            },
+            "bad": {
+              "resultText": "More markers are damaged while you talk.",
+              "effects": { "orderDelta": -3, "factionDeltas": { "locals": -2 }, "setFlags": ["boundary_dispute"] }
+            }
+          }
+        },
+        {
+          "id": "quietly_move_lines",
+          "label": "Quietly move a few lines to calm things.",
+          "tone": "secondary",
+          "effects": { "traitDeltas": { "integrity": -1 }, "orderDelta": 0 },
+          "roll": { "traitBias": { "integrity": -0.6, "generosity": 0.2 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Local relations improve and conflict eases.",
+              "effects": { "factionDeltas": { "locals": 4 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Veterans or settlers feel sold out.",
+              "effects": { "factionDeltas": { "veterans": -2, "settlers": -2 } }
+            },
+            "bad": {
+              "resultText": "Rumor of secret concessions damages legitimacy.",
+              "effects": { "traitDeltas": { "integrity": -5 }, "orderDelta": -3, "favorInRomeDelta": -1 }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "first_festival",
+      "group": "council",
+      "groupLabel": "Council",
+      "petitionerName": "Flavia Secunda",
+      "petitionerTitle": "Priestly figure (with council support)",
+      "petitionerPortraitUrl": "assets/portraits/augur.svg",
+      "title": "The first festival",
+      "body": "A public festival would give the colony a day to act like a real place instead of a work site with arguments. Sabina says grain and timber do not care about symbolism. Flavia says people do, and she is right. The question is whether right now you can afford a day that is more about morale than output.",
+      "options": [
+        {
+          "id": "fund_modest",
+          "label": "Fund a modest public festival.",
+          "tone": "primary",
+          "effects": { "treasuryDelta": -450, "laborDelta": -1 },
+          "roll": { "traitBias": { "piety": 0.5, "generosity": 0.5 }, "statBias": { "stores": 0.3 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Order and morale rise, tensions cool.",
+              "effects": { "orderDelta": 3, "factionDeltas": { "settlers": 2, "locals": 2, "council": 1 }, "setFlags": ["public_festival_held"] }
+            },
+            "mixed": {
+              "resultText": "Treasury cost and slight labor delay.",
+              "effects": { "treasuryDelta": -200, "laborDelta": -2, "orderDelta": 1, "setFlags": ["public_festival_held"] }
+            },
+            "bad": {
+              "resultText": "If stores are low, people call it irresponsible display.",
+              "effects": { "storesDelta": -2, "orderDelta": -2, "factionDeltas": { "council": -2, "settlers": -2 }, "setFlags": ["public_festival_held"] }
+            }
+          }
+        },
+        {
+          "id": "allow_sponsors",
+          "label": "Allow private sponsors to fund it.",
+          "tone": "secondary",
+          "effects": { "orderDelta": 0 },
+          "roll": { "traitBias": { "integrity": -0.4 }, "factionBias": { "merchants": 0.5 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Morale rises, treasury preserved.",
+              "effects": { "orderDelta": 2, "factionDeltas": { "settlers": 2, "merchants": 1 }, "setFlags": ["public_festival_held"] }
+            },
+            "mixed": {
+              "resultText": "Sponsor influence rises.",
+              "effects": { "setFlags": ["private_contractor_empowered", "public_festival_held"], "traitDeltas": { "integrity": -2 } }
+            },
+            "bad": {
+              "resultText": "One faction dominates the event and others feel excluded.",
+              "effects": { "orderDelta": -2, "factionDeltas": { "locals": -2, "settlers": -2, "council": -1 }, "setFlags": ["public_festival_held"] }
+            }
+          }
+        },
+        {
+          "id": "delay_festival",
+          "label": "Delay until the colony is steadier.",
+          "tone": "secondary",
+          "effects": { "orderDelta": 0 },
+          "roll": { "traitBias": { "legalism": 0.3, "integrity": 0.3 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Practical reputation rises.",
+              "effects": { "traitDeltas": { "integrity": 2 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Colony feels joyless.",
+              "effects": { "orderDelta": -1, "factionDeltas": { "settlers": -1 } }
+            },
+            "bad": {
+              "resultText": "People take the delay as proof you only know how to ration and deny.",
+              "effects": { "orderDelta": -3, "factionDeltas": { "settlers": -3, "council": -2 } }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "road_marsh_edge",
+      "group": "merchants",
+      "groupLabel": "Merchants",
+      "petitionerName": "Gaius Ruso",
+      "petitionerTitle": "And Marcia Luperca",
+      "petitionerPortraitUrl": "assets/portraits/surveyor-ruso.svg",
+      "title": "A road through the marsh edge",
+      "body": "There is a route that would cut travel time to the landing area if the engineers can stabilize the wet ground. It is not impossible, but bad ground has a way of making people sound foolish after they said something would be simple. The merchants want the shortcut. Sabina wants fewer things called urgent at the same time.",
+      "options": [
+        {
+          "id": "build_full_effort",
+          "label": "Build the road now with full effort.",
+          "tone": "primary",
+          "effects": { "treasuryDelta": -650, "laborDelta": -4, "storesDelta": 1 },
+          "roll": { "statBias": { "labor": 0.4, "stores": 0.4 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Trade and supply improve.",
+              "effects": { "storesDelta": 3, "factionDeltas": { "merchants": 2 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Expensive and labor heavy.",
+              "effects": { "treasuryDelta": -300, "laborDelta": -3 }
+            },
+            "bad": {
+              "resultText": "Flood_damage or sink failure later.",
+              "effects": {
+                "setFlags": ["flood_damage"],
+                "orderDelta": -1,
+                "schedulePetitions": [
+                  { "afterTurns": 2, "ids": ["followup_washed_out_causeway"], "logText": "A shortcut proves it can fail." }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "temporary_road",
+          "label": "Lay a temporary road first.",
+          "tone": "secondary",
+          "effects": { "treasuryDelta": -400, "laborDelta": -2, "storesDelta": 1 },
+          "roll": { "traitBias": { "legalism": 0.2, "integrity": 0.2 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Cheaper, flexible, practical.",
+              "effects": { "storesDelta": 2, "orderDelta": 1, "traitDeltas": { "integrity": 2 } }
+            },
+            "mixed": {
+              "resultText": "Slower benefits.",
+              "effects": { "storesDelta": 1, "factionDeltas": { "merchants": 1 } }
+            },
+            "bad": {
+              "resultText": "Repeated repairs eat away the savings.",
+              "effects": { "treasuryDelta": -400, "laborDelta": -3, "setFlags": ["roads_neglected"] }
+            }
+          }
+        },
+        {
+          "id": "delay_inland",
+          "label": "Delay and focus inland routes.",
+          "tone": "secondary",
+          "effects": { "laborDelta": 0 },
+          "roll": { "traitBias": { "legalism": 0.2 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Safer if flood risk is high.",
+              "effects": { "storesDelta": 1, "orderDelta": 1, "factionDeltas": { "locals": 1 } }
+            },
+            "mixed": {
+              "resultText": "Merchants annoyed.",
+              "effects": { "factionDeltas": { "merchants": -2 }, "orderDelta": -1 }
+            },
+            "bad": {
+              "resultText": "Landing area inefficiency keeps compounding.",
+              "effects": { "storesDelta": -3, "orderDelta": -2, "setFlags": ["roads_neglected"] }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "ask_rome_for_help",
+      "group": "rome",
+      "groupLabel": "Rome",
+      "petitionerName": "Quintus Sergius Varro",
+      "petitionerTitle": "Suggests it, reluctantly",
+      "petitionerPortraitUrl": "assets/portraits/legate.svg",
+      "title": "Ask Rome for help",
+      "body": "You can send to your patron or governor for aid. That could mean money, grain, an engineer, legal backing, or soldiers. It could also mean attention, and attention from above is only pleasant when your books are clean and your story makes sense. Asking is possible. It just is not free.",
+      "options": [
+        {
+          "id": "ask_grain",
+          "label": "Ask for grain support.",
+          "tone": "primary",
+          "effects": { "favorInRomeDelta": -3 },
+          "roll": { "statBias": { "favorInRome": 0.7, "stores": -0.3 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Stores recover, pressure eases.",
+              "effects": { "storesDelta": 6, "orderDelta": 1, "setFlags": ["rome_owes_favor"] }
+            },
+            "mixed": {
+              "resultText": "Help comes late.",
+              "effects": {
+                "schedulePetitions": [
+                  { "afterTurns": 2, "ids": ["followup_audit_clerk_arrives"], "logText": "Rome pays attention after you ask." }
+                ],
+                "scheduledEffects": [
+                  { "afterTurns": 2, "effects": { "storesDelta": 4 }, "logText": "Grain arrives late, but it arrives." }
+                ]
+              }
+            },
+            "bad": {
+              "resultText": "Colony_under_audit flag set.",
+              "effects": {
+                "setFlags": ["colony_under_audit"],
+                "schedulePetitions": [
+                  { "afterTurns": 1, "ids": ["followup_audit_clerk_arrives"], "logText": "A clerk is dispatched to regularize your accounts." }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "ask_engineer",
+          "label": "Ask for an engineer or survey team.",
+          "tone": "primary",
+          "effects": { "favorInRomeDelta": -3 },
+          "roll": { "traitBias": { "legalism": 0.5 }, "statBias": { "favorInRome": 0.7 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Future public works safer and stronger.",
+              "effects": {
+                "traitDeltas": { "legalism": 3 },
+                "scheduledEffects": [
+                  { "afterTurns": 2, "effects": { "laborDelta": 2 }, "logText": "An engineer’s team improves efficiency." }
+                ],
+                "setFlags": ["rome_owes_favor"]
+              }
+            },
+            "mixed": {
+              "resultText": "Slower arrival, prestige only.",
+              "effects": { "orderDelta": 1, "favorInRomeDelta": -1 }
+            },
+            "bad": {
+              "resultText": "Outside officials criticize earlier decisions.",
+              "effects": { "orderDelta": -2, "factionDeltas": { "council": -2 }, "setFlags": ["colony_under_audit"], "schedulePetitions": [
+                { "afterTurns": 1, "ids": ["followup_audit_clerk_arrives"], "logText": "Outside attention arrives with questions." }
+              ] }
+            }
+          }
+        },
+        {
+          "id": "do_not_ask",
+          "label": "Do not ask yet.",
+          "tone": "secondary",
+          "effects": { "orderDelta": 0 },
+          "roll": { "traitBias": { "integrity": 0.3 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Independence respected if you stabilize alone.",
+              "effects": { "favorInRomeDelta": 1, "traitDeltas": { "integrity": 2 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "No immediate help.",
+              "effects": { "orderDelta": 0 }
+            },
+            "bad": {
+              "resultText": "Avoidable crisis worsens because you waited out of pride.",
+              "effects": { "storesDelta": -3, "orderDelta": -2 }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "smoke_from_workshops",
+      "group": "settlers",
+      "groupLabel": "Settlers",
+      "petitionerName": "Nearby households",
+      "petitionerTitle": "Complaining about workshops",
+      "petitionerPortraitUrl": "assets/portraits/matron-household.svg",
+      "title": "Smoke from the workshops",
+      "body": "A growing line of workshops is useful, loud, dirty, and now close enough to homes that people are complaining. The owners say moving them now would be unfair because they built where space was available. The residents say if this becomes normal, you are deciding early that some parts of the colony are just meant to be worse.",
+      "options": [
+        {
+          "id": "force_relocation",
+          "label": "Force relocation.",
+          "tone": "danger",
+          "effects": { "laborDelta": -2, "orderDelta": 1 },
+          "roll": { "traitBias": { "harshness": 0.4, "integrity": 0.2 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Settler morale rises, future district quality better.",
+              "effects": { "factionDeltas": { "settlers": 3 }, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Merchant anger and short economic slowdown.",
+              "effects": { "factionDeltas": { "merchants": -4 }, "storesDelta": -1 }
+            },
+            "bad": {
+              "resultText": "Workshop owners accuse you of changing terms after investment.",
+              "effects": { "factionDeltas": { "council": -2, "merchants": -3 }, "traitDeltas": { "integrity": -3 }, "orderDelta": -2 }
+            }
+          }
+        },
+        {
+          "id": "regulate_hours",
+          "label": "Allow them to stay and regulate hours.",
+          "tone": "secondary",
+          "effects": { "orderDelta": 0 },
+          "roll": { "traitBias": { "legalism": 0.3 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Compromise, moderate stability.",
+              "effects": { "orderDelta": 1, "factionDeltas": { "settlers": 1, "merchants": 1 } }
+            },
+            "mixed": {
+              "resultText": "Complaints continue.",
+              "effects": { "factionDeltas": { "settlers": -1 }, "orderDelta": 0 }
+            },
+            "bad": {
+              "resultText": "Rules ignored, later fire or unrest risk.",
+              "effects": {
+                "orderDelta": -2,
+                "flagValues": { "fire_risk": true },
+                "scheduledEffects": [
+                  { "afterTurns": 3, "effects": { "orderDelta": -2 }, "logText": "An accident becomes a rumor, then an argument." }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "buy_out",
+          "label": "Buy out the worst sites and redesign the block.",
+          "tone": "primary",
+          "effects": { "treasuryDelta": -850, "laborDelta": -2 },
+          "roll": { "statBias": { "treasury": 0.7 }, "traitBias": { "integrity": 0.3 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Long term win if treasury can bear it.",
+              "effects": { "orderDelta": 2, "factionDeltas": { "settlers": 2, "council": 1 } }
+            },
+            "mixed": {
+              "resultText": "Expensive but respected.",
+              "effects": { "treasuryDelta": -250, "orderDelta": 1 }
+            },
+            "bad": {
+              "resultText": "Council says you are spending like the city is already rich.",
+              "effects": { "factionDeltas": { "council": -3 }, "favorInRomeDelta": -1 }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "burial_ground_dispute",
+      "group": "locals",
+      "groupLabel": "Locals",
+      "petitionerName": "Neria",
+      "petitionerTitle": "With pressure from both locals and settlers",
+      "petitionerPortraitUrl": "assets/portraits/interpreter-neria.svg",
+      "title": "Burial ground dispute",
+      "body": "The edge of a planned district cuts into ground used for burials by local families. Some settlers say the colony cannot stop every time memory is attached to a useful patch of land. The locals say if you build there, you are making your point very plain. This is the sort of decision that can save a block and poison a whole relationship.",
+      "options": [
+        {
+          "id": "preserve",
+          "label": "Preserve the burial ground.",
+          "tone": "secondary",
+          "effects": { "laborDelta": -1, "traitDeltas": { "piety": 1 } },
+          "roll": { "traitBias": { "piety": 0.9 }, "factionBias": { "locals": 0.8 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Local relations improve strongly.",
+              "effects": { "factionDeltas": { "locals": 6 }, "orderDelta": 1, "traitDeltas": { "piety": 3 } }
+            },
+            "mixed": {
+              "resultText": "District plan gets awkward.",
+              "effects": { "laborDelta": -2, "factionDeltas": { "locals": 4 } }
+            },
+            "bad": {
+              "resultText": "Settlers think locals get veto power.",
+              "effects": { "factionDeltas": { "settlers": -3 }, "orderDelta": -1 }
+            }
+          }
+        },
+        {
+          "id": "relocate_compensate",
+          "label": "Relocate the district and compensate both sides.",
+          "tone": "primary",
+          "effects": { "treasuryDelta": -500, "laborDelta": -2 },
+          "roll": { "traitBias": { "integrity": 0.6, "generosity": 0.4 }, "statBias": { "treasury": 0.5 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Compromise respected if treasury is decent.",
+              "effects": { "orderDelta": 1, "factionDeltas": { "locals": 3, "settlers": 2 }, "traitDeltas": { "integrity": 3 } }
+            },
+            "mixed": {
+              "resultText": "Costly and slower.",
+              "effects": { "treasuryDelta": -250, "laborDelta": -3 }
+            },
+            "bad": {
+              "resultText": "Neither side feels truly heard.",
+              "effects": { "orderDelta": -2, "factionDeltas": { "locals": -2, "settlers": -2 } }
+            }
+          }
+        },
+        {
+          "id": "build_over_with_rites",
+          "label": "Build over it with formal rites and decree.",
+          "tone": "danger",
+          "effects": { "orderDelta": 1, "traitDeltas": { "harshness": 2 } },
+          "roll": { "traitBias": { "harshness": 1.0 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Land use preserved, harsh order narrative strengthened.",
+              "effects": { "orderDelta": 1, "traitDeltas": { "harshness": 4 }, "factionDeltas": { "settlers": 1 } }
+            },
+            "mixed": {
+              "resultText": "Quiet resentment.",
+              "effects": { "factionDeltas": { "locals": -2 }, "orderDelta": -1 }
+            },
+            "bad": {
+              "resultText": "Long memory unrest flag set.",
+              "effects": { "orderDelta": -3, "factionDeltas": { "locals": -5 }, "flagValues": { "long_memory_unrest": true } }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "smugglers_at_landing",
+      "group": "merchants",
+      "groupLabel": "Merchants",
+      "petitionerName": "Marcia Luperca",
+      "petitionerTitle": "Who clearly knows more than she says",
+      "petitionerPortraitUrl": "assets/portraits/merchant.svg",
+      "title": "Smugglers at the landing",
+      "body": "Some goods are moving off the landing without proper dues. Stopping it could raise revenue and prove you are in charge. Letting some of it slide could keep prices down and avoid a fight you may not want yet. This is one of those moments where control and convenience stop pointing in the same direction.",
+      "options": [
+        {
+          "id": "crack_down",
+          "label": "Crack down hard.",
+          "tone": "danger",
+          "effects": { "orderDelta": 1, "treasuryDelta": 200 },
+          "roll": { "traitBias": { "harshness": 0.6, "integrity": 0.2 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Treasury rises, order narrative strengthens.",
+              "effects": { "treasuryDelta": 200, "orderDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Trade slows briefly.",
+              "effects": { "storesDelta": -2, "factionDeltas": { "merchants": -2 } }
+            },
+            "bad": {
+              "resultText": "Merchants say you overreached and shortages worsen.",
+              "effects": { "storesDelta": -4, "orderDelta": -2, "factionDeltas": { "merchants": -4 } }
+            }
+          }
+        },
+        {
+          "id": "legalize_licenses",
+          "label": "Legalize part of it through temporary licenses.",
+          "tone": "secondary",
+          "effects": { "treasuryDelta": 200, "storesDelta": 1 },
+          "roll": { "traitBias": { "integrity": -0.4 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Revenue and trade both improve.",
+              "effects": { "treasuryDelta": 150, "storesDelta": 2, "factionDeltas": { "merchants": 2 } }
+            },
+            "mixed": {
+              "resultText": "Monopoly or favoritism risk rises.",
+              "effects": { "factionDeltas": { "council": -2 }, "traitDeltas": { "integrity": -2 }, "setFlags": ["private_contractor_empowered"] }
+            },
+            "bad": {
+              "resultText": "Smugglers become semi-official power brokers.",
+              "effects": { "orderDelta": -2, "setFlags": ["smugglers_tolerated", "private_contractor_empowered"], "traitDeltas": { "integrity": -3 } }
+            }
+          }
+        },
+        {
+          "id": "ignore",
+          "label": "Ignore it for now.",
+          "tone": "secondary",
+          "effects": { "storesDelta": 1 },
+          "roll": { "traitBias": { "integrity": -0.3 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Prices stay low, no immediate conflict.",
+              "effects": { "storesDelta": 1, "factionDeltas": { "merchants": 1 }, "orderDelta": 0 }
+            },
+            "mixed": {
+              "resultText": "Treasury loses out.",
+              "effects": { "treasuryDelta": -150 }
+            },
+            "bad": {
+              "resultText": "Honest merchants and council think you can be played.",
+              "effects": { "traitDeltas": { "integrity": -4 }, "factionDeltas": { "council": -3, "merchants": -1 }, "orderDelta": -2 }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "proper_forum",
+      "group": "council",
+      "groupLabel": "Council",
+      "petitionerName": "Lucius Cassian",
+      "petitionerTitle": "And a council bloc",
+      "petitionerPortraitUrl": "assets/portraits/council-elder-cassian.svg",
+      "title": "The first proper forum",
+      "body": "The council says the colony needs a true center, not just a practical sprawl of useful pieces. They want the forum laid out now, even if it means other work slows. Sabina says a square does not move grain or repair carts. Cassian says a colony without a center stays a camp in people’s heads longer than it should.",
+      "options": [
+        {
+          "id": "approve_now",
+          "label": "Approve the forum now.",
+          "tone": "primary",
+          "effects": { "treasuryDelta": -1100, "laborDelta": -3 },
+          "roll": { "factionBias": { "council": 0.9 }, "statBias": { "stores": 0.3, "labor": 0.3 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Prestige and council favor rise.",
+              "effects": { "orderDelta": 2, "factionDeltas": { "council": 4 }, "favorInRomeDelta": 1 }
+            },
+            "mixed": {
+              "resultText": "Basic works slip.",
+              "effects": { "laborDelta": -3, "storesDelta": -2, "orderDelta": 1 }
+            },
+            "bad": {
+              "resultText": "If stores or labor are low, this looks vain.",
+              "effects": { "storesDelta": -3, "orderDelta": -2, "favorInRomeDelta": -1, "factionDeltas": { "council": -2 } }
+            }
+          }
+        },
+        {
+          "id": "mark_site_delay",
+          "label": "Mark the forum site but delay construction.",
+          "tone": "secondary",
+          "effects": { "orderDelta": 0, "traitDeltas": { "legalism": 1 } },
+          "roll": { "traitBias": { "legalism": 0.7, "integrity": 0.2 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Compromise, future planning improved.",
+              "effects": { "orderDelta": 1, "factionDeltas": { "council": 2 }, "traitDeltas": { "legalism": 3 }, "flagValues": { "forum_site_marked": true } }
+            },
+            "mixed": {
+              "resultText": "Council only half satisfied.",
+              "effects": { "factionDeltas": { "council": 1 }, "flagValues": { "forum_site_marked": true } }
+            },
+            "bad": {
+              "resultText": "Site sits empty and becomes a joke.",
+              "effects": { "orderDelta": -2, "factionDeltas": { "council": -2 }, "flagValues": { "forum_site_mockery": true } }
+            }
+          }
+        },
+        {
+          "id": "reject_for_now",
+          "label": "Reject prestige building for now.",
+          "tone": "danger",
+          "effects": { "orderDelta": 0 },
+          "roll": { "traitBias": { "integrity": 0.4 } },
+          "outcomes": {
+            "strong": {
+              "resultText": "Practical reputation with workers and Sabina type figures.",
+              "effects": { "storesDelta": 2, "laborDelta": 1, "traitDeltas": { "integrity": 2 } }
+            },
+            "mixed": {
+              "resultText": "Council resentment grows.",
+              "effects": { "factionDeltas": { "council": -3 } }
+            },
+            "bad": {
+              "resultText": "Elite backers start acting around you instead of through you.",
+              "effects": { "favorInRomeDelta": -2, "factionDeltas": { "council": -4 }, "setFlags": ["patron_offended"] }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "followup_cheap_roofs_fail",
+      "group": "settlers",
+      "groupLabel": "Settlers",
+      "requiresFlags": ["cheap_housing_built"],
+      "petitionerName": "Tenants",
+      "petitionerTitle": "From the new block",
+      "petitionerPortraitUrl": "assets/portraits/matron-household.svg",
+      "title": "Cheap roofs fail in rain",
+      "body": "The new block went up fast, which was the point. It also leaks, and after the last rain the tenants have started saying out loud that speed was all anyone cared about.",
+      "options": [
+        {
+          "id": "public_repairs",
+          "label": "Order repairs at public cost",
+          "tone": "primary",
+          "effects": { "treasuryDelta": -300 },
+          "roll": { "traitBias": { "generosity": 0.4 } },
+          "outcomes": {
+            "strong": { "resultText": "Repairs calm the block before it becomes a story.", "effects": { "orderDelta": 1, "factionDeltas": { "settlers": 2 } } },
+            "mixed": { "resultText": "It works, but people remember who paid.", "effects": { "treasuryDelta": -200, "orderDelta": 0 } },
+            "bad": { "resultText": "You fix roofs and teach investors what pressure buys.", "effects": { "setFlags": ["private_contractor_empowered"], "orderDelta": -1 } }
+          }
+        },
+        {
+          "id": "force_investor",
+          "label": "Make the investor repair it",
+          "tone": "secondary",
+          "effects": { "traitDeltas": { "integrity": 1 } },
+          "roll": { "traitBias": { "integrity": 0.7, "legalism": 0.3 } },
+          "outcomes": {
+            "strong": { "resultText": "He complies, and the precedent matters.", "effects": { "traitDeltas": { "integrity": 2 }, "orderDelta": 1 } },
+            "mixed": { "resultText": "He drags his feet, and the block stays damp.", "effects": { "orderDelta": -1 } },
+            "bad": { "resultText": "He refuses openly, and everyone learns where your limits are.", "effects": { "orderDelta": -3, "factionDeltas": { "council": -1 } } }
+          }
+        },
+        {
+          "id": "patch_postpone",
+          "label": "Patch and postpone",
+          "tone": "secondary",
+          "effects": { "treasuryDelta": -80 },
+          "roll": { "traitBias": { "integrity": -0.2 } },
+          "outcomes": {
+            "strong": { "resultText": "It holds long enough to stop the noise.", "effects": { "orderDelta": 0 } },
+            "mixed": { "resultText": "It holds, but the complaint stays alive.", "effects": { "orderDelta": -1 } },
+            "bad": { "resultText": "It fails again, and the colony starts talking about negligence.", "effects": { "orderDelta": -2, "storesDelta": -1 } }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "followup_audit_clerk_arrives",
+      "group": "rome",
+      "groupLabel": "Rome",
+      "requiresAnyFlags": ["rome_owes_favor", "colony_under_audit"],
+      "petitionerName": "Audit clerk",
+      "petitionerTitle": "From Rome",
+      "petitionerPortraitUrl": "assets/portraits/scribe-clerk.svg",
+      "title": "Audit clerk from Rome",
+      "body": "The clerk is polite in the way that makes things feel worse. He says he is only here to regularize accounts. Everyone hears that and immediately starts remembering which decisions were made in a hurry.",
+      "options": [
+        {
+          "id": "open_books",
+          "label": "Cooperate fully",
+          "tone": "secondary",
+          "effects": { "traitDeltas": { "integrity": 1 } },
+          "roll": { "traitBias": { "integrity": 0.9, "legalism": 0.4 } },
+          "outcomes": {
+            "strong": { "resultText": "The books hold up, and the visit passes without a wound.", "effects": { "favorInRomeDelta": 2, "orderDelta": 1, "clearFlags": ["colony_under_audit"] } },
+            "mixed": { "resultText": "He finds irregularities, but nothing fatal.", "effects": { "favorInRomeDelta": -1, "orderDelta": 0, "flagValues": { "audit_notes": true } } },
+            "bad": { "resultText": "He finds something that becomes policy.", "effects": { "favorInRomeDelta": -3, "orderDelta": -2, "setFlags": ["colony_under_audit"] } }
+          }
+        },
+        {
+          "id": "manage_visit",
+          "label": "Manage the visit",
+          "tone": "primary",
+          "effects": { "favorInRomeDelta": -1 },
+          "roll": { "traitBias": { "integrity": -0.5 } },
+          "outcomes": {
+            "strong": { "resultText": "You keep it orderly and keep control of the story.", "effects": { "orderDelta": 1 } },
+            "mixed": { "resultText": "You lose time and still gain suspicion.", "effects": { "orderDelta": -1, "flagValues": { "audit_notes": true } } },
+            "bad": { "resultText": "Politeness turns into paperwork, and paperwork turns into leverage.", "effects": { "favorInRomeDelta": -2, "orderDelta": -2, "setFlags": ["colony_under_audit"] } }
+          }
+        },
+        {
+          "id": "send_away",
+          "label": "Send him away",
+          "tone": "danger",
+          "effects": { "favorInRomeDelta": -2 },
+          "roll": { "traitBias": { "harshness": 0.3 } },
+          "outcomes": {
+            "strong": { "resultText": "He leaves, but Rome remembers why.", "effects": { "favorInRomeDelta": -1, "orderDelta": 0, "setFlags": ["colony_under_audit"] } },
+            "mixed": { "resultText": "He leaves and sends questions back.", "effects": { "favorInRomeDelta": -3, "orderDelta": -1, "setFlags": ["colony_under_audit"] } },
+            "bad": { "resultText": "He leaves with offense, and you feel it in the next courier.", "effects": { "favorInRomeDelta": -5, "orderDelta": -2, "setFlags": ["colony_under_audit", "patron_offended"] } }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "followup_veterans_remember_ridge",
+      "group": "veterans",
+      "groupLabel": "Veterans",
+      "requiresFlags": ["veterans_denied_high_ground"],
+      "petitionerName": "Titus Fadius",
+      "petitionerTitle": "Returning to the same promise",
+      "petitionerPortraitUrl": "assets/portraits/veteran-spokesman.svg",
+      "title": "Veterans remember the ridge",
+      "body": "No one has openly refused orders. That is the good news. The less good news is that every conversation with the veterans now comes back around to the same old promise.",
+      "options": [
+        {
+          "id": "offer_watch_posts",
+          "label": "Offer watch-posts and honors",
+          "tone": "secondary",
+          "effects": { "orderDelta": 0 },
+          "roll": { "traitBias": { "integrity": 0.3 } },
+          "outcomes": {
+            "strong": { "resultText": "They accept it as respect and move on.", "effects": { "factionDeltas": { "veterans": 3, "garrison": 1 }, "orderDelta": 1 } },
+            "mixed": { "resultText": "They accept it, but the complaint stays available.", "effects": { "factionDeltas": { "veterans": 1 }, "orderDelta": 0 } },
+            "bad": { "resultText": "They hear it as a diversion.", "effects": { "factionDeltas": { "veterans": -3 }, "orderDelta": -2 } }
+          }
+        },
+        {
+          "id": "offer_other_plots",
+          "label": "Offer better plots elsewhere",
+          "tone": "primary",
+          "effects": { "laborDelta": -1 },
+          "roll": { "traitBias": { "generosity": 0.4 } },
+          "outcomes": {
+            "strong": { "resultText": "The ridge argument fades.", "effects": { "factionDeltas": { "veterans": 4 }, "orderDelta": 1, "clearFlags": ["veterans_denied_high_ground"] } },
+            "mixed": { "resultText": "They take it, but it costs more than it sounds.", "effects": { "orderDelta": 0, "setFlags": ["boundary_dispute"] } },
+            "bad": { "resultText": "It spreads land pressure and teaches them persistence works.", "effects": { "orderDelta": -2, "setFlags": ["boundary_dispute"] } }
+          }
+        },
+        {
+          "id": "hold_firm",
+          "label": "Hold firm",
+          "tone": "danger",
+          "effects": { "orderDelta": 0 },
+          "roll": { "traitBias": { "harshness": 0.6 } },
+          "outcomes": {
+            "strong": { "resultText": "They stop asking, at least to your face.", "effects": { "orderDelta": 1, "factionDeltas": { "veterans": -1 } } },
+            "mixed": { "resultText": "They keep asking, quieter and sharper.", "effects": { "orderDelta": -1, "factionDeltas": { "veterans": -2 } } },
+            "bad": { "resultText": "They take it as proof your word is flexible.", "effects": { "orderDelta": -3, "factionDeltas": { "veterans": -4 }, "setFlags": ["patron_offended"] } }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "followup_market_monopoly_complaint",
+      "group": "council",
+      "groupLabel": "Council",
+      "requiresAnyFlags": ["merchants_granted_monopoly", "private_contractor_empowered"],
+      "petitionerName": "Petitioners",
+      "petitionerTitle": "Complaining about monopoly",
+      "petitionerPortraitUrl": "assets/portraits/merchant.svg",
+      "title": "Market monopoly complaint",
+      "body": "People are saying one family now profits from every urgent need. Even those who like the convenience do not like what it says about who the colony is already bending toward.",
+      "options": [
+        {
+          "id": "break_license",
+          "label": "End the license",
+          "tone": "danger",
+          "effects": { "orderDelta": 0 },
+          "roll": { "traitBias": { "integrity": 0.6 } },
+          "outcomes": {
+            "strong": { "resultText": "The market stays open and the story improves.", "effects": { "orderDelta": 1, "factionDeltas": { "council": 2, "merchants": -1 }, "clearFlags": ["merchants_granted_monopoly"] } },
+            "mixed": { "resultText": "Trade sulks and then adjusts.", "effects": { "orderDelta": 0, "factionDeltas": { "merchants": -3 }, "clearFlags": ["merchants_granted_monopoly"] } },
+            "bad": { "resultText": "The family retaliates through shortages and favors.", "effects": { "storesDelta": -2, "orderDelta": -2, "factionDeltas": { "merchants": -4 }, "clearFlags": ["merchants_granted_monopoly"] } }
+          }
+        },
+        {
+          "id": "regulate_prices",
+          "label": "Regulate prices",
+          "tone": "secondary",
+          "effects": { "traitDeltas": { "legalism": 1 } },
+          "roll": { "traitBias": { "legalism": 0.6 } },
+          "outcomes": {
+            "strong": { "resultText": "It holds, imperfectly, and keeps tempers down.", "effects": { "orderDelta": 1 } },
+            "mixed": { "resultText": "It becomes a constant argument.", "effects": { "orderDelta": 0 } },
+            "bad": { "resultText": "Enforcement fails and everyone sees it.", "effects": { "orderDelta": -2, "traitDeltas": { "integrity": -2 } } }
+          }
+        },
+        {
+          "id": "back_license",
+          "label": "Back the license",
+          "tone": "primary",
+          "effects": { "treasuryDelta": 150 },
+          "roll": { "traitBias": { "integrity": -0.5 } },
+          "outcomes": {
+            "strong": { "resultText": "Revenue rises and the market runs smoothly.", "effects": { "treasuryDelta": 200, "factionDeltas": { "merchants": 2 } } },
+            "mixed": { "resultText": "Convenience wins, and legitimacy pays.", "effects": { "orderDelta": -1, "traitDeltas": { "integrity": -1 } } },
+            "bad": { "resultText": "It becomes the colony’s first openly profitable grievance.", "effects": { "orderDelta": -3, "traitDeltas": { "integrity": -3 }, "setFlags": ["private_contractor_empowered"] } }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "followup_shrine_vandalized",
+      "group": "locals",
+      "groupLabel": "Locals",
+      "requiresFlags": ["local_shrine_disturbed"],
+      "petitionerName": "Neria",
+      "petitionerTitle": "With quiet anger",
+      "petitionerPortraitUrl": "assets/portraits/interpreter-neria.svg",
+      "title": "Shrine vandalized at night",
+      "body": "No one claims to know who did it, which almost always means several people think they do and none of them trust the process enough to say it plainly.",
+      "options": [
+        {
+          "id": "investigate_openly",
+          "label": "Investigate openly",
+          "tone": "secondary",
+          "effects": { "laborDelta": -1, "traitDeltas": { "legalism": 1 } },
+          "roll": { "traitBias": { "legalism": 0.6, "integrity": 0.4 } },
+          "outcomes": {
+            "strong": { "resultText": "You find enough truth to stop the worst stories.", "effects": { "orderDelta": 1, "factionDeltas": { "locals": 2 }, "clearFlags": ["local_shrine_disturbed"] } },
+            "mixed": { "resultText": "You find nothing clean, and suspicion stays.", "effects": { "orderDelta": 0 } },
+            "bad": { "resultText": "The process becomes its own grievance.", "effects": { "orderDelta": -2, "factionDeltas": { "locals": -2 } } }
+          }
+        },
+        {
+          "id": "make_gesture",
+          "label": "Repair and make a gesture",
+          "tone": "primary",
+          "effects": { "treasuryDelta": -200, "traitDeltas": { "piety": 1 } },
+          "roll": { "traitBias": { "piety": 0.7, "generosity": 0.3 } },
+          "outcomes": {
+            "strong": { "resultText": "The gesture works, and the issue shrinks.", "effects": { "factionDeltas": { "locals": 3 }, "orderDelta": 1, "clearFlags": ["local_shrine_disturbed"] } },
+            "mixed": { "resultText": "It helps, but it does not answer the question of who did it.", "effects": { "orderDelta": 0 } },
+            "bad": { "resultText": "It is read as hush money for disrespect.", "effects": { "orderDelta": -2, "factionDeltas": { "locals": -3 } } }
+          }
+        },
+        {
+          "id": "declare_minor",
+          "label": "Declare it a minor matter",
+          "tone": "danger",
+          "effects": { "orderDelta": -1 },
+          "roll": { "traitBias": { "harshness": 0.4 } },
+          "outcomes": {
+            "strong": { "resultText": "People accept it as firmness and move on.", "effects": { "orderDelta": 0 } },
+            "mixed": { "resultText": "They accept it outwardly and remember it.", "effects": { "orderDelta": -1 } },
+            "bad": { "resultText": "It becomes proof, in their minds, that you do not care.", "effects": { "orderDelta": -3, "factionDeltas": { "locals": -4 } } }
+          }
+        }
+      ]
+    },
+
+    {
+      "id": "followup_washed_out_causeway",
+      "group": "merchants",
+      "groupLabel": "Merchants",
+      "requiresFlags": ["flood_damage"],
+      "petitionerName": "Engineers",
+      "petitionerTitle": "And irritated traders",
+      "petitionerPortraitUrl": "assets/portraits/surveyor-ruso.svg",
+      "title": "Washed out causeway",
+      "body": "The road held long enough to make everyone confident and then failed at the worst time for confidence to fail.",
+      "options": [
+        {
+          "id": "rebuild_properly",
+          "label": "Rebuild properly",
+          "tone": "primary",
+          "effects": { "treasuryDelta": -650, "laborDelta": -3 },
+          "roll": { "statBias": { "treasury": 0.6, "labor": 0.4 } },
+          "outcomes": {
+            "strong": { "resultText": "The shortcut becomes reliable, and the embarrassment fades.", "effects": { "storesDelta": 2, "orderDelta": 1, "factionDeltas": { "merchants": 2 }, "clearFlags": ["flood_damage"] } },
+            "mixed": { "resultText": "It works, but costs the thing people pretended to save.", "effects": { "treasuryDelta": -300, "orderDelta": 0, "clearFlags": ["flood_damage"] } },
+            "bad": { "resultText": "The rebuild drags and becomes a second failure.", "effects": { "orderDelta": -2, "storesDelta": -1 } }
+          }
+        },
+        {
+          "id": "patch_temporarily",
+          "label": "Patch temporarily",
+          "tone": "secondary",
+          "effects": { "treasuryDelta": -250, "laborDelta": -2 },
+          "roll": { "traitBias": { "legalism": -0.2 } },
+          "outcomes": {
+            "strong": { "resultText": "It holds longer than it should.", "effects": { "storesDelta": 1, "orderDelta": 0 } },
+            "mixed": { "resultText": "It holds, and everyone keeps watching it.", "effects": { "orderDelta": -1 } },
+            "bad": { "resultText": "It fails again, and the road becomes a joke.", "effects": { "orderDelta": -3, "setFlags": ["roads_neglected"] } }
+          }
+        },
+        {
+          "id": "abandon_shortcut",
+          "label": "Abandon the shortcut",
+          "tone": "danger",
+          "effects": { "orderDelta": -1 },
+          "roll": { "traitBias": { "integrity": 0.2 } },
+          "outcomes": {
+            "strong": { "resultText": "You stop wasting labor and focus elsewhere.", "effects": { "laborDelta": 1, "storesDelta": 1, "clearFlags": ["flood_damage"] } },
+            "mixed": { "resultText": "Merchants complain and then adjust.", "effects": { "factionDeltas": { "merchants": -2 }, "clearFlags": ["flood_damage"] } },
+            "bad": { "resultText": "Trade confidence slips and you feel it in supplies.", "effects": { "storesDelta": -2, "orderDelta": -2, "factionDeltas": { "merchants": -3 } } }
+          }
+        }
+      ]
+    }
+  ]
+}

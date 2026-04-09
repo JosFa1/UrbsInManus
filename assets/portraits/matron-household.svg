@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<rect width="1024" height="1024" fill="#3a3432"/>
+<rect x="120" y="120" width="784" height="784" rx="44" fill="#5c5551"/>
+<polygon points="120,120 904,120 904,220 120,340" fill="#8b817b" opacity="0.18"/>
+<polygon points="120,904 904,904 904,664 120,744" fill="#211d1b" opacity="0.22"/>
+<path d="M250 820 C310 690 420 628 512 628 C604 628 714 690 774 820 L774 904 L250 904 Z" fill="#708393"/>
+<path d="M512 628 C604 628 714 690 774 820 L774 904 L512 904 Z" fill="#617286"/>
+<rect x="468" y="556" width="88" height="92" rx="22" fill="#8d684c"/>
+<ellipse cx="512" cy="430" rx="170" ry="188" fill="#b68a66"/>
+<path d="M336 390 C344 296 424 228 512 228 C600 228 680 296 688 390 C652 366 626 336 618 298 C576 338 506 362 414 384 C404 442 410 494 438 534 C388 506 344 450 336 390 Z" fill="#332b29" opacity="0.95"/>
+<path d="M292 396 C330 300 404 234 512 210 C620 234 694 300 732 396 L684 420 C652 332 594 286 512 274 C430 286 372 332 340 420 Z" fill="#c0b7a6" opacity="0.88"/>
+<path d="M436 438 Q474 420 502 438" fill="none" stroke="#211d1b" stroke-width="12" stroke-linecap="round"/>
+<path d="M522 438 Q550 420 588 438" fill="none" stroke="#211d1b" stroke-width="12" stroke-linecap="round"/>
+<line x1="432" y1="396" x2="492" y2="382" stroke="#211d1b" stroke-width="14" stroke-linecap="round"/>
+<line x1="532" y1="382" x2="592" y2="396" stroke="#211d1b" stroke-width="14" stroke-linecap="round"/>
+<path d="M520 414 C542 444 540 481 510 500 C531 501 549 496 560 485" fill="none" stroke="#8d684c" stroke-width="15" stroke-linecap="round"/>
+<path d="M462 540 Q512 558 562 540" fill="none" stroke="#4d2825" stroke-width="12" stroke-linecap="round"/>
+<circle cx="350" cy="748" r="26" fill="none" stroke="#b49b73" stroke-width="10"/>
+<rect x="372" y="742" width="72" height="12" rx="4" fill="#b49b73"/>
+<rect x="426" y="754" width="14" height="18" fill="#b49b73"/>
+<rect x="408" y="754" width="12" height="12" fill="#b49b73"/>
+<path d="M616 744 C642 728 678 728 708 742 L708 814 C676 826 644 826 616 812 Z" fill="#6f3b37"/>
+<path d="M334 728 L512 628 L690 728 L690 904 L334 904 Z" fill="#617286" opacity="0.55"/>
+<circle cx="512" cy="706" r="20" fill="#b49b73"/>
+<rect x="160" y="140" width="704" height="744" rx="26" fill="none" stroke="#9f9585" stroke-width="12" opacity="0.45"/>
+<text x="512" y="955" text-anchor="middle" font-family="Georgia, Times New Roman, serif" font-size="42" fill="#c0b7a6">HOUSEHOLD</text>
+<text x="512" y="990" text-anchor="middle" font-family="Georgia, Times New Roman, serif" font-size="20" letter-spacing="3" fill="#b49b73" opacity="0.9">MATRON</text>
+</svg>

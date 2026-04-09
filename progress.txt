@@ -1,0 +1,50 @@
+Remake Progress - Roman Colony Strategy (MVP foundation)
+Date: 2026-04-08
+
+Legend:
+- [x] Implemented (rough)
+- [ ] Not yet implemented
+- [~] Partially / placeholder
+
+PHASE 1 (Foundation)
+- [x] Scene/state framework (scene manager + store)
+- [x] Data loader for structured JSON content
+- [x] Prologue dialogue scene system (portraits + backgrounds + speaker names + hook events)
+- [x] Charter selection screen (small/medium/large as legal scope)
+- [x] Arrival sequence framework (coastal vs inland frames)
+- [x] Petition event framework (approve/delay/deny, queue, effects + banded outcome support)
+- [x] Placeholder portraits/background art assets
+
+PHASE 2 (Core systems)
+- [~] Visible colony stats HUD (Treasury, Order, Stores, Labor, Favor in Rome, Local Relations)
+- [~] Hidden traits + world flags (plumbed; needs authored content + balancing)
+- [~] Delayed effects scheduling (plumbed; needs broader use in petition content)
+- [ ] Colony economy model with Roman revenue streams (rents/market/workshops/public land/dues)
+- [ ] Fixed obligations model (upkeep/public works/supplies/tribute)
+- [~] Faction approval values (displayed + simple deltas; needs design + balancing)
+- [ ] Building approval pipeline (approve projects via petitions; connect to map/buildings later)
+- [~] Request queue (dockets + eligibility; still needs weighting, pacing, scenario control)
+
+PHASE 3 (Pressure + win conditions)
+- [ ] Unrest & resistance system (triggers, escalation, consequences)
+- [ ] Aid petition system (governor/central authority; rare, costly)
+- [ ] Milestone objectives & win/lose conditions tied to charter scope
+
+DATA-DRIVEN CONTENT (needs expansion)
+- [~] Scenario data (currently 1 scenario)
+- [~] Prologue content (short; needs iteration)
+- [~] Petitions (sample set; supports branching bands + delayed effects; needs many more)
+- [ ] Multiple province intros + arrival variants
+
+POLISH / FIXES NEEDED (intentionally rough)
+- [ ] Better UI layout on very small screens
+- [ ] Accessibility: focus states, ARIA labels, keyboard navigation beyond Enter/Space
+- [ ] Dialogue UX: faster text, back/skip (if desired), history log
+- [ ] Petition UX: clearer consequences preview, better pacing, better copy
+- [ ] Balance: tune effects so stability/treasury/factions feel meaningful
+- [ ] Save/load support for new state (currently none)
+- [ ] Audio hooks (placeholder; none implemented)
+- [ ] Animation hooks: implement actual transitions (events exist)
+- [ ] Error handling for missing/bad JSON data
+- [ ] Replace placeholder SVGs with real art
+- [ ] Remove or archive legacy city-builder UI/code once remake is stable

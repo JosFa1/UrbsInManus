@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && npm run postbuild",
+    "build": "vite build",
     "postbuild": "node copy-files.js",
     "preview": "vite preview"
   },

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+
+<rect width="1600" height="900" fill="#3a3432"/>
+<rect width="1600" height="290" fill="#768495"/>
+<polygon points="0,280 300,220 560,242 860,176 1110,212 1600,160 1600,900 0,900" fill="#8a785a"/>
+<polygon points="214,496 472,360 708,496 648,678 274,678" fill="#9f9585"/>
+<polygon points="256,504 472,394 666,504 616,646 324,646" fill="#c0b7a6"/>
+<polygon points="472,394 666,504 616,646 472,646" fill="#9f9585" opacity="0.5"/>
+<rect x="872" y="500" width="236" height="24" fill="#493727"/>
+<rect x="906" y="524" width="26" height="86" fill="#493727"/>
+<rect x="1048" y="524" width="26" height="86" fill="#493727"/>
+<rect x="880" y="444" width="220" height="58" fill="#6a5038"/>
+<rect x="942" y="458" width="96" height="32" fill="#c0b7a6"/>
+<line x1="1220" y1="420" x2="1220" y2="620" stroke="#493727" stroke-width="10"/>
+<line x1="1320" y1="420" x2="1320" y2="620" stroke="#493727" stroke-width="10"/>
+<line x1="1220" y1="420" x2="1320" y2="420" stroke="#493727" stroke-width="10"/>
+<line x1="1220" y1="520" x2="1320" y2="520" stroke="#493727" stroke-width="10"/>
+<rect x="1220" y="420" width="100" height="100" fill="none" stroke="#c0b7a6" stroke-width="10"/>
+<rect x="1190" y="620" width="160" height="18" fill="#6a5038"/>
+<rect x="0" y="656" width="1600" height="244" fill="#211d1b" opacity="0.28"/>
+<text x="104" y="122" font-family="Georgia, serif" font-size="48" fill="#c0b7a6">Survey Camp</text>
+</svg>

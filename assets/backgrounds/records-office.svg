@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<rect width="1600" height="900" fill="#3a3432"/>
+<rect width="1600" height="900" fill="#5b4e41"/>
+<rect x="0" y="0" width="1600" height="180" fill="#4e4338"/>
+<rect x="0" y="180" width="1600" height="84" fill="#6b5c4b"/>
+<rect x="120" y="188" width="260" height="430" fill="#6a5038"/>
+<rect x="430" y="188" width="260" height="430" fill="#6a5038"/>
+<rect x="740" y="188" width="260" height="430" fill="#6a5038"/>
+<rect x="1050" y="188" width="260" height="430" fill="#6a5038"/>
+<rect x="1360" y="188" width="120" height="430" fill="#6a5038"/>
+<rect x="138" y="236" width="224" height="24" fill="#7a623b"/>
+<rect x="138" y="336" width="224" height="24" fill="#7a623b"/>
+<rect x="138" y="436" width="224" height="24" fill="#7a623b"/>
+<rect x="138" y="536" width="224" height="24" fill="#7a623b"/>
+<rect x="448" y="236" width="224" height="24" fill="#7a623b"/>
+<rect x="448" y="336" width="224" height="24" fill="#7a623b"/>
+<rect x="448" y="436" width="224" height="24" fill="#7a623b"/>
+<rect x="448" y="536" width="224" height="24" fill="#7a623b"/>
+<rect x="758" y="236" width="224" height="24" fill="#7a623b"/>
+<rect x="758" y="336" width="224" height="24" fill="#7a623b"/>
+<rect x="758" y="436" width="224" height="24" fill="#7a623b"/>
+<rect x="758" y="536" width="224" height="24" fill="#7a623b"/>
+<rect x="1068" y="236" width="224" height="24" fill="#7a623b"/>
+<rect x="1068" y="336" width="224" height="24" fill="#7a623b"/>
+<rect x="1068" y="436" width="224" height="24" fill="#7a623b"/>
+<rect x="1068" y="536" width="224" height="24" fill="#7a623b"/>
+<rect x="1378" y="236" width="84" height="24" fill="#7a623b"/>
+<rect x="1378" y="336" width="84" height="24" fill="#7a623b"/>
+<rect x="1378" y="436" width="84" height="24" fill="#7a623b"/>
+<rect x="1378" y="536" width="84" height="24" fill="#7a623b"/>
+<rect x="150" y="208" width="34" height="48" rx="12" fill="#c0b7a6"/>
+<rect x="150" y="308" width="52" height="44" rx="10" fill="#8d684c"/>
+<rect x="200" y="208" width="34" height="48" rx="12" fill="#c0b7a6"/>
+<rect x="200" y="308" width="52" height="44" rx="10" fill="#8d684c"/>
+<rect x="260" y="208" width="34" height="48" rx="12" fill="#c0b7a6"/>
+<rect x="260" y="308" width="52" height="44" rx="10" fill="#8d684c"/>
+<rect x="460" y="208" width="34" height="48" rx="12" fill="#c0b7a6"/>
+<rect x="460" y="308" width="52" height="44" rx="10" fill="#8d684c"/>
+<rect x="520" y="208" width="34" height="48" rx="12" fill="#c0b7a6"/>
+<rect x="520" y="308" width="52" height="44" rx="10" fill="#8d684c"/>
+<rect x="790" y="208" width="34" height="48" rx="12" fill="#c0b7a6"/>
+<rect x="790" y="308" width="52" height="44" rx="10" fill="#8d684c"/>
+<rect x="860" y="208" width="34" height="48" rx="12" fill="#c0b7a6"/>
+<rect x="860" y="308" width="52" height="44" rx="10" fill="#8d684c"/>
+<rect x="1100" y="208" width="34" height="48" rx="12" fill="#c0b7a6"/>
+<rect x="1100" y="308" width="52" height="44" rx="10" fill="#8d684c"/>
+<rect x="1180" y="208" width="34" height="48" rx="12" fill="#c0b7a6"/>
+<rect x="1180" y="308" width="52" height="44" rx="10" fill="#8d684c"/>
+<rect x="1390" y="208" width="34" height="48" rx="12" fill="#c0b7a6"/>
+<rect x="1390" y="308" width="52" height="44" rx="10" fill="#8d684c"/>
+<rect x="340" y="640" width="920" height="102" fill="#6a5038"/>
+<rect x="404" y="602" width="792" height="62" fill="#7a623b"/>
+<rect x="470" y="620" width="160" height="28" fill="#c0b7a6"/>
+<rect x="666" y="614" width="208" height="38" rx="10" fill="#8d684c"/>
+<rect x="928" y="614" width="126" height="34" fill="#9f9585"/>
+<rect x="1132" y="610" width="22" height="88" fill="#b49b73"/>
+<polygon points="1132,698 1118,672 1146,672" fill="#211d1b"/>
+<circle cx="800" cy="130" r="48" fill="#5d6650"/>
+<path d="M778 84 L822 84 L834 174 L766 174 Z" fill="#b49b73"/>
+<rect x="0" y="670" width="1600" height="230" fill="#211d1b" opacity="0.28"/>
+<text x="104" y="124" font-family="Georgia, serif" font-size="48" fill="#c0b7a6">Records Office</text>
+</svg>

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<rect width="1024" height="1024" fill="#3a3432"/>
+<rect x="120" y="120" width="784" height="784" rx="44" fill="#5c5551"/>
+<polygon points="120,120 904,120 904,220 120,340" fill="#8b817b" opacity="0.18"/>
+<polygon points="120,904 904,904 904,664 120,744" fill="#211d1b" opacity="0.22"/>
+<path d="M250 820 C310 690 420 628 512 628 C604 628 714 690 774 820 L774 904 L250 904 Z" fill="#7f6d5a"/>
+<path d="M512 628 C604 628 714 690 774 820 L774 904 L512 904 Z" fill="#675545"/>
+<rect x="468" y="556" width="88" height="92" rx="22" fill="#8d684c"/>
+<ellipse cx="512" cy="430" rx="170" ry="188" fill="#b78b67"/>
+<path d="M352 398 C350 292 424 226 518 226 C618 226 684 296 678 394 C646 362 624 334 614 306 C566 350 490 380 408 392 C400 446 410 484 430 520 C388 498 356 452 352 398 Z" fill="#2e2724" opacity="0.95"/>
+<path d="M372 430 C384 520 434 586 512 596 C590 586 640 520 652 430 C636 460 614 476 590 488 C552 508 472 508 434 488 C410 476 388 460 372 430 Z" fill="#2e2724" opacity="0.22"/>
+<path d="M436 438 Q474 420 502 438" fill="none" stroke="#211d1b" stroke-width="12" stroke-linecap="round"/>
+<path d="M522 438 Q550 420 588 438" fill="none" stroke="#211d1b" stroke-width="12" stroke-linecap="round"/>
+<line x1="432" y1="396" x2="492" y2="382" stroke="#211d1b" stroke-width="14" stroke-linecap="round"/>
+<line x1="532" y1="382" x2="592" y2="396" stroke="#211d1b" stroke-width="14" stroke-linecap="round"/>
+<path d="M520 414 C542 444 540 481 510 500 C531 501 549 496 560 485" fill="none" stroke="#8d684c" stroke-width="15" stroke-linecap="round"/>
+<path d="M462 540 Q512 558 562 540" fill="none" stroke="#4d2825" stroke-width="12" stroke-linecap="round"/>
+<path d="M334 720 L512 628 L690 720 L690 904 L334 904 Z" fill="#6f3b37" opacity="0.72"/>
+<path d="M334 720 L512 628 L690 720 L512 904 L334 904 Z" fill="#6f3b37" opacity="0.18"/>
+<rect x="444" y="630" width="136" height="66" rx="16" fill="#c0b7a6" opacity="0.95"/>
+<line x1="466" y1="652" x2="558" y2="652" stroke="#211d1b" stroke-width="8" opacity="0.5"/>
+<line x1="466" y1="674" x2="558" y2="674" stroke="#211d1b" stroke-width="8" opacity="0.5"/>
+<circle cx="350" cy="748" r="26" fill="none" stroke="#b49b73" stroke-width="10"/>
+<rect x="372" y="742" width="72" height="12" rx="4" fill="#b49b73"/>
+<rect x="426" y="754" width="14" height="18" fill="#b49b73"/>
+<rect x="408" y="754" width="12" height="12" fill="#b49b73"/>
+<rect x="612" y="716" width="136" height="64" rx="22" fill="#c0b7a6"/>
+<rect x="632" y="730" width="96" height="36" rx="12" fill="#9f9585"/>
+<circle cx="624" cy="748" r="18" fill="#b49b73"/>
+<circle cx="736" cy="748" r="18" fill="#b49b73"/>
+<circle cx="512" cy="700" r="20" fill="#b49b73"/>
+<rect x="160" y="140" width="704" height="744" rx="26" fill="none" stroke="#9f9585" stroke-width="12" opacity="0.45"/>
+<text x="512" y="955" text-anchor="middle" font-family="Georgia, Times New Roman, serif" font-size="42" fill="#c0b7a6">QUARTERMASTER</text>
+<text x="512" y="990" text-anchor="middle" font-family="Georgia, Times New Roman, serif" font-size="20" letter-spacing="3" fill="#b49b73" opacity="0.9">SABINA</text>
+</svg>

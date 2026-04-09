@@ -9,9 +9,15 @@ body {
     background-color: #1a1a1a;
     color: #f5f5dc;
     height: 100vh;
+    height: 100dvh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+}
+
+#app {
+    flex: 1;
+    min-height: 0;
 }
 
 .top-bar {
@@ -199,6 +205,640 @@ h1 {
     margin: 6px 0;
 }
 
+/* ========================================
+   Remake foundation UI (prologue/charter/arrival/petitions)
+   ======================================== */
+
+.screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    padding: 24px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.panel {
+    width: min(1020px, calc(100% - 24px));
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(245, 245, 220, 0.25);
+    border-radius: 14px;
+    padding: 18px;
+    backdrop-filter: blur(6px);
+}
+
+.panel-title {
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+}
+
+.muted {
+    opacity: 0.82;
+}
+
+.btn {
+    background: rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(245, 245, 220, 0.35);
+    color: #f5f5dc;
+    border-radius: 12px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
+}
+
+.btn:hover {
+    background: rgba(0, 0, 0, 0.32);
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.btn:focus-visible {
+    outline: 2px solid rgba(255, 215, 0, 0.75);
+    outline-offset: 2px;
+}
+
+.screen .panel {
+    animation: ui-panel-in 0.14s ease both;
+}
+
+@keyframes ui-panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.btn.primary {
+    background: rgba(255, 215, 0, 0.14);
+    border-color: rgba(255, 215, 0, 0.75);
+}
+
+.btn.primary:hover {
+    background: rgba(255, 215, 0, 0.22);
+}
+
+.btn.danger {
+    background: rgba(255, 90, 90, 0.12);
+    border-color: rgba(255, 90, 90, 0.75);
+}
+
+.btn.danger:hover {
+    background: rgba(255, 90, 90, 0.18);
+}
+
+/* Dialogue */
+
+.dialogue-screen {
+    padding: 0;
+    align-items: stretch;
+    justify-content: stretch;
+    overflow: hidden;
+}
+
+.dialogue-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: saturate(0.95) contrast(0.95);
+}
+
+.dialogue-box {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 24px;
+    width: min(1020px, calc(100% - 48px));
+    display: flex;
+    gap: 14px;
+    padding: 14px;
+    background: rgba(0, 0, 0, 0.68);
+    border: 1px solid rgba(245, 245, 220, 0.25);
+    border-radius: 16px;
+    backdrop-filter: blur(8px);
+    max-height: calc(100% - 48px);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.dialogue-portrait {
+    width: 140px;
+    height: 140px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(245, 245, 220, 0.18);
+    background: rgba(0, 0, 0, 0.25);
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+}
+
+@media (max-width: 520px) {
+    .dialogue-box {
+        left: 0;
+        transform: none;
+        bottom: 0;
+        width: 100%;
+        border-radius: 0;
+        padding: 12px;
+        gap: 12px;
+        max-height: calc(100% - 64px);
+    }
+
+    .dialogue-portrait {
+        width: 96px;
+        height: 96px;
+        border-radius: 12px;
+    }
+
+    .dialogue-text {
+        font-size: 1em;
+    }
+}
+
+.dialogue-portrait-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dialogue-portrait-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+}
+
+.dialogue-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.dialogue-name {
+    font-weight: bold;
+    letter-spacing: 0.04em;
+}
+
+.dialogue-text {
+    line-height: 1.35;
+    font-size: 1.06em;
+}
+
+.dialogue-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.dialogue-choices .btn {
+    width: 100%;
+    text-align: left;
+}
+
+.dialogue-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+}
+
+/* Charter */
+
+.charter-screen .panel {
+    max-width: 1040px;
+}
+
+.charter-grid {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.charter-card {
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(245, 245, 220, 0.18);
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.charter-name {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.charter-legal {
+    opacity: 0.85;
+    font-style: italic;
+}
+
+.charter-desc {
+    opacity: 0.92;
+    line-height: 1.25;
+}
+
+.charter-metrics {
+    opacity: 0.85;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 10px;
+    font-size: 0.95em;
+}
+
+@media (max-width: 980px) {
+    .charter-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Arrival */
+
+.arrival-screen {
+    padding: 0;
+    overflow: hidden;
+}
+
+.arrival-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: saturate(0.95) contrast(0.95);
+}
+
+.arrival-box {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 24px;
+    width: min(1020px, calc(100% - 48px));
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.68);
+    border: 1px solid rgba(245, 245, 220, 0.25);
+    border-radius: 16px;
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: calc(100% - 48px);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 520px) {
+    .arrival-box {
+        left: 0;
+        transform: none;
+        bottom: 0;
+        width: 100%;
+        border-radius: 0;
+        padding: 12px;
+        max-height: calc(100% - 64px);
+    }
+}
+
+.arrival-title {
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    font-size: 1.1em;
+}
+
+.arrival-text {
+    line-height: 1.35;
+}
+
+.arrival-controls {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Petitions */
+
+.petition-screen {
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 18px;
+    gap: 14px;
+    overflow: hidden;
+}
+
+.petition-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: saturate(0.95) contrast(0.95);
+    pointer-events: none;
+}
+
+.petition-screen > .hud,
+.petition-screen > .petition-layout {
+    position: relative;
+    z-index: 1;
+}
+
+.petition-screen .toast {
+    left: 18px;
+}
+
+.hud {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 0;
+    align-items: flex-end;
+}
+
+.hud-title {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.hud-right {
+    display: flex;
+    gap: 10px;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.hud-stat {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(245, 245, 220, 0.2);
+    border-radius: 12px;
+    padding: 10px 12px;
+    min-width: 120px;
+    flex: 0 0 132px;
+    transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+}
+
+.hud-stat.pulse {
+    animation: hud-pulse 0.55s ease;
+}
+
+@keyframes hud-pulse {
+    0% {
+        border-color: rgba(245, 245, 220, 0.2);
+        background: rgba(0, 0, 0, 0.3);
+        transform: translateY(0);
+    }
+    35% {
+        border-color: rgba(255, 215, 0, 0.75);
+        background: rgba(255, 215, 0, 0.12);
+        transform: translateY(-2px);
+    }
+    100% {
+        border-color: rgba(245, 245, 220, 0.2);
+        background: rgba(0, 0, 0, 0.3);
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 520px) {
+    .hud {
+        align-items: flex-start;
+    }
+
+    .hud-stat {
+        min-width: 104px;
+        padding: 8px 10px;
+    }
+}
+
+.hud-stat .k {
+    opacity: 0.8;
+    font-size: 0.86em;
+}
+
+.hud-stat .v {
+    font-weight: bold;
+}
+
+.petition-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 14px;
+    flex: 1;
+    min-height: 0;
+    align-items: end;
+}
+
+.petition-main {
+    display: flex;
+    min-height: 0;
+}
+
+.petition-side {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 0;
+}
+
+.petition-layout .panel {
+    width: 100%;
+}
+
+.petition {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    max-height: 72vh;
+    max-height: 72dvh;
+}
+
+.petition-group {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.82em;
+    margin-bottom: 6px;
+}
+
+.petition-title {
+    font-weight: bold;
+    font-size: 1.15em;
+    margin-bottom: 10px;
+}
+
+.petition-body {
+    line-height: 1.35;
+    opacity: 0.95;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.petition-petitioner {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin: 10px 0 12px 0;
+    min-width: 0;
+}
+
+.petition-portrait {
+    width: 110px;
+    height: 110px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(245, 245, 220, 0.18);
+    background: rgba(0, 0, 0, 0.25);
+    flex: 0 0 auto;
+}
+
+.petition-portrait-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.petition-petitioner-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.petition-petitioner-name {
+    font-weight: bold;
+    letter-spacing: 0.04em;
+}
+
+@media (max-width: 740px) {
+    .hud-right {
+        flex-wrap: wrap;
+        overflow-x: visible;
+    }
+
+    .hud-stat {
+        flex: 1 1 120px;
+    }
+}
+
+.petition-controls {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.faction-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 10px;
+}
+
+.faction .k {
+    opacity: 0.8;
+    font-size: 0.9em;
+}
+
+.faction .v {
+    font-weight: bold;
+}
+
+.log-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.log-line {
+    opacity: 0.9;
+    line-height: 1.2;
+}
+
+@media (max-width: 980px) {
+    .petition-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+        flex: 0 0 auto;
+        min-height: auto;
+    }
+
+    .petition-screen {
+        overflow: auto;
+    }
+
+    .petition {
+        overflow: visible;
+        max-height: none;
+    }
+
+    .petition-body {
+        overflow: visible;
+        flex: 0 0 auto;
+    }
+
+    .petition-petitioner {
+        align-items: flex-start;
+    }
+
+    .petition-portrait {
+        width: 96px;
+        height: 96px;
+        border-radius: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn {
+        transition: none;
+    }
+
+    .btn:active {
+        transform: none;
+    }
+
+    .screen .panel {
+        animation: none;
+    }
+
+    .hud-stat.pulse {
+        animation: none;
+    }
+}
+
+.fatal {
+    white-space: pre-wrap;
+    padding: 18px;
+    margin: 18px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 90, 90, 0.55);
+    background: rgba(0, 0, 0, 0.55);
+}
+
 .tool-btn {
     background: rgba(139, 69, 19, 0.15);
     border: 1px solid rgba(139, 69, 19, 0.8);
@@ -312,6 +952,14 @@ h1 {
     transition: opacity 0.12s ease, transform 0.12s ease;
     pointer-events: none;
     max-width: 420px;
+}
+
+@media (max-width: 740px) {
+    .toast {
+        left: 18px;
+        right: 18px;
+        max-width: none;
+    }
 }
 
 .toast.show {

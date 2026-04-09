@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+
+
+<rect width="512" height="512" fill="#3a3432"/>
+<circle cx="256" cy="256" r="182" fill="#4d2825"/>
+<circle cx="256" cy="256" r="154" fill="none" stroke="#b49b73" stroke-width="18"/>
+<path d="M256 122 L290 210 L386 210 L308 266 L338 356 L256 302 L174 356 L204 266 L126 210 L222 210 Z" fill="#b49b73"/>
+<path d="M170 358 C198 384 226 398 256 400 C286 398 314 384 342 358" fill="none" stroke="#5d6650" stroke-width="16" stroke-linecap="round"/>
+<text x="256" y="452" text-anchor="middle" font-family="Georgia, serif" font-size="30" fill="#c0b7a6">COLONIA</text>
+
+</svg>

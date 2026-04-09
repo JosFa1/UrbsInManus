@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<rect width="1600" height="900" fill="#3a3432"/>
+<rect width="1600" height="360" fill="#737f8f"/>
+<rect y="360" width="1600" height="540" fill="#85735a"/>
+<polygon points="0,420 250,400 530,486 760,462 980,522 1240,470 1600,540 1600,900 0,900" fill="#7b694f"/>
+<path d="M0 900 L520 560 L706 560 L1600 900 Z" fill="#6a5038"/>
+<path d="M650 900 L790 544 L948 544 L1120 900 Z" fill="#4f3d30" opacity="0.45"/>
+<rect x="680" y="268" width="216" height="240" fill="#9f9585"/>
+<polygon points="648,306 788,192 928,306" fill="#c0b7a6"/>
+<rect x="752" y="330" width="72" height="178" fill="#8d684c"/>
+<circle cx="788" cy="400" r="42" fill="#5d6650"/>
+<rect x="734" y="520" width="108" height="28" fill="#5b4835"/>
+<rect x="348" y="442" width="38" height="112" fill="#9f9585"/>
+<rect x="1210" y="460" width="38" height="104" fill="#9f9585"/>
+<path d="M332 442 L402 442 L432 490 L302 490 Z" fill="#c0b7a6"/>
+<path d="M1194 460 L1264 460 L1292 506 L1168 506 Z" fill="#c0b7a6"/>
+<circle cx="276" cy="566" r="20" fill="#b49b73"/>
+<circle cx="1304" cy="580" r="20" fill="#b49b73"/>
+<circle cx="1318" cy="600" r="12" fill="#c0b7a6"/>
+<circle cx="260" cy="586" r="12" fill="#c0b7a6"/>
+<rect x="0" y="640" width="1600" height="260" fill="#211d1b" opacity="0.32"/>
+<text x="104" y="124" font-family="Georgia, serif" font-size="48" fill="#c0b7a6">Shrine Crossing</text>
+</svg>

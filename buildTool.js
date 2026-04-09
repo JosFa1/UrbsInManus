@@ -172,7 +172,7 @@
             const w = def.size.w;
             const h = def.size.h;
 
-            const terrainLabel = (t) => (t ? (t.charAt(0).toUpperCase() + t.slice(1)) : '—');
+            const terrainLabel = (t) => (t ? (t.charAt(0).toUpperCase() + t.slice(1)) : '-');
 
             // Bounds
             if (originX < 0 || originY < 0 || originX + w > this.world.width || originY + h > this.world.height) {
@@ -639,16 +639,16 @@
 
             const selectedLabel = this.demolishMode
                 ? 'Dirue'
-                : (this.selectedType ? this.catalog.get(this.selectedType)?.latinName : '—');
+                : (this.selectedType ? this.catalog.get(this.selectedType)?.latinName : '-');
 
             const def = this.getSelectedDef();
             const footprint = this.demolishMode
                 ? (() => {
                     const id = this.getBuildingIdAt(this.hover.x, this.hover.y);
                     const b = id ? this.getBuildingById(id) : null;
-                    return b ? `${b.width}x${b.height}` : '—';
+                    return b ? `${b.width}x${b.height}` : '-';
                 })()
-                : (def ? `${def.size.w}x${def.size.h}` : '—');
+                : (def ? `${def.size.w}x${def.size.h}` : '-');
 
             const cost = def ? this._currentCost(def, this._computeVariant(def, this.hover.x, this.hover.y).baseCost) : null;
             const coffers = this.economy ? this.economy.coffers : null;

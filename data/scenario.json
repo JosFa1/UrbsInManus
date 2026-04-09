@@ -1,0 +1,42 @@
+{
+  "id": "colonia_victrix_britannia",
+  "name": "Colonia Victrix",
+  "year": 50,
+  "yearLabel": "50 CE",
+  "era": "Early Empire",
+  "province": "Britannia",
+  "arrivalType": "coastal",
+  "settlers": ["veterans", "merchants", "families"],
+  "romeExpectations": ["stability", "loyalty", "revenue"],
+  "initialFlagValues": {
+    "land_not_surveyed": true
+  },
+  "initialPetitionIds": [
+    "mark_first_allotments",
+    "first_well",
+    "timber_from_grove",
+    "bread_before_stone",
+    "rental_housing_offer",
+    "veterans_high_ground"
+  ],
+  "petitionPoolIds": [
+    "mark_first_allotments",
+    "first_well",
+    "timber_from_grove",
+    "bread_before_stone",
+    "rental_housing_offer",
+    "veterans_high_ground",
+    "shrine_at_crossing",
+    "market_day_now_or_later",
+    "garrison_pay_due",
+    "tax_arrears_lower_quarter",
+    "boundary_stones_torn_up",
+    "first_festival",
+    "road_marsh_edge",
+    "ask_rome_for_help",
+    "smoke_from_workshops",
+    "burial_ground_dispute",
+    "smugglers_at_landing",
+    "proper_forum"
+  ]
+}

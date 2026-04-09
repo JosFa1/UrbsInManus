@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<rect width="1600" height="900" fill="#3a3432"/>
+<rect width="1600" height="420" fill="#768495"/>
+<rect y="420" width="1600" height="480" fill="#8a785a"/>
+<rect x="0" y="365" width="1600" height="55" fill="#667589" opacity="0.55"/>
+<polygon points="110,370 280,270 438,370 438,650 110,650" fill="#6a5038"/>
+<polygon points="110,370 280,270 438,370 280,420" fill="#6f3b37"/>
+<polygon points="460,360 650,250 840,360 840,656 460,656" fill="#6a5038"/>
+<polygon points="460,360 650,250 840,360 650,410" fill="#59664d"/>
+<polygon points="876,372 1060,280 1248,372 1248,664 876,664" fill="#6a5038"/>
+<polygon points="876,372 1060,280 1248,372 1060,424" fill="#617286"/>
+<polygon points="1288,380 1436,300 1540,380 1540,650 1288,650" fill="#6a5038"/>
+<polygon points="1288,380 1436,300 1540,380 1436,424" fill="#6f3b37"/>
+<rect x="170" y="500" width="208" height="42" fill="#7a623b"/>
+<rect x="518" y="506" width="260" height="44" fill="#7a623b"/>
+<rect x="934" y="510" width="254" height="46" fill="#7a623b"/>
+<rect x="1324" y="510" width="180" height="42" fill="#7a623b"/>
+<circle cx="320" cy="700" r="56" fill="#5c4d3f"/>
+<circle cx="1070" cy="712" r="56" fill="#5c4d3f"/>
+<rect x="256" y="690" width="814" height="28" fill="#6a5038"/>
+<rect x="116" y="680" width="128" height="36" fill="#7a623b"/>
+<rect x="1180" y="684" width="220" height="36" fill="#7a623b"/>
+<rect x="0" y="610" width="1600" height="48" fill="#6a5038" opacity="0.18"/>
+<rect x="0" y="662" width="1600" height="238" fill="#211d1b" opacity="0.28"/>
+<text x="104" y="124" font-family="Georgia, serif" font-size="48" fill="#c0b7a6">Market Row</text>
+</svg>

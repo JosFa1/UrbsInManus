@@ -1,0 +1,92 @@
+{
+  "id": "prologue_colony_authorization",
+  "title": "Prologue",
+  "speakers": {
+    "duovir": {
+      "name": "Duovir (You)",
+      "portraitUrl": "assets/portraits/duovir.svg"
+    },
+    "varro": {
+      "name": "Quintus Sergius Varro",
+      "portraitUrl": "assets/portraits/legate.svg"
+    },
+    "sabina": {
+      "name": "Aelia Sabina",
+      "portraitUrl": "assets/portraits/quartermaster-sabina.svg"
+    }
+  },
+  "backgrounds": {
+    "tent": "assets/backgrounds/governor-tent.svg",
+    "road": "assets/backgrounds/road.svg",
+    "survey": "assets/backgrounds/survey-camp.svg"
+  },
+  "pools": {
+    "openingNarration": [
+      {
+        "speakerId": "duovir",
+        "backgroundId": "road",
+        "text": "We did not end up here by chance. Rome does not move this many people, tools, animals, and sacks of grain without deciding the matter long before anyone sees the shore. The order was given. Now the harder part starts. Either this place becomes a colony, or it becomes a cost people in Rome regret."
+      },
+      {
+        "speakerId": "duovir",
+        "backgroundId": "road",
+        "text": "A new colony sounds clean when people talk about it in Rome. They talk about land, order, and glory. Then you get here and it starts with wet ground, tired men, bad guesses, and three arguments before the first cart is even unloaded."
+      },
+      {
+        "speakerId": "duovir",
+        "backgroundId": "road",
+        "text": "This place is meant to become Roman. That sounds simple until you remember that roads, walls, markets, and laws do not rise on their own. Somebody has to choose what gets built first, who gets heard first, and who learns to wait."
+      }
+    ]
+  },
+  "lines": [
+    { "pickOneFromPool": "openingNarration" },
+    {
+      "speakerId": "varro",
+      "backgroundId": "tent",
+      "text": "Rome wants a colony that can stand on its own feet sooner rather than later. That means order, revenue, and no reports that make other men ask whether this was worth the effort. You do not need perfection. You need something firm enough that people stop calling it temporary."
+    },
+    {
+      "speakerId": "sabina",
+      "backgroundId": "tent",
+      "text": "We have enough to begin. We do not have enough to waste."
+    },
+    {
+      "speakerId": "sabina",
+      "backgroundId": "survey",
+      "text": "So say what comes first.",
+      "choices": [
+        {
+          "id": "survival",
+          "label": "Then we start with what keeps people alive.",
+          "effects": {
+            "traitDeltas": { "generosity": 12, "harshness": -4 },
+            "flagValues": { "prologuePriority": "survival" }
+          }
+        },
+        {
+          "id": "institution",
+          "label": "Then we start with what makes the colony look real.",
+          "effects": {
+            "traitDeltas": { "legalism": 12, "integrity": 4 },
+            "flagValues": { "prologuePriority": "institution" }
+          }
+        },
+        {
+          "id": "order",
+          "label": "Then we start with what keeps everyone in line.",
+          "effects": {
+            "traitDeltas": { "harshness": 12 },
+            "orderDelta": 1,
+            "flagValues": { "prologuePriority": "order" }
+          }
+        }
+      ]
+    },
+    {
+      "speakerId": "duovir",
+      "backgroundId": "survey",
+      "text": "Good. Then we begin."
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+
+<rect width="1024" height="1024" fill="#3a3432"/>
+<rect x="120" y="120" width="784" height="784" rx="44" fill="#5c5551"/>
+<polygon points="120,120 904,120 904,220 120,340" fill="#8b817b" opacity="0.18"/>
+<polygon points="120,904 904,904 904,664 120,744" fill="#211d1b" opacity="0.22"/>
+<path d="M250 820 C310 690 420 628 512 628 C604 628 714 690 774 820 L774 904 L250 904 Z" fill="#c0b7a6"/>
+<path d="M512 628 C604 628 714 690 774 820 L774 904 L512 904 Z" fill="#9f9585"/>
+<rect x="468" y="556" width="88" height="92" rx="22" fill="#8d684c"/>
+<ellipse cx="512" cy="430" rx="170" ry="188" fill="#b58a65"/>
+<path d="M512 242 C601 246 671 317 680 413 C646 390 619 358 597 318 C553 352 486 378 407 390 C400 434 405 470 421 516 C380 490 352 437 352 390 C352 308 422 242 512 242 Z" fill="#211d1b" opacity="0.92"/>
+<path d="M412 490 C452 518 572 520 612 490 C584 569 441 569 412 490 Z" fill="#8d684c"/>
+<path d="M520 414 C542 444 540 481 510 500 C531 501 549 496 560 485" fill="none" stroke="#8d684c" stroke-width="15" stroke-linecap="round"/>
+<path d="M436 438 Q474 420 502 438" fill="none" stroke="#211d1b" stroke-width="12" stroke-linecap="round"/>
+<path d="M522 438 Q550 420 588 438" fill="none" stroke="#211d1b" stroke-width="12" stroke-linecap="round"/>
+<line x1="432" y1="396" x2="492" y2="382" stroke="#211d1b" stroke-width="14" stroke-linecap="round"/>
+<line x1="532" y1="382" x2="592" y2="396" stroke="#211d1b" stroke-width="14" stroke-linecap="round"/>
+<path d="M462 540 Q512 558 562 540" fill="none" stroke="#4d2825" stroke-width="12" stroke-linecap="round"/>
+<path d="M408 510 C452 578 572 578 616 510" fill="none" stroke="#211d1b" stroke-width="20" stroke-linecap="round"/>
+<path d="M444 536 Q512 566 580 536" fill="none" stroke="#211d1b" stroke-width="16" stroke-linecap="round"/>
+<ellipse cx="439.3" cy="477.8" rx="16" ry="32" transform="rotate(-115.0 439.3 477.8)" fill="#5d6650"/>
+<ellipse cx="394.7" cy="451.2" rx="16" ry="32" transform="rotate(-133.0 394.7 451.2)" fill="#5d6650"/>
+<ellipse cx="361.6" cy="413.7" rx="16" ry="32" transform="rotate(-151.0 361.6 413.7)" fill="#5d6650"/>
+<ellipse cx="343.2" cy="369.0" rx="16" ry="32" transform="rotate(-169.0 343.2 369.0)" fill="#5d6650"/>
+<ellipse cx="341.3" cy="321.5" rx="16" ry="32" transform="rotate(-187.0 341.3 321.5)" fill="#5d6650"/>
+<ellipse cx="356.1" cy="275.8" rx="16" ry="32" transform="rotate(-205.0 356.1 275.8)" fill="#5d6650"/>
+<ellipse cx="584.7" cy="202.2" rx="16" ry="32" transform="rotate(-65.0 584.7 202.2)" fill="#5d6650"/>
+<ellipse cx="629.3" cy="228.8" rx="16" ry="32" transform="rotate(-47.0 629.3 228.8)" fill="#5d6650"/>
+<ellipse cx="662.4" cy="266.3" rx="16" ry="32" transform="rotate(-29.0 662.4 266.3)" fill="#5d6650"/>
+<ellipse cx="680.8" cy="311.0" rx="16" ry="32" transform="rotate(-11.0 680.8 311.0)" fill="#5d6650"/>
+<ellipse cx="682.7" cy="358.5" rx="16" ry="32" transform="rotate(7.0 682.7 358.5)" fill="#5d6650"/>
+<ellipse cx="667.9" cy="404.2" rx="16" ry="32" transform="rotate(25.0 667.9 404.2)" fill="#5d6650"/>
+<rect x="160" y="140" width="704" height="744" rx="26" fill="none" stroke="#9f9585" stroke-width="12" opacity="0.45"/>
+<text x="512" y="955" text-anchor="middle" font-family="Georgia, Times New Roman, serif" font-size="42" fill="#c0b7a6">DUOVIR</text>
+<text x="512" y="990" text-anchor="middle" font-family="Georgia, Times New Roman, serif" font-size="20" letter-spacing="3" fill="#b49b73" opacity="0.9">CITY FOUNDER</text>
+</svg>

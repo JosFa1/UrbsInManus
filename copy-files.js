@@ -1,26 +1,46 @@
 const fs = require('fs');
 const path = require('path');
 
-const files = [
+const itemsToCopy = [
+  // Legacy files (kept for now)
   'buildingCatalog.js',
   'saveAdapter.js',
   'buildTool.js',
   'game.js',
   'map.png',
-  'favicon.ico'
+  'favicon.ico',
+
+  // Remake foundation content
+  'data',
+  'assets'
 ];
 
 const distDir = 'dist';
 
-files.forEach(file => {
-  const src = path.join(__dirname, file);
-  const dest = path.join(__dirname, distDir, file);
+function copyRecursive(src, dest) {
+  const stat = fs.statSync(src);
+  if (stat.isDirectory()) {
+    fs.mkdirSync(dest, { recursive: true });
+    const entries = fs.readdirSync(src);
+    for (const entry of entries) {
+      copyRecursive(path.join(src, entry), path.join(dest, entry));
+    }
+    return;
+  }
+
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.copyFileSync(src, dest);
+}
+
+itemsToCopy.forEach(item => {
+  const src = path.join(__dirname, item);
+  const dest = path.join(__dirname, distDir, item);
 
   try {
-    fs.copyFileSync(src, dest);
-    console.log(`Copied ${file} to dist/`);
+    copyRecursive(src, dest);
+    console.log(`Copied ${item} to dist/`);
   } catch (err) {
-    console.error(`Error copying ${file}:`, err);
+    console.error(`Error copying ${item}:`, err);
     process.exit(1);
   }
 });

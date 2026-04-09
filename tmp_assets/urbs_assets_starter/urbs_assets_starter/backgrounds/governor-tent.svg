@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+
+
+    <rect width="1600" height="900" fill="#3a3432"/>
+    <rect width="1600" height="420" fill="#768495"/>
+    <rect y="420" width="1600" height="480" fill="#8a785a"/>
+    
+<polygon points="180,150 800,40 1420,150 1260,690 340,690" fill="#4d2825"/>
+<polygon points="250,180 800,92 1350,180 1218,654 382,654" fill="#6f3b37"/>
+<polygon points="800,92 1350,180 1218,654 800,654" fill="#4d2825" opacity="0.55"/>
+<rect x="674" y="310" width="252" height="220" fill="#c0b7a6"/>
+<rect x="710" y="350" width="180" height="144" fill="#9f9585"/>
+<rect x="530" y="548" width="540" height="28" fill="#493727"/>
+<rect x="584" y="576" width="432" height="18" fill="#6a5038"/>
+<rect x="742" y="520" width="116" height="54" fill="#6a5038"/>
+<path d="M702 520 H898 L862 450 H738 Z" fill="#7a623b"/>
+<circle cx="800" cy="430" r="44" fill="#5d6650"/>
+<path d="M782 388 L818 388 L830 472 L770 472 Z" fill="#b49b73"/>
+<rect x="230" y="650" width="1140" height="60" fill="#493727" opacity="0.24"/>
+<rect x="0" y="660" width="1600" height="240" fill="#211d1b" opacity="0.28"/>
+<text x="104" y="124" font-family="Georgia, serif" font-size="48" fill="#c0b7a6">Governor Tent</text>
+</svg>

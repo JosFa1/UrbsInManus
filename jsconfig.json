@@ -7,6 +7,6 @@
     "lib": ["ES2020", "DOM"],
     "jsx": "react"
   },
-  "include": ["*.js"],
+  "include": ["*.js", "src/**/*.js"],
   "exclude": ["node_modules"]
 }

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+
+<rect width="1600" height="900" fill="#3a3432"/>
+<rect width="1600" height="300" fill="#768495"/>
+<polygon points="0,280 190,192 390,234 620,160 820,206 1010,146 1210,186 1410,126 1600,182 1600,450 0,450" fill="#41473a"/>
+<polygon points="660,900 940,900 1040,540 1120,450 960,450 800,560 640,450 480,450 560,540" fill="#5c5551"/>
+<polygon points="800,560 940,900 1040,540 1120,450 960,450 800,560" fill="#3a3432" opacity="0.38"/>
+<rect x="278" y="446" width="56" height="164" rx="8" fill="#8b817b"/>
+<rect x="290" y="422" width="32" height="30" fill="#8b817b"/>
+<path d="M306 476 v68" stroke="#5c5551" stroke-width="12" stroke-linecap="round"/>
+<rect x="1210" y="434" width="34" height="190" fill="#493727"/>
+<circle cx="1186" cy="420" r="24" fill="#5d6650"/>
+<circle cx="1248" cy="408" r="30" fill="#5d6650"/>
+<circle cx="1280" cy="444" r="26" fill="#41473a"/>
+<rect x="1050" y="462" width="20" height="110" fill="#493727"/>
+<path d="M1060 462 L1116 504 L1060 520 Z" fill="#6f3b37"/>
+<rect x="0" y="652" width="1600" height="248" fill="#211d1b" opacity="0.28"/>
+<text x="104" y="122" font-family="Georgia, serif" font-size="48" fill="#c0b7a6">Road</text>
+</svg>

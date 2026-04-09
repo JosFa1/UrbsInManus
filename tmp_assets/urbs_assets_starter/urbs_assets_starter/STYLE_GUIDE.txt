@@ -1,0 +1,48 @@
+Urbs in Manus starter asset pack
+
+Included files
+
+Portraits
+- duovir.svg
+- legate.svg
+- centurion.svg
+- merchant.svg
+- augur.svg
+
+Backgrounds
+- governor-tent.svg
+- harbor.svg
+- road.svg
+- survey-camp.svg
+
+UI
+- colony-seal.svg
+- petition-panel-template.svg
+
+Style rules
+- Flat fills only
+- No gradients
+- 1 main light direction from upper left
+- One shadow shape per major form
+- Keep lower 25 to 30 percent of backgrounds darker and calmer for text readability
+- Faces should stay readable at 128 px
+- Backgrounds should read clearly even when heavily cropped on mobile
+
+Suggested project mapping
+- governor-tent.svg for briefings, decrees, early authority scenes
+- harbor.svg for arrivals, trade, shortages, imports, naval talk
+- road.svg for patrols, locals, travel, land routes, unrest
+- survey-camp.svg for petitions, planning, allocation, census, early civic scenes
+- duovir.svg for player voice or city magistrate
+- legate.svg for governor or imperial administration
+- centurion.svg for military order, security, force, discipline
+- merchant.svg for trade petitions
+- augur.svg for religion, omens, sacred complaints
+
+Recommended next assets
+- veteran-spokesman portrait
+- matron-household portrait
+- scribe portrait
+- market-row background
+- shrine background
+- records-office background

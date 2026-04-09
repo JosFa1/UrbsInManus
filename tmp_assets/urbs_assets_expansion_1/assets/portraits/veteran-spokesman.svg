@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<rect width="1024" height="1024" fill="#3a3432"/>
+<rect x="120" y="120" width="784" height="784" rx="44" fill="#5c5551"/>
+<polygon points="120,120 904,120 904,220 120,340" fill="#8b817b" opacity="0.18"/>
+<polygon points="120,904 904,904 904,664 120,744" fill="#211d1b" opacity="0.22"/>
+<path d="M250 820 C310 690 420 628 512 628 C604 628 714 690 774 820 L774 904 L250 904 Z" fill="#7e7360"/>
+<path d="M512 628 C604 628 714 690 774 820 L774 904 L512 904 Z" fill="#615644"/>
+<rect x="468" y="556" width="88" height="92" rx="22" fill="#8d684c"/>
+<ellipse cx="512" cy="430" rx="170" ry="188" fill="#b78b65"/>
+<path d="M360 386 C364 298 434 242 514 242 C596 242 664 298 668 386 C642 374 614 348 594 316 C554 348 482 378 410 388 C404 432 410 470 426 508 C386 486 360 440 360 386 Z" fill="#3a312d" opacity="0.96"/>
+<path d="M436 438 Q474 420 502 438" fill="none" stroke="#211d1b" stroke-width="12" stroke-linecap="round"/>
+<path d="M522 438 Q550 420 588 438" fill="none" stroke="#211d1b" stroke-width="12" stroke-linecap="round"/>
+<line x1="432" y1="396" x2="492" y2="382" stroke="#211d1b" stroke-width="14" stroke-linecap="round"/>
+<line x1="532" y1="382" x2="592" y2="396" stroke="#211d1b" stroke-width="14" stroke-linecap="round"/>
+<path d="M520 414 C542 444 540 481 510 500 C531 501 549 496 560 485" fill="none" stroke="#8d684c" stroke-width="15" stroke-linecap="round"/>
+<path d="M462 540 Q512 558 562 540" fill="none" stroke="#4d2825" stroke-width="12" stroke-linecap="round"/>
+<path d="M422 490 C454 512 570 512 602 490 C576 540 448 540 422 490 Z" fill="#8d684c"/>
+<path d="M408 506 C450 590 574 590 616 506" fill="none" stroke="#312a27" stroke-width="20" stroke-linecap="round"/>
+<path d="M444 534 Q512 566 580 534" fill="none" stroke="#312a27" stroke-width="16" stroke-linecap="round"/>
+<line x1="606" y1="438" x2="566" y2="504" stroke="#4d2825" stroke-width="8" opacity="0.75" stroke-linecap="round"/>
+<path d="M314 740 L512 628 L710 740 L710 904 L314 904 Z" fill="#6f3b37" opacity="0.55"/>
+<rect x="388" y="700" width="248" height="38" rx="18" fill="#6a5038"/>
+<rect x="418" y="748" width="188" height="34" rx="16" fill="#6a5038"/>
+<rect x="160" y="140" width="704" height="744" rx="26" fill="none" stroke="#9f9585" stroke-width="12" opacity="0.45"/>
+<text x="512" y="955" text-anchor="middle" font-family="Georgia, Times New Roman, serif" font-size="42" fill="#c0b7a6">VETERAN</text>
+<text x="512" y="990" text-anchor="middle" font-family="Georgia, Times New Roman, serif" font-size="20" letter-spacing="3" fill="#b49b73" opacity="0.9">SPOKESMAN</text>
+</svg>

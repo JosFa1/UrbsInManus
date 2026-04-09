@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<rect width="1024" height="1024" fill="#3a3432"/>
+<rect x="120" y="120" width="784" height="784" rx="44" fill="#5c5551"/>
+<polygon points="120,120 904,120 904,220 120,340" fill="#8b817b" opacity="0.18"/>
+<polygon points="120,904 904,904 904,664 120,744" fill="#211d1b" opacity="0.22"/>
+<path d="M250 820 C310 690 420 628 512 628 C604 628 714 690 774 820 L774 904 L250 904 Z" fill="#d7d0c2"/>
+<path d="M512 628 C604 628 714 690 774 820 L774 904 L512 904 Z" fill="#b9b0a0"/>
+<rect x="468" y="556" width="88" height="92" rx="22" fill="#8d684c"/>
+<ellipse cx="512" cy="430" rx="170" ry="188" fill="#bc916a"/>
+<path d="M384 360 C392 282 452 230 514 230 C576 230 632 282 640 360 C600 332 566 310 540 286 C514 300 480 322 426 346 C418 410 422 462 438 502 C398 474 380 424 384 360 Z" fill="#211d1b" opacity="0.88"/>
+<ellipse cx="512" cy="274" rx="112" ry="70" fill="#b58a65"/>
+<path d="M416 290 C454 244 572 244 608 292" fill="none" stroke="#b49b73" stroke-width="20" stroke-linecap="round"/>
+<path d="M436 438 Q474 420 502 438" fill="none" stroke="#211d1b" stroke-width="12" stroke-linecap="round"/>
+<path d="M522 438 Q550 420 588 438" fill="none" stroke="#211d1b" stroke-width="12" stroke-linecap="round"/>
+<line x1="432" y1="396" x2="492" y2="382" stroke="#211d1b" stroke-width="14" stroke-linecap="round"/>
+<line x1="532" y1="382" x2="592" y2="396" stroke="#211d1b" stroke-width="14" stroke-linecap="round"/>
+<path d="M520 414 C542 444 540 481 510 500 C531 501 549 496 560 485" fill="none" stroke="#8d684c" stroke-width="15" stroke-linecap="round"/>
+<path d="M462 540 Q512 558 562 540" fill="none" stroke="#4d2825" stroke-width="12" stroke-linecap="round"/>
+<path d="M438 472 Q468 466 492 474" fill="none" stroke="#8d684c" stroke-width="7" opacity="0.6"/>
+<path d="M532 474 Q556 466 586 472" fill="none" stroke="#8d684c" stroke-width="7" opacity="0.6"/>
+<path d="M282 756 C368 664 442 628 512 628 C582 628 656 664 742 756 L742 904 L282 904 Z" fill="#c0b7a6"/>
+<path d="M512 628 C582 628 656 664 742 756 L742 904 L512 904 Z" fill="#9f9585" opacity="0.6"/>
+<path d="M370 688 L654 688 L612 744 L412 744 Z" fill="#6f3b37" opacity="0.8"/>
+<circle cx="646" cy="780" r="18" fill="#b49b73"/>
+<circle cx="646" cy="780" r="9" fill="#4d2825"/>
+<circle cx="512" cy="700" r="20" fill="#b49b73"/>
+<rect x="160" y="140" width="704" height="744" rx="26" fill="none" stroke="#9f9585" stroke-width="12" opacity="0.45"/>
+<text x="512" y="955" text-anchor="middle" font-family="Georgia, Times New Roman, serif" font-size="42" fill="#c0b7a6">COUNCIL ELDER</text>
+<text x="512" y="990" text-anchor="middle" font-family="Georgia, Times New Roman, serif" font-size="20" letter-spacing="3" fill="#b49b73" opacity="0.9">CASSIAN</text>
+</svg>

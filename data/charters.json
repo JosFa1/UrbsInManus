@@ -1,0 +1,82 @@
+{
+  "charters": [
+    {
+      "id": "small",
+      "name": "Small Charter",
+      "legalStyleLabel": "Lex coloniae minor",
+      "description": "A small charter is the safer version of the job. Fewer settlers, fewer moving parts, fewer chances to get buried under your own mistakes. The downside is that every problem hits harder because there is less room to absorb it.",
+      "gameplayFeel": [
+        "Shorter run",
+        "Lower starting labor",
+        "Lower pressure",
+        "Fewer petition chains",
+        "Mistakes matter more immediately"
+      ],
+      "startingTreasury": 3500,
+      "petitionDocketSize": 5,
+      "startingMeters": {
+        "order": 58,
+        "stores": 55,
+        "labor": 45,
+        "favorInRome": 52
+      },
+      "params": {
+        "mapSize": [48, 32],
+        "targetPopulation": 1500,
+        "objectives": 3,
+        "expectedYears": 8
+      }
+    },
+    {
+      "id": "medium",
+      "name": "Medium Charter",
+      "legalStyleLabel": "Lex coloniae ordinaria",
+      "description": "This is the balanced version. Big enough to feel like a real colony, small enough that you can still keep track of what is breaking and why. Most runs should probably use this.",
+      "gameplayFeel": [
+        "Standard run",
+        "Best variety",
+        "Full petition mix"
+      ],
+      "startingTreasury": 5000,
+      "petitionDocketSize": 6,
+      "startingMeters": {
+        "order": 55,
+        "stores": 50,
+        "labor": 50,
+        "favorInRome": 55
+      },
+      "params": {
+        "mapSize": [64, 40],
+        "targetPopulation": 3000,
+        "objectives": 5,
+        "expectedYears": 12
+      }
+    },
+    {
+      "id": "large",
+      "name": "Large Charter",
+      "legalStyleLabel": "Lex coloniae maior",
+      "description": "A large charter is where ambition starts to outrun control. More people, more demands, more chances to profit, and more ways for one decision to spread trouble across the whole colony.",
+      "gameplayFeel": [
+        "Longer run",
+        "Higher treasury and pressure",
+        "More faction conflict",
+        "More chain petitions"
+      ],
+      "startingTreasury": 7000,
+      "petitionDocketSize": 7,
+      "startingMeters": {
+        "order": 52,
+        "stores": 46,
+        "labor": 60,
+        "favorInRome": 60
+      },
+      "params": {
+        "mapSize": [80, 50],
+        "targetPopulation": 5000,
+        "objectives": 7,
+        "expectedYears": 18
+      }
+    }
+  ]
+}

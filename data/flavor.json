@@ -1,0 +1,39 @@
+{
+  "firstPetitionIntroLines": [
+    "The clerk lays down the first docket. The colony watches how you breathe.",
+    "They come to test the shape of your authority. Not with swords. With requests.",
+    "The first petitions are simple. That will not last."
+  ],
+  "petitionArrivalLines": [
+    "Another request comes in, and it is not really just a request.",
+    "The next problem arrives dressed up as advice.",
+    "By midday, somebody else has decided what the colony needs first.",
+    "A simpler version of this issue probably existed ten minutes ago. It does not anymore.",
+    "What they are asking for is clear. Why they are asking now is the more useful question."
+  ],
+  "optionConfirmationLines": [
+    "That solves one thing and wakes up another.",
+    "A clean answer on paper. We will see about the ground.",
+    "That should hold, assuming people act like they said they would.",
+    "Reasonable enough. Which usually means the consequences will be less reasonable.",
+    "Not ideal, but at least it is a decision."
+  ],
+  "successFlavorLines": [
+    "For once, the outcome mostly matched the plan.",
+    "It worked better than anyone had a right to expect.",
+    "People are still complaining, but less than before, which counts as progress.",
+    "The colony looks a little more intentional after this."
+  ],
+  "mixedFlavorLines": [
+    "It worked, just not cleanly.",
+    "The main issue calmed down. The side issue did not.",
+    "This bought time, which is useful until it runs out.",
+    "Nobody got exactly what they wanted, which may be why it held together."
+  ],
+  "badFlavorLines": [
+    "The problem did not disappear. It just changed shape.",
+    "That landed poorly, and people noticed.",
+    "The fast answer turned out to be the expensive one.",
+    "Now the issue is bigger and has witnesses."
+  ]
+}

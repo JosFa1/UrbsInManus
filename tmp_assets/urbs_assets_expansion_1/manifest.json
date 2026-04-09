@@ -1,0 +1,20 @@
+{
+  "portraits": [
+    "quartermaster-sabina",
+    "surveyor-ruso",
+    "interpreter-neria",
+    "council-elder-cassian",
+    "scribe-clerk",
+    "veteran-spokesman",
+    "matron-household"
+  ],
+  "backgrounds": [
+    "market-row",
+    "shrine-crossing",
+    "records-office"
+  ],
+  "canvas": {
+    "portraits": "1024x1024",
+    "backgrounds": "1600x900"
+  }
+}

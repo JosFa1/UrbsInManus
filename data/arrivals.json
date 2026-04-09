@@ -1,0 +1,40 @@
+{
+  "coastal": {
+    "frames": [
+      {
+        "title": "Coastal Arrival",
+        "backgroundUrl": "assets/backgrounds/harbor.svg",
+        "text": "The ships come in ugly, heavy, and slower than anyone wanted. By the time the ramps hit the sand, everyone already has an opinion about where the camp should go. That is how this starts. Not with a speech. With arguments, mud, and a lot of things that still need carrying."
+      },
+      {
+        "title": "Unloading",
+        "backgroundUrl": "assets/backgrounds/harbor.svg",
+        "text": "The quartermasters count grain and nails like prayer beads. The merchants argue about stall space before there is even a street to stand on. The veterans watch the hills and pretend they are not watching."
+      },
+      {
+        "title": "A Place to Govern",
+        "backgroundUrl": "assets/backgrounds/survey-camp.svg",
+        "text": "A tribunal platform goes up from planks. Stakes go into the ground. This is the first version of the colony: a camp, a claim, and a place where petitions will find you."
+      }
+    ]
+  },
+  "inland": {
+    "frames": [
+      {
+        "title": "Inland Arrival",
+        "backgroundUrl": "assets/backgrounds/road.svg",
+        "text": "The column reaches the site by late light and sets camp before anyone is happy with the ground. The surveyor says the slope is wrong. The quartermaster says the stores need unloading anyway. By nightfall the first version of the colony is a line of fires and a lot of guesses."
+      },
+      {
+        "title": "Survey and Stakes",
+        "backgroundUrl": "assets/backgrounds/survey-camp.svg",
+        "text": "The surveyors mark what the colony is supposed to become. The guards mark what it is allowed to be tonight. Everything else is still negotiable."
+      },
+      {
+        "title": "Petitions",
+        "backgroundUrl": "assets/backgrounds/survey-camp.svg",
+        "text": "Once the camp looks even slightly permanent, requests start arriving. People can smell unfinished authority almost immediately."
+      }
+    ]
+  }
+}
